@@ -68,7 +68,7 @@ object ApiFactory {
             .build()
     }
 
-    val api: Api = retrofit.create(Api::class.java)
+    private val api: Api = retrofit.create(Api::class.java)
 
 
     interface Api {

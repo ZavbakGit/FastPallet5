@@ -3,7 +3,6 @@ package `fun`.gladkikh.fastpallet5.db.initity
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
-import java.util.*
 
 @Entity
 data class CreatePalletDb(

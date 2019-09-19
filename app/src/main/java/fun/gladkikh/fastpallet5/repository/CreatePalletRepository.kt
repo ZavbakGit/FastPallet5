@@ -27,9 +27,7 @@ object CreatePalletRepository {
     }
 
 
-    fun getCreatePallet(guid: String) = App.database.getCreatPalletDao().getDocByGuid(guid).toCreatPallet()
-
-    fun getListProductByDoc(guidDoc: String) = Transformations.map(
+    fun getListProductByDoc(guidDoc: String): LiveData<List<Product>> = Transformations.map(
         App.database.getCreatPalletDao().getProductByDoc(guidDoc)
     ) {
         it.map { prod ->
@@ -43,7 +41,7 @@ object CreatePalletRepository {
         it.toProduct()
     }
 
-    fun getListPalletByProduct(guidProduct: String) = Transformations.map(
+    fun getListPalletByProduct(guidProduct: String): LiveData<List<Pallet>> = Transformations.map(
         App.database.getCreatPalletDao().getListPalletByProduct(guidProduct)
     ) {
         it.map { pallet ->
@@ -57,7 +55,7 @@ object CreatePalletRepository {
         it.toPallet()
     }
 
-    fun getListBoxByPallet(guidPallet: String) = Transformations.map(
+    fun getListBoxByPallet(guidPallet: String): LiveData<List<Box>> = Transformations.map(
         App.database.getCreatPalletDao().getListBoxByPallet(guidPallet)
     ) {
         it.map { box ->

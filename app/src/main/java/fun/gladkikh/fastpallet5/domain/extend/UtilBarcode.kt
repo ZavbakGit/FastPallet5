@@ -7,6 +7,7 @@ fun Product.getWeightFromBarcode(barcode: String): Float {
     return barcode.substring(0..2).toFloatOrNull() ?: 0f
 }
 
+//ToDo Надо перенести куданибудь
 fun List<Box>.getInfoWrap(): InfoListBoxWrap {
     val infoPalletWrap = InfoListBoxWrap(0, 0f)
 
