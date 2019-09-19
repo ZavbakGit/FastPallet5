@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">FastPallet5</string>
+    <string-array name="entries_type_tsd">
+        <item>АТОЛ Smart.Droid</item>
+        <item>АТОЛ Smart.Lite</item>
+    </string-array>
+    <string-array name="entry_values_tsd">
+        <item>1</item>
+        <item>2</item>
+    </string-array>
+</resources>

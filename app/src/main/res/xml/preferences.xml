@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <EditTextPreference
+            android:summary="Адрес хоста"
+            android:key="preference_host"
+            android:inputType="textUri"
+            android:selectAllOnFocus="true"
+            android:singleLine="true"
+            android:title="Host" />
+    <EditTextPreference
+            android:summary="Логин"
+            android:key="preference_login"
+            android:selectAllOnFocus="true"
+            android:singleLine="true"
+            android:title="Login" />
+
+    <EditTextPreference
+            android:summary="Пароль"
+            android:key="preference_pass"
+            android:selectAllOnFocus="true"
+            android:singleLine="true"
+            android:title="Password" />
+
+    <EditTextPreference
+            android:summary="Код"
+            android:key="preference_code_1c"
+            android:selectAllOnFocus="true"
+            android:singleLine="true"
+            android:title="Код терминала" />
+
+    <ListPreference
+            android:entries="@array/entries_type_tsd"
+            android:entryValues="@array/entry_values_tsd"
+            android:key="list_tsd"
+            android:summary="Терминал сбора данных"
+            android:defaultValue="1"
+            android:title="ТСД">
+    </ListPreference>
+
+
+</PreferenceScreen>
