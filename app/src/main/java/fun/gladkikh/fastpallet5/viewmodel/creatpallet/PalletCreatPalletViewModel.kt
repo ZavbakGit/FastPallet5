@@ -33,7 +33,7 @@ class PalletCreatPalletViewModel(
     init {
         disposables.add(
         dataPublishSubject.toFlowable(BackpressureStrategy.BUFFER)
-            .debounce(500, TimeUnit.MILLISECONDS)
+            .debounce(300, TimeUnit.MILLISECONDS)
             .switchMap {
                 return@switchMap Flowable.just(it).map { it.getInfoWrap() }
             }
@@ -44,7 +44,6 @@ class PalletCreatPalletViewModel(
             .subscribe()
         )
     }
-
 
     fun getDocLiveData(): LiveData<CreatePallet> = CreatePalletRepository.getDocByGuid(guidDoc)
     fun getProductLiveData(): LiveData<Product> = CreatePalletRepository.getProductByGuid(guidProduct)
@@ -64,19 +63,6 @@ class PalletCreatPalletViewModel(
             weight = 100f,
             data = Date()
         )
-
-//        //Тестируем
-//        (0..50).map {
-//            Box(
-//                guid = UUID.randomUUID().toString(),
-//                barcode = barcode,
-//                countBox = 1,
-//                weight = 100f,
-//                data = Date()
-//            )
-//        }.forEach {
-//            CreatePalletRepository.saveBox(box,guidPallet)
-//        }
         CreatePalletRepository.saveBox(box, guidPallet)
     }
 
