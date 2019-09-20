@@ -152,3 +152,5 @@ fun getCyrillicLetterByNumber(s: String): String {
         else -> ""
     }
 }
+
+data class ValidationResult(val result:Boolean,val message:String?= null,val code:Int? = null)

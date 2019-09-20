@@ -1,10 +1,13 @@
 package `fun`.gladkikh.fastpallet5.viewmodel.creatpallet
 
+import `fun`.gladkikh.fastpallet5.domain.extend.ValidationResult
+import `fun`.gladkikh.fastpallet5.domain.extend.getNumberDocByBarCode
 import `fun`.gladkikh.fastpallet5.domain.extend.isPallet
 import `fun`.gladkikh.fastpallet5.domain.intety.CreatePallet
 import `fun`.gladkikh.fastpallet5.domain.intety.Pallet
 import `fun`.gladkikh.fastpallet5.domain.intety.Product
 import `fun`.gladkikh.fastpallet5.domain.intety.Status
+import `fun`.gladkikh.fastpallet5.domain.intety.Status.*
 import `fun`.gladkikh.fastpallet5.repository.CreatePalletRepository
 import `fun`.gladkikh.fastpallet5.viewmodel.BaseViewModelFragment
 import androidx.lifecycle.LiveData
@@ -18,25 +21,21 @@ class ProductCreatPalletViewModel(
 ) : BaseViewModelFragment() {
 
 
-    var docCreatePallet:CreatePallet? = null
+    private var statusDoc: Status? = null
+    var docCreatePallet: CreatePallet? = null
         set(value) {
             field = value
+            statusDoc = Status.getStatusById(field?.status ?: 0)
         }
 
 
-    lateinit var status:Status
+    lateinit var status: Status
 
     fun getDocLiveData(): LiveData<CreatePallet> = CreatePalletRepository.getDocByGuid(guidDoc)
     fun getProductLiveData(): LiveData<Product> = CreatePalletRepository.getProductByGuid(guidProduct)
     fun getListPalletByProduct() = CreatePalletRepository.getListPalletByProduct(guidProduct)
 
     fun addPallet(barcode: String) {
-        when{
-            isPallet(barcode) -> messageError.postValue("Это не штрих код паллеты!")
-            docCreatePallet.status?.let { Status.getStatusById(it) }
-                    in [null,Status.LOADED,Status.UNLOADED] ->  messageError.postValue("Это не штрих код паллеты!")
-        }
-
         //ToDo Выполнить необходимые проверки при добавлении паллеты
         val pallet = Pallet(
             guid = UUID.randomUUID().toString(),
@@ -53,10 +52,6 @@ class ProductCreatPalletViewModel(
         CreatePalletRepository.savePallet(pallet, guidProduct)
     }
 
-    fun setDoc(doc:CreatePallet){
-        docCreatePallet = doc
-    }
-
     class ViewModelFactory(
         private val guid: String,
         private val guidStringProduct: String
@@ -65,5 +60,18 @@ class ProductCreatPalletViewModel(
         override fun <T : ViewModel> create(modelClass: Class<T>): T {
             return ProductCreatPalletViewModel(guid, guidStringProduct) as T
         }
+    }
+
+    private fun isValid(barcode:String): ValidationResult {
+        if (!isPallet(barcode)) return ValidationResult(false,"Этот штрих код не паллеты")
+        if (status !in listOf(LOADED,NEW)) return ValidationResult(false,"Нельзя изменять документ с этим статусом")
+
+        try {
+            getNumberDocByBarCode(barcode)
+        } catch (e: Exception) {
+            return ValidationResult(false,"Ошибка получения номмера паллеты!")
+        }
+
+        return ValidationResult(true)
     }
 }

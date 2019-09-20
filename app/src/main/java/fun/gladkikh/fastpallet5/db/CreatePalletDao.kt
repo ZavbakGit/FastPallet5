@@ -82,9 +82,7 @@ interface CreatePalletDao {
     @Query("SELECT * FROM PalletCreatePalletDb WHERE guidProduct = :guidProduct")
     fun getListPalletByProduct(guidProduct:String):LiveData<List<PalletCreatePalletDb>>
 
-
     //Box
-
     @Insert
     fun insert(boxCreatPalletDb: BoxCreatPalletDb)
 
