@@ -1,5 +1,6 @@
 package `fun`.gladkikh.fastpallet5.ui.activity
 
+import `fun`.gladkikh.fastpallet5.Constants
 import `fun`.gladkikh.fastpallet5.R
 import `fun`.gladkikh.fastpallet5.viewmodel.util.SingleLiveEvent
 import android.os.Bundle
@@ -15,6 +16,7 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.snackbar.Snackbar
 import io.reactivex.Flowable
 import kotlinx.android.synthetic.main.bottom_sheet.*
+import kotlinx.android.synthetic.main.createpallet_doc_fr.*
 import kotlinx.android.synthetic.main.item_box.*
 import kotlinx.android.synthetic.main.progress_overlay.*
 
@@ -61,9 +63,7 @@ class MainActivity : BaseActivity(), HostActivity {
             barcode.postValue(it)
         })
 
-        val options = NavOptions.Builder().
-            setEnterAnim(R.anim.nav_custom_enter_anim).
-            build()
+        val options = NavOptions.Builder().setEnterAnim(R.anim.nav_custom_enter_anim).build()
 
 
         bottomSheetBehavior.apply {
@@ -81,8 +81,24 @@ class MainActivity : BaseActivity(), HostActivity {
                 }
         }
 
+        getKeyListenerLd().observe(this, Observer { key ->
+            when (key) {
+                Constants.KEY_MENU -> {
+                    bottomSheetBehavior.state =
+                        when (bottomSheetBehavior.state) {
+                            BottomSheetBehavior.STATE_COLLAPSED -> BottomSheetBehavior.STATE_EXPANDED
+                            BottomSheetBehavior.STATE_EXPANDED -> {
+                                btDownload.requestFocus()
+                                BottomSheetBehavior.STATE_COLLAPSED
+                            }
+                            else -> BottomSheetBehavior.STATE_COLLAPSED
+                        }
+                }
+            }
+        })
+
         btSettings.setOnClickListener {
-            navController.navigate(R.id.settingsFragment,null,options)
+            navController.navigate(R.id.settingsFragment, null, options)
         }
 
         navController = Navigation.findNavController(this, R.id.nav_host_fragment)

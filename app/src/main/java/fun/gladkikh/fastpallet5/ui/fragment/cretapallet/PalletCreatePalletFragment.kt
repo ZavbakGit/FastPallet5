@@ -7,6 +7,7 @@ import `fun`.gladkikh.fastpallet5.ui.adapter.MyBaseAdapter
 import `fun`.gladkikh.fastpallet5.ui.fragment.BaseFragment
 import `fun`.gladkikh.fastpallet5.viewmodel.creatpallet.PalletCreatPalletViewModel
 import android.content.Context
+import android.os.Bundle
 
 import android.view.View
 import android.widget.TextView
@@ -73,15 +74,43 @@ class PalletCreatePalletFragment : BaseFragment() {
             viewModel.addBox(it)
         })
 
-        tvInfo.setOnClickListener {
-            Flowable.interval(300, TimeUnit.MILLISECONDS)
-                .take(500)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe {
-                    viewModel.addBox("100")
-                }
+        //Открываю диалог коробки
+        //ToDo поменять
+        listView.setOnItemClickListener { _, _, i, _ ->
+            val bundle = Bundle()
+//            bundle.putString(PalletCreatePalletFragment.GUID_DOC, viewModel.guidDoc)
+//            bundle.putString(PalletCreatePalletFragment.GUID_STRING_PRODUCT, viewModel.guidProduct)
+//            bundle.putString(PalletCreatePalletFragment.GUID_PALLET, adapter.list[i].guid)
+            hostActivity.getHostNavController()
+                .navigate(
+                    R.id.action_palletCreatPalletFragment_to_dialogProduct,
+                    bundle
+                )
         }
+
+        tvInfo.setOnClickListener {
+
+            //Открываю диалог продуктов
+
+            val bundle = Bundle()
+//            bundle.putString(PalletCreatePalletFragment.GUID_DOC, viewModel.guidDoc)
+//            bundle.putString(PalletCreatePalletFragment.GUID_STRING_PRODUCT, viewModel.guidProduct)
+//            bundle.putString(PalletCreatePalletFragment.GUID_PALLET, adapter.list[i].guid)
+            hostActivity.getHostNavController()
+                .navigate(
+                    R.id.action_palletCreatPalletFragment_to_dialogProduct,
+                    bundle
+                )
+
+            //            Flowable.interval(300, TimeUnit.MILLISECONDS)
+//                .take(500)
+//                .subscribeOn(Schedulers.io())
+//                .observeOn(AndroidSchedulers.mainThread())
+//                .subscribe {
+//                    viewModel.addBox("100")
+//                }
+        }
+
 
     }
 

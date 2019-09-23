@@ -12,7 +12,10 @@ import android.view.View
 import android.widget.TextView
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
+import kotlinx.android.synthetic.main.bottom_sheet.*
+import kotlinx.android.synthetic.main.createpallet_doc_fr.*
 import kotlinx.android.synthetic.main.doc_list_frag.*
+import kotlinx.android.synthetic.main.doc_list_frag.listView
 
 class DocListFragment : BaseFragment() {
     private lateinit var viewModel: DocListViewModel
@@ -44,7 +47,7 @@ class DocListFragment : BaseFragment() {
         }
 
 
-        btLoad.setOnClickListener {
+        tvInfo.setOnClickListener {
             viewModel.loadDocs()
         }
 
@@ -74,5 +77,5 @@ class DocListFragment : BaseFragment() {
         var tvRight: TextView = view.findViewById(R.id.tv_info_doc_right)
     }
 
-    override fun getLayout() = R.layout.doc_list_frag
+    override fun getLayout() = R.layout.createpallet_doc_fr
 }
