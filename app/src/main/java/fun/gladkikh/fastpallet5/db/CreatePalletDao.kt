@@ -6,10 +6,7 @@ import `fun`.gladkikh.fastpallet5.db.initity.CreatePalletDb
 import `fun`.gladkikh.fastpallet5.db.initity.PalletCreatePalletDb
 import `fun`.gladkikh.fastpallet5.db.initity.ProductCreatePalletDb
 import androidx.lifecycle.LiveData
-import androidx.room.Dao
-import androidx.room.Insert
-import androidx.room.Query
-import androidx.room.Update
+import androidx.room.*
 
 @Dao
 interface CreatePalletDao {
@@ -50,7 +47,7 @@ interface CreatePalletDao {
     fun update(productCreatePalletDb: ProductCreatePalletDb)
 
     @Query("SELECT * FROM ProductCreatePalletDb WHERE guidDoc = :guidDoc")
-    fun getProductByDoc(guidDoc:String):LiveData<List<ProductCreatePalletDb>>
+    fun getProductByDocLd(guidDoc:String):LiveData<List<ProductCreatePalletDb>>
 
     @Query("SELECT * FROM ProductCreatePalletDb WHERE guid = :guid")
     fun getProductByGuidLd(guid:String): LiveData<ProductCreatePalletDb>
@@ -63,6 +60,9 @@ interface CreatePalletDao {
 
     @Insert
     fun insert(palletCreatePalletDb: PalletCreatePalletDb)
+
+    @Delete
+    fun dellPallet(palletCreatePalletDb: PalletCreatePalletDb)
 
     @Insert
     fun insertPalletList(listPalletCreatePalletDb: List<PalletCreatePalletDb>)
@@ -80,7 +80,10 @@ interface CreatePalletDao {
     fun getPalletByGuid(guid:String): PalletCreatePalletDb
 
     @Query("SELECT * FROM PalletCreatePalletDb WHERE guidProduct = :guidProduct")
-    fun getListPalletByProduct(guidProduct:String):LiveData<List<PalletCreatePalletDb>>
+    fun getListPalletByProductLd(guidProduct:String):LiveData<List<PalletCreatePalletDb>>
+
+    @Query("SELECT * FROM PalletCreatePalletDb WHERE guidProduct = :guidProduct")
+    fun getListPalletByProduct(guidProduct:String):List<PalletCreatePalletDb>
 
     //Box
     @Insert
@@ -102,6 +105,6 @@ interface CreatePalletDao {
     fun getBoxByGuid(guid:String): BoxCreatPalletDb
 
     @Query("SELECT * FROM BoxCreatPalletDb WHERE guidPallet = :guidPallet")
-    fun getListBoxByPallet(guidPallet:String):LiveData<List<BoxCreatPalletDb>>
+    fun getListBoxByPalletLd(guidPallet:String):LiveData<List<BoxCreatPalletDb>>
 
 }

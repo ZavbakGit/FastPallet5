@@ -7,10 +7,11 @@ import io.reactivex.Flowable
 
 interface HostActivity{
     fun showMessage(text: CharSequence)
+    fun showErrorMessage(text: CharSequence)
     fun isShowProgress():Boolean
     fun showProgress()
     fun hideProgress()
-    fun getKeyListenerFlowable():Flowable<Int>
+    fun getKeyListenerLd():LiveData<Int>
     fun getHostNavController(): NavController
     fun getBarcodeSingleLiveData():SingleLiveEvent<String>
 }

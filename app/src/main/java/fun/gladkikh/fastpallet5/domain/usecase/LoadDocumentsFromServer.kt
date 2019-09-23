@@ -52,7 +52,7 @@ class LoadDocumentsFromServer {
                     guid = UUID.randomUUID().toString(),
                     date = it.date,
                     number = it.number,
-                    status = Status.getStatusByString(it.status).id,
+                    status = Status.LOADED.id,
                     barcode = null,
                     dataChanged = null,
                     description = null,

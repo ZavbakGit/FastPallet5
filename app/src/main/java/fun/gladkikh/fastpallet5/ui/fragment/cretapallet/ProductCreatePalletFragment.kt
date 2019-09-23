@@ -1,5 +1,6 @@
 package `fun`.gladkikh.fastpallet5.ui.fragment.cretapallet
 
+import `fun`.gladkikh.fastpallet5.Constants.KEY_DELL
 import `fun`.gladkikh.fastpallet5.R
 import `fun`.gladkikh.fastpallet5.common.toSimpleString
 import `fun`.gladkikh.fastpallet5.domain.intety.Pallet
@@ -10,6 +11,7 @@ import android.content.Context
 import android.os.Bundle
 import android.view.View
 import android.widget.TextView
+import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import kotlinx.android.synthetic.main.createpallet_doc_fr.*
@@ -43,13 +45,19 @@ class ProductCreatePalletFragment : BaseFragment() {
             ).get(ProductCreatPalletViewModel::class.java)
 
 
-        viewModel.getProductLiveData().observe(viewLifecycleOwner, Observer {
-            tvInfo.text = it.nameProduct
+        viewModel.messageError.observe(viewLifecycleOwner, Observer {
+            hostActivity.showMessage(it)
         })
 
-        viewModel.getListPalletByProduct().observe(viewLifecycleOwner, Observer {
-            showList(it)
+
+        viewModel.getDataModelLd().observe(viewLifecycleOwner, Observer {
+            tvInfo.text =
+                (it.docCreatePallet?.number ?: "")
+                    .plus("\n").plus(it.product?.nameProduct ?: "")
+
+            showList(it.listPallet)
         })
+
 
         listView.setOnItemClickListener { _, _, i, _ ->
             val bundle = Bundle()
@@ -57,13 +65,39 @@ class ProductCreatePalletFragment : BaseFragment() {
             bundle.putString(PalletCreatePalletFragment.GUID_STRING_PRODUCT, viewModel.guidProduct)
             bundle.putString(PalletCreatePalletFragment.GUID_PALLET, adapter.list[i].guid)
             hostActivity.getHostNavController()
-                .navigate(R.id.action_stringProductCreatPalletFragment_to_palletCreatPalletFragment, bundle)
+                .navigate(
+                    R.id.action_stringProductCreatPalletFragment_to_palletCreatPalletFragment,
+                    bundle
+                )
         }
 
         hostActivity.getBarcodeSingleLiveData().observe(viewLifecycleOwner, Observer {
             viewModel.addPallet(it)
         })
 
+
+        hostActivity.getKeyListenerLd().observe(viewLifecycleOwner, Observer { key ->
+            when (key) {
+                //Проверяем, что нажата dell
+                KEY_DELL -> {
+                    //Проверяем, что выбрана строка
+                    listView.selectedItemPosition.takeUnless { position -> position == -1 }?.let {
+                        viewModel.keyPressDell(it)
+                    }
+                }
+            }
+        })
+
+        viewModel.getConfirmDellLd().observe(viewLifecycleOwner, Observer {
+            AlertDialog.Builder(activity!!)
+                .setTitle(it.message)
+                .setMessage("Удалить")
+                .setNegativeButton(android.R.string.cancel, null) // dismisses by default
+                .setPositiveButton("Да") { dialog, which ->
+                    viewModel.confirmedDell(it.position)
+                }
+                .show()
+        })
     }
 
     override fun getLayout() = R.layout.createpallet_doc_fr
@@ -76,7 +110,7 @@ class ProductCreatePalletFragment : BaseFragment() {
     private class Adapter(mContext: Context) : MyBaseAdapter<Pallet>(mContext) {
         override fun bindView(item: Pallet, holder: Any) {
             holder as ViewHolder
-            holder.tvInfo.text = item.guid
+            holder.tvInfo.text = item.number
             holder.tvLeft.text = item.barcode
             holder.tvRight.text = item.dataChanged?.toSimpleString()
         }

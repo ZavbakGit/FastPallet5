@@ -3,6 +3,8 @@ package `fun`.gladkikh.fastpallet5.ui.activity
 import android.os.Bundle
 import android.view.KeyEvent
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import com.gladkikh.mylibrary.BarcodeHelper
 import io.reactivex.BackpressureStrategy
 import io.reactivex.Flowable
@@ -11,7 +13,9 @@ import io.reactivex.subjects.PublishSubject
 
 abstract class BaseActivity: AppCompatActivity(){
 
-    private val publishSubjectKeyClick = PublishSubject.create<Int>()
+
+    private val keyDownLiveData = MutableLiveData<Int>()
+
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -22,11 +26,14 @@ abstract class BaseActivity: AppCompatActivity(){
 
 
     override fun onKeyDown(keyCode: Int, event: KeyEvent?): Boolean {
-        publishSubjectKeyClick.onNext(keyCode)
+        keyDownLiveData.postValue(keyCode)
         return super.onKeyDown(keyCode, event)
     }
 
-    fun getKeyListenerFlowable(): Flowable<Int> = publishSubjectKeyClick.toFlowable(BackpressureStrategy.DROP)
+
+
+    fun getKeyListenerLd(): LiveData<Int> = keyDownLiveData
+
 
     protected abstract fun getLayout(): Int
 }

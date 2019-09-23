@@ -13,13 +13,13 @@ import com.gladkikh.mylibrary.BarcodeHelper
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 
 import com.google.android.material.snackbar.Snackbar
+import io.reactivex.Flowable
 import kotlinx.android.synthetic.main.bottom_sheet.*
 import kotlinx.android.synthetic.main.item_box.*
 import kotlinx.android.synthetic.main.progress_overlay.*
 
 
 class MainActivity : BaseActivity(), HostActivity {
-
 
     lateinit var barcodeHelper: BarcodeHelper
     var barcode = SingleLiveEvent<String>()
@@ -30,6 +30,12 @@ class MainActivity : BaseActivity(), HostActivity {
         Snackbar.make(root, text, Snackbar.LENGTH_LONG)
             .setAction("Action", null).show()
     }
+
+    override fun showErrorMessage(text: CharSequence) {
+        Snackbar.make(root, text, Snackbar.LENGTH_LONG)
+            .setAction("Action", null).show()
+    }
+
 
     override fun getHostNavController() = navController
 

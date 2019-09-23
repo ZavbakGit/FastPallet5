@@ -11,12 +11,9 @@ import androidx.navigation.NavController
 
 
 abstract class BaseFragment : Fragment() {
+
     private lateinit var navController: NavController
-
-
     lateinit var hostActivity: HostActivity
-
-
 
     override fun onCreateView(
         inflater: LayoutInflater,

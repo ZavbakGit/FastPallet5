@@ -7,12 +7,12 @@ import `fun`.gladkikh.fastpallet5.domain.intety.CreatePallet
 import `fun`.gladkikh.fastpallet5.domain.intety.Pallet
 import `fun`.gladkikh.fastpallet5.domain.intety.Product
 import `fun`.gladkikh.fastpallet5.domain.intety.Status
-import `fun`.gladkikh.fastpallet5.domain.intety.Status.*
+import `fun`.gladkikh.fastpallet5.domain.intety.Status.LOADED
+import `fun`.gladkikh.fastpallet5.domain.intety.Status.NEW
 import `fun`.gladkikh.fastpallet5.repository.CreatePalletRepository
 import `fun`.gladkikh.fastpallet5.viewmodel.BaseViewModelFragment
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
+import `fun`.gladkikh.fastpallet5.viewmodel.util.SingleLiveEvent
+import androidx.lifecycle.*
 import java.util.*
 
 class ProductCreatPalletViewModel(
@@ -21,35 +21,55 @@ class ProductCreatPalletViewModel(
 ) : BaseViewModelFragment() {
 
 
-    private var statusDoc: Status? = null
-    var docCreatePallet: CreatePallet? = null
-        set(value) {
-            field = value
-            statusDoc = Status.getStatusById(field?.status ?: 0)
+    private var dataModel = DataModel()
+
+    private val mediatorDataModel: MediatorLiveData<DataModel> =
+        MediatorLiveData<DataModel>().apply {
+            addSource(CreatePalletRepository.getDocByGuid(guidDoc)) {
+                dataModel.docCreatePallet = it
+                this.postValue(dataModel)
+            }
+
+            addSource(CreatePalletRepository.getProductByGuid(guidProduct)) {
+                dataModel.product = it
+                this.postValue(dataModel)
+            }
+
+            addSource(CreatePalletRepository.getListPalletByProductLd(guidProduct)) {
+                dataModel.listPallet = it
+                this.postValue(dataModel)
+            }
         }
 
+    private val confirmDell = SingleLiveEvent<DataConfirmDell>()
 
-    lateinit var status: Status
 
-    fun getDocLiveData(): LiveData<CreatePallet> = CreatePalletRepository.getDocByGuid(guidDoc)
-    fun getProductLiveData(): LiveData<Product> = CreatePalletRepository.getProductByGuid(guidProduct)
-    fun getListPalletByProduct() = CreatePalletRepository.getListPalletByProduct(guidProduct)
+    fun getDataModelLd(): LiveData<DataModel> = mediatorDataModel
+
+    fun getConfirmDellLd(): LiveData<DataConfirmDell> = confirmDell
 
     fun addPallet(barcode: String) {
-        //ToDo Выполнить необходимые проверки при добавлении паллеты
-        val pallet = Pallet(
-            guid = UUID.randomUUID().toString(),
-            count = null,
-            countBox = null,
-            number = null,
-            barcode = barcode,
-            dataChanged = Date(),
-            nameProduct = null,
-            sclad = null,
-            state = null
-        )
 
-        CreatePalletRepository.savePallet(pallet, guidProduct)
+        val isValid = isValid(barcode)
+
+        if (!isValid.result) {
+            messageError.postValue(isValid.message)
+        } else {
+            val pallet = Pallet(
+                guid = UUID.randomUUID().toString(),
+                count = null,
+                countBox = null,
+                number = getNumberDocByBarCode(barcode),
+                barcode = barcode,
+                dataChanged = Date(),
+                nameProduct = null,
+                sclad = null,
+                state = null
+            )
+
+            CreatePalletRepository.savePallet(pallet, guidProduct)
+        }
+
     }
 
     class ViewModelFactory(
@@ -62,16 +82,59 @@ class ProductCreatPalletViewModel(
         }
     }
 
-    private fun isValid(barcode:String): ValidationResult {
-        if (!isPallet(barcode)) return ValidationResult(false,"Этот штрих код не паллеты")
-        if (status !in listOf(LOADED,NEW)) return ValidationResult(false,"Нельзя изменять документ с этим статусом")
+    private fun isValid(barcode: String): ValidationResult {
+        val status = dataModel.docCreatePallet?.status?.let { Status.getStatusById(it) }
+
+        if (!isPallet(barcode)) return ValidationResult(false, "Этот штрих код не паллеты")
+        if (status !in listOf(LOADED, NEW)) return ValidationResult(
+            false,
+            "Нельзя изменять документ с этим статусом"
+        )
+
+        val number: String?
 
         try {
-            getNumberDocByBarCode(barcode)
+            number = getNumberDocByBarCode(barcode)
         } catch (e: Exception) {
-            return ValidationResult(false,"Ошибка получения номмера паллеты!")
+            return ValidationResult(false, "Ошибка получения номмера паллеты!")
+        }
+
+        if (CreatePalletRepository.getListPalletByProduct(guidProduct).find {
+                it.number.equals(
+                    number
+                )
+            } != null) {
+            return ValidationResult(false, "Паллета уже внесена!")
         }
 
         return ValidationResult(true)
     }
+
+    fun keyPressDell(position: Int) {
+        val status = dataModel.docCreatePallet?.status?.let { Status.getStatusById(it) }
+        if (status !in listOf(LOADED, NEW)) {
+            messageError.postValue("Нельзя изменять документ с этим статусом")
+            return
+        }
+
+        dataModel.listPallet[position].number?.let {
+            confirmDell.postValue(
+                DataConfirmDell(
+                    "Удалить паллету № $it", position
+                )
+            )
+        }
+    }
+
+    fun confirmedDell(position: Int) {
+        CreatePalletRepository.dellPallet(dataModel.listPallet[position],dataModel.product!!.guid)
+    }
+
+    data class DataModel(
+        var docCreatePallet: CreatePallet? = null,
+        var product: Product? = null,
+        var listPallet: List<Pallet> = listOf()
+    )
+
+    data class DataConfirmDell(var message: String, var position: Int)
 }
