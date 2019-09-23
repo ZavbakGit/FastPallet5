@@ -59,6 +59,7 @@ class ProductCreatePalletFragment : BaseFragment() {
         })
 
 
+        //Открываю экран палеты
         listView.setOnItemClickListener { _, _, i, _ ->
             val bundle = Bundle()
             bundle.putString(PalletCreatePalletFragment.GUID_DOC, viewModel.guidDoc)
@@ -88,13 +89,14 @@ class ProductCreatePalletFragment : BaseFragment() {
             }
         })
 
-        viewModel.getConfirmDellLd().observe(viewLifecycleOwner, Observer {
+        //Открываю диалог подтверждения
+        viewModel.getConfirmDellDialogLd().observe(viewLifecycleOwner, Observer {
             AlertDialog.Builder(activity!!)
                 .setTitle(it.message)
                 .setMessage("Удалить")
                 .setNegativeButton(android.R.string.cancel, null) // dismisses by default
                 .setPositiveButton("Да") { dialog, which ->
-                    viewModel.confirmedDell(it.position)
+                    viewModel.dialogConfirmedDell(it.position)
                 }
                 .show()
         })

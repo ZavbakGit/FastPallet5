@@ -41,12 +41,12 @@ class ProductCreatPalletViewModel(
             }
         }
 
-    private val confirmDell = SingleLiveEvent<DataConfirmDell>()
+    private val confirmDellDialog = SingleLiveEvent<DataDialogConfirmDell>()
 
 
     fun getDataModelLd(): LiveData<DataModel> = mediatorDataModel
 
-    fun getConfirmDellLd(): LiveData<DataConfirmDell> = confirmDell
+    fun getConfirmDellDialogLd(): LiveData<DataDialogConfirmDell> = confirmDellDialog
 
     fun addPallet(barcode: String) {
 
@@ -118,15 +118,15 @@ class ProductCreatPalletViewModel(
         }
 
         dataModel.listPallet[position].number?.let {
-            confirmDell.postValue(
-                DataConfirmDell(
+            confirmDellDialog.postValue(
+                DataDialogConfirmDell(
                     "Удалить паллету № $it", position
                 )
             )
         }
     }
 
-    fun confirmedDell(position: Int) {
+    fun dialogConfirmedDell(position: Int) {
         CreatePalletRepository.dellPallet(dataModel.listPallet[position],dataModel.product!!.guid)
     }
 
@@ -136,5 +136,5 @@ class ProductCreatPalletViewModel(
         var listPallet: List<Pallet> = listOf()
     )
 
-    data class DataConfirmDell(var message: String, var position: Int)
+    data class DataDialogConfirmDell(var message: String, var position: Int)
 }
