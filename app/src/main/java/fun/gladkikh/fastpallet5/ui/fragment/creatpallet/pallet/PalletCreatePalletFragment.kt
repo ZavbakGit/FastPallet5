@@ -6,6 +6,7 @@ import `fun`.gladkikh.fastpallet5.domain.intety.Box
 import `fun`.gladkikh.fastpallet5.ui.adapter.MyBaseAdapter
 import `fun`.gladkikh.fastpallet5.ui.base.BaseFragment
 import `fun`.gladkikh.fastpallet5.ui.fragment.creatpallet.dialodproduct.DialogProductCreatePalletFragment
+import `fun`.gladkikh.fastpallet5.ui.fragment.dialog.FireMissilesDialogFragment
 
 import android.content.Context
 import android.os.Bundle
@@ -89,14 +90,16 @@ class PalletCreatePalletFragment :
         }
 
         tvMenu.setOnClickListener {
+         val dial =    FireMissilesDialogFragment()
+            dial.show(activity!!.supportFragmentManager,"jjj")
 
-            Flowable.interval(300, TimeUnit.MILLISECONDS)
-                .take(500)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe {
-                    viewModel.addBox("${(10..99).random()}123456789")
-                }
+//            Flowable.interval(300, TimeUnit.MILLISECONDS)
+//                .take(500)
+//                .subscribeOn(Schedulers.io())
+//                .observeOn(AndroidSchedulers.mainThread())
+//                .subscribe {
+//                    viewModel.addBox("${(10..99).random()}123456789")
+//                }
 
             //viewModel.addBox("${(10..99).random()}123456789")
         }

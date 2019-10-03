@@ -8,6 +8,7 @@ import `fun`.gladkikh.fastpallet5.domain.intety.CreatePallet
 import `fun`.gladkikh.fastpallet5.domain.intety.Pallet
 import `fun`.gladkikh.fastpallet5.domain.intety.Product
 import `fun`.gladkikh.fastpallet5.repository.CreatePalletRepository
+import `fun`.gladkikh.fastpallet5.ui.base.AbsentLiveData
 import `fun`.gladkikh.fastpallet5.ui.base.BaseViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
