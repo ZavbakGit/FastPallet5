@@ -59,8 +59,6 @@ object CreatePalletRepository {
         it.toPallet()
     }
 
-
-
     fun getListBoxByPallet(guidPallet: String): LiveData<List<Box>> = Transformations.map(
         App.database.getCreatPalletDao().getListBoxByPalletLd(guidPallet)
     ) {

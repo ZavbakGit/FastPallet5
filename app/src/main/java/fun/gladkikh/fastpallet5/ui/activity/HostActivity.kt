@@ -7,7 +7,6 @@ import androidx.navigation.NavController
 interface HostActivity{
     fun showMessage(text: CharSequence)
     fun showErrorMessage(text: CharSequence)
-    fun isShowProgress():Boolean
     fun showProgress()
     fun hideProgress()
     fun getKeyListenerLd():LiveData<Int>

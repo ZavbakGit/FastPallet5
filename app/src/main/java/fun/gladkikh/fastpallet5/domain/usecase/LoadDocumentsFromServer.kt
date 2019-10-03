@@ -57,10 +57,10 @@ class LoadDocumentsFromServer {
                     status = Status.LOADED.id,
                     barcode = null,
                     dataChanged = null,
-                    description = null,
-                    guidServer = null,
+                    description = it.description,
+                    guidServer = it.guid,
                     isWasLoadedLastTime = null,
-                    typeFromServer = null,
+                    typeFromServer = it.type,
                     listProduct = listProd
                 )
 

@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="300dp"
         app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior"
         android:id="@+id/bottom_sheet"
         app:behavior_hideable="true"
@@ -19,41 +20,16 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-    <Button
+    <com.google.android.material.navigation.NavigationView
+            android:background="@color/colorPrimaryDark"
             android:textColor="@color/colorWhite"
-            android:id="@+id/btDownload"
-            style = "?android:attr/borderlessButtonStyle"
-            android:layout_width = "wrap_content"
-            android:layout_height = "wrap_content"
-            android:layout_marginTop = "8dp"
-            android:text = "ЗАГРУЗИТЬ"
-            app:layout_constraintEnd_toEndOf = "parent"
-            app:layout_constraintStart_toStartOf = "parent"
+            app:menu="@menu/documents_menu"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/tvMenu" />
-
-    <Button
-            android:textColor="@color/colorWhite"
-            android:id="@+id/btSend"
-            style = "?android:attr/borderlessButtonStyle"
-            android:layout_width = "wrap_content"
-            android:layout_height = "wrap_content"
-            android:layout_marginTop = "8dp"
-            android:text = "Выгрузить"
-            app:layout_constraintEnd_toEndOf = "parent"
-            app:layout_constraintStart_toStartOf = "parent"
-            app:layout_constraintTop_toBottomOf="@+id/btDownload" />
-
-    <Button
-            android:textColor="@color/colorWhite"
-            android:id="@+id/btSettings"
-            style = "?android:attr/borderlessButtonStyle"
-            android:layout_width = "wrap_content"
-            android:layout_height = "wrap_content"
-            android:layout_marginTop = "8dp"
-            android:text = "Настройки"
-            app:layout_constraintEnd_toEndOf = "parent"
-            app:layout_constraintStart_toStartOf = "parent"
-            app:layout_constraintTop_toBottomOf="@+id/btSend" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
