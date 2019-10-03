@@ -1,9 +1,8 @@
 package `fun`.gladkikh.fastpallet5.ui.activity
 
-import `fun`.gladkikh.fastpallet5.viewmodel.util.SingleLiveEvent
+import `fun`.gladkikh.fastpallet5.ui.base.SingleLiveEvent
 import androidx.lifecycle.LiveData
 import androidx.navigation.NavController
-import io.reactivex.Flowable
 
 interface HostActivity{
     fun showMessage(text: CharSequence)
@@ -12,6 +11,6 @@ interface HostActivity{
     fun showProgress()
     fun hideProgress()
     fun getKeyListenerLd():LiveData<Int>
-    fun getHostNavController(): NavController
-    fun getBarcodeSingleLiveData():SingleLiveEvent<String>
+    fun getNavController(): NavController
+    fun getBarcodeSingleLiveData(): SingleLiveEvent<String>
 }

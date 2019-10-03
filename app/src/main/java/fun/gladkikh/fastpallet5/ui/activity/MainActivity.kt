@@ -2,7 +2,7 @@ package `fun`.gladkikh.fastpallet5.ui.activity
 
 import `fun`.gladkikh.fastpallet5.Constants
 import `fun`.gladkikh.fastpallet5.R
-import `fun`.gladkikh.fastpallet5.viewmodel.util.SingleLiveEvent
+import `fun`.gladkikh.fastpallet5.ui.base.SingleLiveEvent
 import android.os.Bundle
 import android.view.View
 import androidx.lifecycle.LiveData

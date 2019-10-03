@@ -1,14 +1,11 @@
 package `fun`.gladkikh.fastpallet5.ui.activity
 
+import `fun`.gladkikh.fastpallet5.ui.base.SingleLiveEvent
 import android.os.Bundle
 import android.view.KeyEvent
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.gladkikh.mylibrary.BarcodeHelper
-import io.reactivex.BackpressureStrategy
-import io.reactivex.Flowable
-import io.reactivex.subjects.PublishSubject
 
 
 abstract class BaseActivity: AppCompatActivity(){

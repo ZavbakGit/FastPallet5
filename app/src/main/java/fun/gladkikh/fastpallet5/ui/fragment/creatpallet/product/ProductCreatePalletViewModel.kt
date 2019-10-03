@@ -10,9 +10,11 @@ import `fun`.gladkikh.fastpallet5.domain.intety.Status
 import `fun`.gladkikh.fastpallet5.domain.intety.Status.LOADED
 import `fun`.gladkikh.fastpallet5.domain.intety.Status.NEW
 import `fun`.gladkikh.fastpallet5.repository.CreatePalletRepository
-import `fun`.gladkikh.fastpallet5.viewmodel.BaseViewModelFragment
-import `fun`.gladkikh.fastpallet5.viewmodel.util.SingleLiveEvent
-import androidx.lifecycle.*
+import `fun`.gladkikh.fastpallet5.ui.base.BaseViewModel
+import `fun`.gladkikh.fastpallet5.ui.base.SingleLiveEvent
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MediatorLiveData
+import androidx.lifecycle.Observer
 import java.util.*
 
 class ProductCreatPalletViewModel(
@@ -41,7 +43,8 @@ class ProductCreatPalletViewModel(
             }
         }
 
-    private val confirmDellDialog = SingleLiveEvent<DataDialogConfirmDell>()
+    private val confirmDellDialog =
+        SingleLiveEvent<DataDialogConfirmDell>()
 
 
     fun getDataModelLd(): LiveData<DataModel> = mediatorDataModel
