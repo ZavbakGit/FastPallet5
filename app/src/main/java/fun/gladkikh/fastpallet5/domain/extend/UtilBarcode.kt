@@ -15,16 +15,15 @@ fun List<Box>.getInfoWrap(): InfoListBoxWrap {
 
     this.forEach {
         infoPalletWrap.apply {
-            countBox += it.countBox ?: 0
-            weight = weight.toBigDecimal().add((it.weight?:0f).toBigDecimal()).toFloat()
+            countBox = countBox!! + (it.countBox ?: 0)
+            weight = weight!!.toBigDecimal().add((it.weight ?: 0f).toBigDecimal()).toFloat()
         }
-
     }
 
     return infoPalletWrap
 }
 
-data class InfoListBoxWrap(var countBox: Int, var weight: Float)
+data class InfoListBoxWrap(var countBox: Int? = null, var weight: Float? = null)
 
 fun getWeightByBarcode(barcode: String, start: Int, finish: Int, coff: Float): Float {
 
@@ -153,4 +152,4 @@ fun getCyrillicLetterByNumber(s: String): String {
     }
 }
 
-data class ValidationResult(val result:Boolean,val message:String?= null,val code:Int? = null)
+data class ValidationResult(val result: Boolean, val message: String? = null, val code: Int? = null)

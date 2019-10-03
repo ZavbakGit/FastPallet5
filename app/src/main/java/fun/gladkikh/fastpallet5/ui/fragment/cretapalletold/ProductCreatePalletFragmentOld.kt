@@ -124,7 +124,7 @@ class ProductCreatePalletFragment : BaseFragment() {
 
     private class ViewHolder(view: View) {
         var tvInfo: TextView = view.findViewById(R.id.tv_item_info)
-        var tvLeft: TextView = view.findViewById(R.id.tv_info__doc_left)
+        var tvLeft: TextView = view.findViewById(R.id.tv_info_doc_left)
         var tvRight: TextView = view.findViewById(R.id.tv_info_doc_right)
     }
 

@@ -78,14 +78,14 @@ class PalletCreatePalletFragment : BaseFragment() {
         //ToDo поменять
         listView.setOnItemClickListener { _, _, i, _ ->
             val bundle = Bundle()
-//            bundle.putString(PalletCreatePalletFragment.GUID_DOC, viewModel.guidDoc)
-//            bundle.putString(PalletCreatePalletFragment.GUID_STRING_PRODUCT, viewModel.guidProduct)
-//            bundle.putString(PalletCreatePalletFragment.GUID_PALLET, adapter.list[i].guid)
-            hostActivity.getHostNavController()
-                .navigate(
-                    R.id.action_palletCreatPalletFragment_to_dialogProduct,
-                    bundle
-                )
+//            bundle.putString(PalletCreatePalletFragmentOld.GUID_DOC, viewModel.guidDoc)
+//            bundle.putString(PalletCreatePalletFragmentOld.GUID_STRING_PRODUCT, viewModel.guidProduct)
+//            bundle.putString(PalletCreatePalletFragmentOld.GUID_PALLET, adapter.list[i].guid)
+//            hostActivity.getNavController()
+//                .navigate(
+//                    R.id.action_palletCreatPalletFragment_to_dialogProduct,
+//                    bundle
+//                )
         }
 
         tvInfo.setOnClickListener {
@@ -93,14 +93,14 @@ class PalletCreatePalletFragment : BaseFragment() {
             //Открываю диалог продуктов
 
             val bundle = Bundle()
-//            bundle.putString(PalletCreatePalletFragment.GUID_DOC, viewModel.guidDoc)
-//            bundle.putString(PalletCreatePalletFragment.GUID_STRING_PRODUCT, viewModel.guidProduct)
-//            bundle.putString(PalletCreatePalletFragment.GUID_PALLET, adapter.list[i].guid)
-            hostActivity.getHostNavController()
-                .navigate(
-                    R.id.action_palletCreatPalletFragment_to_dialogProduct,
-                    bundle
-                )
+//            bundle.putString(PalletCreatePalletFragmentOld.GUID_DOC, viewModel.guidDoc)
+            bundle.putString(PalletCreatePalletFragmentOld.GUID_STRING_PRODUCT, viewModel.guidProduct)
+//            bundle.putString(PalletCreatePalletFragmentOld.GUID_PALLET, adapter.list[i].guid)
+//            hostActivity.getNavController()
+//                .navigate(
+//                    R.id.action_palletCreatePalletFragment_to_dialogProduct,
+//                    bundle
+//                )
 
             //            Flowable.interval(300, TimeUnit.MILLISECONDS)
 //                .take(500)
@@ -139,7 +139,7 @@ class PalletCreatePalletFragment : BaseFragment() {
 
     private class ViewHolder(view: View) {
         var tvInfo: TextView = view.findViewById(R.id.tv_item_info)
-        var tvLeft: TextView = view.findViewById(R.id.tv_info__doc_left)
+        var tvLeft: TextView = view.findViewById(R.id.tv_info_doc_left)
         var tvRight: TextView = view.findViewById(R.id.tv_info_doc_right)
     }
 

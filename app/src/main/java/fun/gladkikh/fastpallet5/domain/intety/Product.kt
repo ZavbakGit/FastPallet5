@@ -4,28 +4,28 @@ import java.util.*
 
 data class Product(
 
-    var guid: String,
-    var number: String?,
-    var barcode: String?,
+    var guid: String = "",
+    var number: String? = null,
+    var barcode: String? = null,
 
-    var guidProduct: String?,
-    var nameProduct: String?,
-    var codeProduct: String?,
-    var ed: String?,
+    var guidProduct: String? = null,
+    var nameProduct: String? = null,
+    var codeProduct: String? = null,
+    var ed: String? = null,
 
-    var weightBarcode: String?,
-    var weightStartProduct: Int?,
-    var weightEndProduct: Int?,
-    var weightCoffProduct: Float?,
+    var weightBarcode: String? = null,
+    var weightStartProduct: Int? = null,
+    var weightEndProduct: Int? = null,
+    var weightCoffProduct: Float? = null,
 
-    var edCoff: Float?,
-    var count: Float?,
-    var countBox: Int?,
-    var countPallet: Int?,
+    var edCoff: Float? = null,
+    var count: Float? = null,
+    var countBox: Int? = null,
+    var countPallet: Int? = null,
 
 
-    var dataChanged: Date?,
-    var isWasLoadedLastTime: Boolean?,
+    var dataChanged: Date? = null,
+    var isWasLoadedLastTime: Boolean? = null,
 
 
     val boxes: List<Box>? = listOf(),

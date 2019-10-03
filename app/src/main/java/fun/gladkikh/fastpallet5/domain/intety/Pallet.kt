@@ -3,17 +3,17 @@ package `fun`.gladkikh.fastpallet5.domain.intety
 import java.util.*
 
 data class Pallet(
-    var number: String?,
-    var barcode: String?,
-    var guid: String,
+    var number: String? = null,
+    var barcode: String? = null,
+    var guid: String = "",
 
-    var dataChanged: Date?,
-    var count: Float?,
-    var countBox: Int?,
+    var dataChanged: Date? = null,
+    var count: Float? = null,
+    var countBox: Int? = null,
 
-    var nameProduct: String?,
-    var state: String?,
-    var sclad: String?,
+    var nameProduct: String? = null,
+    var state: String? = null,
+    var sclad: String? = null,
 
     var boxes: List<Box> = listOf()
 )

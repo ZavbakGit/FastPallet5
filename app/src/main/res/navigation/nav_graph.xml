@@ -46,4 +46,43 @@
             android:id="@+id/dialogProduct"
             android:name="fun.gladkikh.fastpallet5.ui.fragment.DialogProduct"
             android:label="DialogProduct" />
+    <fragment
+            android:id="@+id/documentsFragment"
+            android:name="fun.gladkikh.fastpallet5.ui.fragment.documents.DocumentsFragment"
+            android:label="DocumentsFragment" >
+        <action
+                android:id="@+id/action_documentsFragment_to_settingsFragment"
+                app:destination="@id/settingsFragment" />
+        <action
+                android:id="@+id/action_documentsFragment_to_creatPalletFragment"
+                app:destination="@id/creatPalletFragment" />
+    </fragment>
+    <fragment
+            android:id="@+id/creatPalletFragment"
+            android:name="fun.gladkikh.fastpallet5.ui.fragment.creatpallet.doc.CreatePalletFragment"
+            android:label="CreatPalletFragment" >
+        <action
+                android:id="@+id/action_creatPalletFragment_to_productCreatePalletFragment"
+                app:destination="@id/productCreatePalletFragment" />
+    </fragment>
+    <fragment
+            android:id="@+id/productCreatePalletFragment"
+            android:name="fun.gladkikh.fastpallet5.ui.fragment.creatpallet.product.ProductCreatePalletFragment"
+            android:label="ProductCreatePalletFragment">
+        <action
+                android:id="@+id/action_productCreatePalletFragment_to_palletCreatePalletFragment"
+                app:destination="@id/palletCreatePalletFragment" />
+    </fragment>
+    <fragment
+            android:id="@+id/palletCreatePalletFragment"
+            android:name="fun.gladkikh.fastpallet5.ui.fragment.creatpallet.pallet.PalletCreatePalletFragment"
+            android:label="PalletCreatePalletFragment" >
+        <action
+                android:id="@+id/action_palletCreatePalletFragment_to_dialogProductCreatePalletFragment"
+                app:destination="@id/dialogProductCreatePalletFragment" />
+    </fragment>
+    <fragment
+            android:id="@+id/dialogProductCreatePalletFragment"
+            android:name="fun.gladkikh.fastpallet5.ui.fragment.creatpallet.dialodproduct.DialogProductCreatePalletFragment"
+            android:label="DialogProductCreatePalletFragment" />
 </navigation>
