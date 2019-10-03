@@ -21,8 +21,6 @@
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 
-    <include layout="@layout/bottom_sheet" />
-
     <include layout="@layout/progress_overlay"/>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

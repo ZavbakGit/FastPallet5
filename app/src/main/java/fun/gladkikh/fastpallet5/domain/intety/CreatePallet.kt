@@ -5,21 +5,21 @@ import java.util.*
 
 data class CreatePallet(
 
-    var guid: String,
-    var guidServer: String?,
+    var guid: String = "",
+    var guidServer: String? = null,
 
-    var typeFromServer: String?,
+    var typeFromServer: String? = "",
 
-    var status: Int?,
-    var number: String?,
+    var status: Int? = null,
+    var number: String? = null,
 
-    var date: Date?,
+    var date: Date? = null,
 
-    var dataChanged: Date?,
+    var dataChanged: Date? = null,
 
-    var isWasLoadedLastTime: Boolean?,
-    var description: String?,
-    var barcode: String?,
+    var isWasLoadedLastTime: Boolean? = null,
+    var description: String? = null,
+    var barcode: String? = null,
 
     var listProduct:List<Product> = listOf()
 )

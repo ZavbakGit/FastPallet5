@@ -1,8 +1,10 @@
 package `fun`.gladkikh.fastpallet5.domain.usecase
 
+import `fun`.gladkikh.fastpallet5.common.getFloatByParseStr
+import `fun`.gladkikh.fastpallet5.common.getIntByParseStr
 import `fun`.gladkikh.fastpallet5.domain.intety.CreatePallet
-import `fun`.gladkikh.fastpallet5.domain.intety.Status
 import `fun`.gladkikh.fastpallet5.domain.intety.Product
+import `fun`.gladkikh.fastpallet5.domain.intety.Status
 import `fun`.gladkikh.fastpallet5.network.ApiFactory
 import `fun`.gladkikh.fastpallet5.network.intity.GetListDocsRequest
 import `fun`.gladkikh.fastpallet5.network.intity.ListDocResponse
@@ -33,18 +35,18 @@ class LoadDocumentsFromServer {
                         dataChanged = Date(),
                         barcode = null,
                         number = stringProd.number,
-                        countBox = stringProd.countBox?.toIntOrNull() ?: 0,
-                        count = stringProd.count?.toFloatOrNull() ?: 0f,
+                        countBox = stringProd.countBox?.getIntByParseStr(),
+                        count = stringProd.count?.getFloatByParseStr(),
                         countPallet = null,
                         boxes = null,
                         codeProduct = stringProd.codeProduct,
                         ed = stringProd.ed,
-                        edCoff = stringProd.edCoff?.toFloatOrNull(),
+                        edCoff = stringProd.edCoff?.getFloatByParseStr(),
                         guidProduct = stringProd.guidProduct,
                         weightBarcode = stringProd.barcode,
-                        weightCoffProduct = stringProd.weightCoffProduct?.toFloatOrNull() ?: 0f,
-                        weightEndProduct = stringProd.weightEndProduct?.toIntOrNull() ?: 0,
-                        weightStartProduct = stringProd.weightStartProduct?.toIntOrNull() ?: 0
+                        weightCoffProduct = stringProd.weightCoffProduct?.getFloatByParseStr(),
+                        weightEndProduct = stringProd.weightEndProduct?.getIntByParseStr(),
+                        weightStartProduct = stringProd.weightStartProduct?.getIntByParseStr()
                     )
                 } ?: listOf()
 
@@ -55,10 +57,10 @@ class LoadDocumentsFromServer {
                     status = Status.LOADED.id,
                     barcode = null,
                     dataChanged = null,
-                    description = null,
-                    guidServer = null,
+                    description = it.description,
+                    guidServer = it.guid,
                     isWasLoadedLastTime = null,
-                    typeFromServer = null,
+                    typeFromServer = it.type,
                     listProduct = listProd
                 )
 

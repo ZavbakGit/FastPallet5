@@ -1,12 +1,12 @@
-package `fun`.gladkikh.fastpallet5.ui.fragment.cretapallet
+package `fun`.gladkikh.fastpallet5.ui.fragment.creatpallet.product
 
 import `fun`.gladkikh.fastpallet5.Constants.KEY_DELL
 import `fun`.gladkikh.fastpallet5.R
 import `fun`.gladkikh.fastpallet5.common.toSimpleString
 import `fun`.gladkikh.fastpallet5.domain.intety.Pallet
 import `fun`.gladkikh.fastpallet5.ui.adapter.MyBaseAdapter
-import `fun`.gladkikh.fastpallet5.ui.fragment.BaseFragment
-import `fun`.gladkikh.fastpallet5.viewmodel.creatpallet.ProductCreatPalletViewModel
+import `fun`.gladkikh.fastpallet5.ui.base.BaseFragment
+import `fun`.gladkikh.fastpallet5.ui.fragment.creatpallet.pallet.PalletCreatePalletFragment
 import android.content.Context
 import android.os.Bundle
 import android.view.View
@@ -14,68 +14,53 @@ import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
-import kotlinx.android.synthetic.main.createpallet_doc_fr.*
+import kotlinx.android.synthetic.main.documents_frag.*
 
+class ProductCreatePalletFragment :
+    BaseFragment<WrapDataProductCreatePallet?, ProductCreatPalletViewState>() {
 
-class ProductCreatePalletFragment : BaseFragment() {
+    override val layoutRes: Int = R.layout.documents_frag
+
+    override val viewModel: ProductCreatePalletViewModel by lazy {
+        ViewModelProviders.of(this).get(ProductCreatePalletViewModel::class.java)
+    }
+
+    companion object {
+        val EXTRA_GUID_PRODUCT = ProductCreatePalletFragment::class.java.name + "extra.GUID.PRODUCT"
+        val EXTRA_GUID_DOC = ProductCreatePalletFragment::class.java.name + "extra.GUID.DOC"
+    }
 
     private lateinit var adapter: Adapter
 
-    companion object {
-        const val GUID_DOC = "guid_doc"
-        const val GUID_STRING_PRODUCT = "guid_string_product"
+    override fun renderData(data: WrapDataProductCreatePallet?) {
+        tvInfo.text = data?.product?.nameProduct
+        listView.adapter = adapter
+        data?.product?.pallets?.let {
+            adapter.list = data.product.pallets
+        }
     }
-
-    private lateinit var viewModel: ProductCreatPalletViewModel
 
     override fun initSubscription() {
         super.initSubscription()
 
-        adapter =
-            Adapter(activity as Context)
-
-        viewModel =
-
-            ViewModelProviders.of(
-                this,
-                ProductCreatPalletViewModel.ViewModelFactory(
-                    arguments?.get(GUID_DOC) as String,
-                    arguments?.get(GUID_STRING_PRODUCT) as String
-                )
-            ).get(ProductCreatPalletViewModel::class.java)
+        adapter = Adapter(activity as Context)
+        viewModel.setGuid(
+            arguments?.get(EXTRA_GUID_DOC) as String,
+            arguments?.get(EXTRA_GUID_PRODUCT) as String
+        )
 
 
-        viewModel.messageError.observe(viewLifecycleOwner, Observer {
-            hostActivity.showMessage(it)
-        })
-
-
-        viewModel.getDataModelLd().observe(viewLifecycleOwner, Observer {
-            tvInfo.text =
-                (it.docCreatePallet?.number ?: "")
-                    .plus("\n").plus(it.product?.nameProduct ?: "")
-
-            showList(it.listPallet)
-        })
-
-
-        //Открываю экран палеты
         listView.setOnItemClickListener { _, _, i, _ ->
             val bundle = Bundle()
-            bundle.putString(PalletCreatePalletFragment.GUID_DOC, viewModel.guidDoc)
-            bundle.putString(PalletCreatePalletFragment.GUID_STRING_PRODUCT, viewModel.guidProduct)
-            bundle.putString(PalletCreatePalletFragment.GUID_PALLET, adapter.list[i].guid)
-            hostActivity.getHostNavController()
-                .navigate(
-                    R.id.action_stringProductCreatPalletFragment_to_palletCreatPalletFragment,
-                    bundle
-                )
+            bundle.putString(PalletCreatePalletFragment.EXTRA_GUID_DOC, arguments?.get(EXTRA_GUID_DOC) as String)
+            bundle.putString(PalletCreatePalletFragment.EXTRA_GUID_PRODUCT, arguments?.get(EXTRA_GUID_PRODUCT) as String)
+            bundle.putString(PalletCreatePalletFragment.EXTRA_GUID_PALLET, adapter.list[i].guid)
+            hostActivity.getNavController().navigate(R.id.action_productCreatePalletFragment_to_palletCreatePalletFragment, bundle)
         }
 
         hostActivity.getBarcodeSingleLiveData().observe(viewLifecycleOwner, Observer {
             viewModel.addPallet(it)
         })
-
 
         hostActivity.getKeyListenerLd().observe(viewLifecycleOwner, Observer { key ->
             when (key) {
@@ -100,20 +85,19 @@ class ProductCreatePalletFragment : BaseFragment() {
                 }
                 .show()
         })
+
+        tvInfo.setOnClickListener {
+            viewModel.addPallet("<pal>0214000000${(10..99).random()}</pal>")
+        }
     }
 
-    override fun getLayout() = R.layout.createpallet_doc_fr
 
-    private fun showList(list: List<Pallet>) {
-        adapter.list = list
-        listView.adapter = adapter
-    }
 
     private class Adapter(mContext: Context) : MyBaseAdapter<Pallet>(mContext) {
         override fun bindView(item: Pallet, holder: Any) {
             holder as ViewHolder
             holder.tvInfo.text = item.number
-            holder.tvLeft.text = item.barcode
+            holder.tvLeft.text = ""
             holder.tvRight.text = item.dataChanged?.toSimpleString()
         }
 
@@ -124,7 +108,7 @@ class ProductCreatePalletFragment : BaseFragment() {
 
     private class ViewHolder(view: View) {
         var tvInfo: TextView = view.findViewById(R.id.tv_item_info)
-        var tvLeft: TextView = view.findViewById(R.id.tv_info__doc_left)
+        var tvLeft: TextView = view.findViewById(R.id.tv_info_doc_left)
         var tvRight: TextView = view.findViewById(R.id.tv_info_doc_right)
     }
 

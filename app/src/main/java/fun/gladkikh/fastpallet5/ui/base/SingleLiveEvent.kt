@@ -1,4 +1,4 @@
-package `fun`.gladkikh.fastpallet5.viewmodel.util
+package `fun`.gladkikh.fastpallet5.ui.base
 
 import androidx.lifecycle.LifecycleOwner
 
