@@ -87,4 +87,11 @@ object CreatePalletRepository {
     }
 
 
+    fun getBoxByGuid(guid:String) = Transformations.map(
+        App.database.getCreatPalletDao().getBoxByGuidLd(guid)
+    ) {
+        it.toBox()
+    }
+
+
 }
