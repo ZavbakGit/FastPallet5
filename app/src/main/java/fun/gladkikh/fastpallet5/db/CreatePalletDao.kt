@@ -107,4 +107,7 @@ interface CreatePalletDao {
     @Query("SELECT * FROM BoxCreatPalletDb WHERE guidPallet = :guidPallet")
     fun getListBoxByPalletLd(guidPallet:String):LiveData<List<BoxCreatPalletDb>>
 
+    @Delete
+    fun dellBox(boxCreatPalletDb: BoxCreatPalletDb)
+
 }

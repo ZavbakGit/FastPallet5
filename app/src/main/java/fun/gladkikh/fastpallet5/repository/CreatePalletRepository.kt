@@ -93,5 +93,9 @@ object CreatePalletRepository {
         it.toBox()
     }
 
+    fun dellBox(box: Box,guidPallet:String){
+        App.database.getCreatPalletDao().dellBox(box.toBoxCreatPalletDb(guidPallet))
+    }
+
 
 }
