@@ -25,11 +25,12 @@ import java.util.concurrent.TimeUnit
 
 
 class BoxCreatePalletViewModel :
-    BaseViewModel<BoxWrapDataCreatePallet?, BoxCreatPalletViewState>() {
+    BaseViewModel<BoxWrapDataCreatePallet?, BoxCreatePalletViewState>() {
 
     private var liveDataMerger: MediatorLiveData<BoxWrapDataCreatePallet> = MediatorLiveData()
 
     private val dataPublishSubject = PublishSubject.create<List<Box>?>()
+
     private val infoWrap = MutableLiveData<InfoListBoxWrap>()
     fun getInfoWrap(): LiveData<InfoListBoxWrap> = infoWrap
 
@@ -37,7 +38,7 @@ class BoxCreatePalletViewModel :
     fun getCommandLd(): LiveData<Command> = commandLd
 
     private val documentObserver = Observer<BoxWrapDataCreatePallet> {
-        viewStateLiveData.value = BoxCreatPalletViewState(
+        viewStateLiveData.value = BoxCreatePalletViewState(
             wrapData = it
         )
     }
@@ -47,9 +48,10 @@ class BoxCreatePalletViewModel :
     val createPalletRepository = CreatePalletRepository
 
     init {
-        viewStateLiveData.value = BoxCreatPalletViewState()
+        viewStateLiveData.value = BoxCreatePalletViewState()
         liveDataMerger.observeForever(documentObserver)
 
+        //Подписка на пересчет
         disposables.add(
             dataPublishSubject.toFlowable(BackpressureStrategy.BUFFER)
                 .debounce(300, TimeUnit.MILLISECONDS)
@@ -65,67 +67,35 @@ class BoxCreatePalletViewModel :
 
     }
 
-    //Пересчет количества
-    fun refreshInfo() {
+    /**
+     * Пересчитываем колличество
+     */
+    private fun refreshInfo() {
         liveDataMerger.value?.pallet?.boxes?.let { dataPublishSubject.onNext(it) }
     }
 
-    fun addBox(barcode: String) {
+    private fun addSurseGetListBoxByPallet(guidPallet: String, guidBox: String) {
+        liveDataMerger.removeSource(getBoxGetListBoxByPalletld)
+        getBoxGetListBoxByPalletld = createPalletRepository.getListBoxByPallet(guidPallet)
 
-        if (!cheskEditDoc(liveDataMerger.value?.doc)) {
-            messageError.value = "Нельзя изменять документ!"
-            return
+        liveDataMerger.addSource(getBoxGetListBoxByPalletld) { list ->
+
+            val pallet = (liveDataMerger.value?.pallet ?: Pallet()).apply { this.boxes = list }
+
+            liveDataMerger.value =
+                BoxWrapDataCreatePallet(
+                    doc = liveDataMerger.value?.doc ?: CreatePallet(),
+                    product = liveDataMerger.value?.product ?: Product(),
+                    pallet = pallet,
+                    box = pallet.boxes.find { it.guid == guidBox }
+                )
+
+            refreshInfo()
+
         }
-
-        val product = liveDataMerger.value?.product!!
-
-        val weight = getWeightByBarcode(
-            barcode = barcode,
-            start = product.weightStartProduct ?: 0,
-            finish = product.weightEndProduct ?: 0,
-            coff = product.weightCoffProduct ?: 0f
-        )
-
-        if (weight == 0f) {
-            messageError.value = "Ошибка в считывания веса! \n $barcode"
-            return
-        }
-
-        val box = Box(
-            guid = UUID.randomUUID().toString(),
-            barcode = barcode,
-            countBox = 1,
-            weight = weight,
-            data = Date()
-        )
-        createPalletRepository.saveBox(box, liveDataMerger.value?.pallet?.guid!!)
-
-        //Подпишимся заново
-        addSurseGetListBoxByPallet(liveDataMerger.value?.pallet?.guid!!, box.guid)
-    }
-
-    fun dell() {
-        if (!cheskEditDoc(liveDataMerger.value?.doc)) {
-            messageError.value = "Нельзя изменять документ!"
-            return
-        }
-        commandLd.value  = Confirm("Удалить?")
-    }
-
-    fun confirmedDell(){
-        createPalletRepository.dellBox(liveDataMerger.value?.box!!,liveDataMerger.value?.pallet!!.guid)
-        commandLd.value  = Close()
-    }
-
-
-    override fun onCleared() {
-        super.onCleared()
-        liveDataMerger.removeObserver(documentObserver)
-
     }
 
     fun setGuid(guidDoc: String, guidProduct: String, guidPallet: String, guidBox: String) {
-
         liveDataMerger.addSource(createPalletRepository.getDocByGuid(guidDoc)) {
             liveDataMerger.value =
                 BoxWrapDataCreatePallet(
@@ -163,27 +133,65 @@ class BoxCreatePalletViewModel :
         addSurseGetListBoxByPallet(guidPallet, guidBox)
     }
 
-    fun addSurseGetListBoxByPallet(guidPallet: String, guidBox: String) {
-        liveDataMerger.removeSource(getBoxGetListBoxByPalletld)
-        getBoxGetListBoxByPalletld = createPalletRepository.getListBoxByPallet(guidPallet)
+    fun addBox(barcode: String) {
 
-        liveDataMerger.addSource(getBoxGetListBoxByPalletld) { list ->
-
-            val pallet = (liveDataMerger.value?.pallet ?: Pallet()).apply { this.boxes = list }
-
-            liveDataMerger.value =
-                BoxWrapDataCreatePallet(
-                    doc = liveDataMerger.value?.doc ?: CreatePallet(),
-                    product = liveDataMerger.value?.product ?: Product(),
-                    pallet = pallet,
-                    box = pallet.boxes.find { it.guid == guidBox }
-                )
-
-            refreshInfo()
-
+        if (!cheskEditDoc(liveDataMerger.value?.doc)) {
+            messageError.value = "Нельзя изменять документ!"
+            return
         }
 
+        val product = liveDataMerger.value?.product!!
+
+        val weight = getWeightByBarcode(
+            barcode = barcode,
+            start = product.weightStartProduct ?: 0,
+            finish = product.weightEndProduct ?: 0,
+            coff = product.weightCoffProduct ?: 0f
+        )
+
+        if (weight == 0f) {
+            messageError.value = "Ошибка в считывания веса! \n $barcode"
+            return
+        }
+
+        val box = Box(
+            guid = UUID.randomUUID().toString(),
+            barcode = barcode,
+            countBox = 1,
+            weight = weight,
+            data = Date()
+        )
+        createPalletRepository.saveBox(box, liveDataMerger.value?.pallet?.guid!!)
+
+        //Подпишимся заново
+        addSurseGetListBoxByPallet(liveDataMerger.value?.pallet?.guid!!, box.guid)
     }
 
+    /**
+     * Намеренье удалить
+     */
+    fun dell() {
+        if (!cheskEditDoc(liveDataMerger.value?.doc)) {
+            messageError.value = "Нельзя изменять документ!"
+            return
+        }
+        commandLd.value = Confirm("Удалить?")
+    }
 
+    /**
+     * Подтверждение удаления
+     */
+    fun confirmedDell() {
+        createPalletRepository.dellBox(
+            liveDataMerger.value?.box!!,
+            liveDataMerger.value?.pallet!!.guid
+        )
+        commandLd.value = Close()
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        liveDataMerger.removeObserver(documentObserver)
+
+    }
 }

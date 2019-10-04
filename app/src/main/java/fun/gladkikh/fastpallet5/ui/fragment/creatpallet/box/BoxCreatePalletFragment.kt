@@ -14,7 +14,7 @@ import kotlinx.android.synthetic.main.box_scr.edWeight
 import kotlinx.android.synthetic.main.box_scr.tvInfo
 
 class BoxCreatePalletFragment :
-    BaseFragment<BoxWrapDataCreatePallet?, BoxCreatPalletViewState>() {
+    BaseFragment<BoxWrapDataCreatePallet?, BoxCreatePalletViewState>() {
 
     override val layoutRes: Int = R.layout.box_scr
 
@@ -27,11 +27,9 @@ class BoxCreatePalletFragment :
         val EXTRA_GUID_PRODUCT = this::class.java.name + "extra.GUID.PRODUCT"
         val EXTRA_GUID_PALLET = this::class.java.name + "extra.GUID.PALLET"
         val EXTRA_GUID_BOX = this::class.java.name + "extra.GUID.BOX"
-        val EXTRA_GUID_BARCODE = this::class.java.name + "extra.GUID.BARCODE"
     }
 
     val listEditText: List<EditText> by lazy { listOf(edPlace, edWeight) }
-
 
     override fun renderData(data: BoxWrapDataCreatePallet?) {
         tvInfo.text = data?.product?.nameProduct

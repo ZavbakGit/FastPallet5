@@ -8,7 +8,7 @@ import `fun`.gladkikh.fastpallet5.domain.intety.Product
 import `fun`.gladkikh.fastpallet5.ui.base.BaseViewState
 
 
-class BoxCreatPalletViewState(
+class BoxCreatePalletViewState(
     val wrapData: BoxWrapDataCreatePallet? = null,
     error: Throwable? = null
 ) :
