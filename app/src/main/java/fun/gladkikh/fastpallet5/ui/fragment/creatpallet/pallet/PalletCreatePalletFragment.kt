@@ -5,23 +5,18 @@ import `fun`.gladkikh.fastpallet5.common.toSimpleString
 import `fun`.gladkikh.fastpallet5.domain.intety.Box
 import `fun`.gladkikh.fastpallet5.ui.adapter.MyBaseAdapter
 import `fun`.gladkikh.fastpallet5.ui.base.BaseFragment
+import `fun`.gladkikh.fastpallet5.ui.fragment.creatpallet.box.BoxCreatePalletFragment
 import `fun`.gladkikh.fastpallet5.ui.fragment.creatpallet.dialodproduct.DialogProductCreatePalletFragment
-import `fun`.gladkikh.fastpallet5.ui.fragment.dialog.FireMissilesDialogFragment
-
 import android.content.Context
 import android.os.Bundle
 import android.view.View
 import android.widget.TextView
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
-import io.reactivex.Flowable
-import io.reactivex.android.schedulers.AndroidSchedulers
-import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.documents_frag.*
-import java.util.concurrent.TimeUnit
 
 class PalletCreatePalletFragment :
-    BaseFragment<WrapDataPalletCreatePallet?, PalletCreatPalletViewState>() {
+    BaseFragment<PalletWrapDataCreatePallet?, PalletCreatPalletViewState>() {
 
     override val layoutRes: Int = R.layout.documents_frag
 
@@ -30,14 +25,14 @@ class PalletCreatePalletFragment :
     }
 
     companion object {
-        val EXTRA_GUID_DOC = PalletCreatePalletFragment::class.java.name + "extra.GUID.DOC"
-        val EXTRA_GUID_PRODUCT = PalletCreatePalletFragment::class.java.name + "extra.GUID.PRODUCT"
-        val EXTRA_GUID_PALLET = PalletCreatePalletFragment::class.java.name + "extra.GUID.PALLET"
+        val EXTRA_GUID_DOC = this::class.java.name + "extra.GUID.DOC"
+        val EXTRA_GUID_PRODUCT = this::class.java.name + "extra.GUID.PRODUCT"
+        val EXTRA_GUID_PALLET = this::class.java.name + "extra.GUID.PALLET"
     }
 
     private lateinit var adapter: Adapter
 
-    override fun renderData(data: WrapDataPalletCreatePallet?) {
+    override fun renderData(data: PalletWrapDataCreatePallet?) {
         tvInfo.text = data?.pallet?.number
         listView.adapter = adapter
         data?.pallet?.boxes?.let {
@@ -54,9 +49,9 @@ class PalletCreatePalletFragment :
 
 
         viewModel.getInfoWrap().observe(viewLifecycleOwner, Observer {
-            tv_info_doc_right.text = "".plus(it.countBox?:0)
+            tv_info_doc_right.text = "".plus(it.countBox ?: 0)
                 .plus(" / ")
-                .plus(it?.weight?:0)
+                .plus(it?.weight ?: 0)
         })
 
 
@@ -89,11 +84,16 @@ class PalletCreatePalletFragment :
                 )
         }
 
-        tvMenu.setOnClickListener {
-         val dial =    FireMissilesDialogFragment()
-            dial.show(activity!!.supportFragmentManager,"jjj")
+        listView.setOnItemClickListener { _, _, i, _ ->
+            openBox(adapter.list[i].guid)
+        }
 
-//            Flowable.interval(300, TimeUnit.MILLISECONDS)
+        viewModel.getCommandOpenBoxFormLd().observe(viewLifecycleOwner, Observer {
+            openBox(it)
+        })
+
+        tvMenu.setOnClickListener {
+            //            Flowable.interval(300, TimeUnit.MILLISECONDS)
 //                .take(500)
 //                .subscribeOn(Schedulers.io())
 //                .observeOn(AndroidSchedulers.mainThread())
@@ -101,9 +101,31 @@ class PalletCreatePalletFragment :
 //                    viewModel.addBox("${(10..99).random()}123456789")
 //                }
 
-            //viewModel.addBox("${(10..99).random()}123456789")
+            viewModel.addBox("${(10..99).random()}123456789")
         }
 
+    }
+
+    private fun openBox(guid: String) {
+        val bundle = Bundle()
+        bundle.putString(
+            BoxCreatePalletFragment.EXTRA_GUID_DOC,
+            arguments?.get(EXTRA_GUID_DOC) as String
+        )
+        bundle.putString(
+            BoxCreatePalletFragment.EXTRA_GUID_PRODUCT,
+            arguments?.get(EXTRA_GUID_PRODUCT) as String
+        )
+        bundle.putString(
+            BoxCreatePalletFragment.EXTRA_GUID_PALLET,
+            arguments?.get(EXTRA_GUID_PALLET) as String
+        )
+        bundle.putString(BoxCreatePalletFragment.EXTRA_GUID_BOX, guid)
+
+        hostActivity.getNavController().navigate(
+            R.id.action_palletCreatePalletFragment_to_boxCreatePalletFragment,
+            bundle
+        )
     }
 
     private class Adapter(mContext: Context) : MyBaseAdapter<Box>(mContext) {

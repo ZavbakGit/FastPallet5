@@ -1,5 +1,6 @@
 package `fun`.gladkikh.fastpallet5.ui.fragment.creatpallet.product
 
+import `fun`.gladkikh.fastpallet5.domain.cheskEditDoc
 import `fun`.gladkikh.fastpallet5.domain.extend.ValidationResult
 import `fun`.gladkikh.fastpallet5.domain.extend.getNumberDocByBarCode
 import `fun`.gladkikh.fastpallet5.domain.extend.isPallet
@@ -48,7 +49,7 @@ class ProductCreatePalletViewModel :
 
     fun setGuid(guidDoc: String, guidProduct: String) {
         liveDataMerger.addSource(CreatePalletRepository.getDocByGuid(guidDoc)) {
-            val product = liveDataMerger.value?.product?:Product()
+            val product = liveDataMerger.value?.product ?: Product()
             liveDataMerger.value = WrapDataProductCreatePallet(
                 doc = it,
                 product = liveDataMerger.value?.product
@@ -57,7 +58,7 @@ class ProductCreatePalletViewModel :
 
         liveDataMerger.addSource(CreatePalletRepository.getProductByGuid(guidProduct)) {
 
-            val doc = liveDataMerger.value?.doc?:CreatePallet()
+            val doc = liveDataMerger.value?.doc ?: CreatePallet()
 
             liveDataMerger.value = WrapDataProductCreatePallet(
                 product = it,
@@ -67,8 +68,8 @@ class ProductCreatePalletViewModel :
 
         liveDataMerger.addSource(CreatePalletRepository.getListPalletByProductLd(guidProduct)) { list ->
             //Если прочитаем вперед
-            val doc = liveDataMerger.value?.doc?:CreatePallet()
-            val product = liveDataMerger.value?.product?:Product()
+            val doc = liveDataMerger.value?.doc ?: CreatePallet()
+            val product = liveDataMerger.value?.product ?: Product()
             product.pallets = list
 
             liveDataMerger.value = WrapDataProductCreatePallet(
@@ -103,12 +104,10 @@ class ProductCreatePalletViewModel :
     }
 
     private fun isValid(barcode: String): ValidationResult {
-        val status = liveDataMerger.value?.doc?.status?.let {
-            Status.getStatusById(it)
-        }
 
         if (!isPallet(barcode)) return ValidationResult(false, "Этот штрих код не паллеты")
-        if (status !in listOf(LOADED, NEW)) return ValidationResult(
+
+        if (cheskEditDoc(liveDataMerger.value?.doc)) return ValidationResult(
             false,
             "Нельзя изменять документ с этим статусом"
         )
