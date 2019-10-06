@@ -13,16 +13,14 @@ import android.view.View
 import android.widget.PopupMenu
 import android.widget.TextView
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
 import kotlinx.android.synthetic.main.documents_frag.*
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class DocumentsFragment : BaseFragment<List<Document>?, DocumentsViewState>() {
 
     override val layoutRes: Int = R.layout.documents_frag
 
-    override val viewModel: DocumentsViewModel by lazy {
-        ViewModelProviders.of(this).get(DocumentsViewModel::class.java)
-    }
+    override val viewModel: DocumentsViewModel by viewModel()
 
     private lateinit var adapter: DocumentsFragment.Adapter
 

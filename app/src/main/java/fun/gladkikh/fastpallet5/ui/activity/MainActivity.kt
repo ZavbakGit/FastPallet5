@@ -1,6 +1,7 @@
 package `fun`.gladkikh.fastpallet5.ui.activity
 
 import `fun`.gladkikh.fastpallet5.R
+import `fun`.gladkikh.fastpallet5.repository.DocumetRepository
 import `fun`.gladkikh.fastpallet5.ui.base.SingleLiveEvent
 import android.os.Bundle
 import android.view.View
@@ -14,6 +15,7 @@ import kotlinx.android.synthetic.main.progress_overlay.*
 
 
 class MainActivity : BaseActivity(),HostActivity {
+
 
     lateinit var barcodeHelper: BarcodeHelper
 
