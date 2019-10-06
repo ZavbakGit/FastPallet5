@@ -2,9 +2,7 @@ package `fun`.gladkikh.fastpallet5.ui.fragment.creatpallet.dialodproduct
 
 import `fun`.gladkikh.fastpallet5.R
 import `fun`.gladkikh.fastpallet5.ui.base.BaseFragment
-import `fun`.gladkikh.fastpallet5.ui.fragment.creatpallet.product.ProductCreatePalletFragment
 import android.text.Editable
-import android.text.InputType
 import android.text.TextWatcher
 import android.widget.EditText
 import androidx.lifecycle.Observer
@@ -26,7 +24,7 @@ class DialogProductCreatePalletFragment :
         val EXTRA_GUID_DOC = DialogProductCreatePalletFragment::class.java.name + "extra.GUID.DOC"
     }
 
-    val listEditText: List<EditText> by lazy { listOf(edBarcode, edStart, edFinish, edCoeff) }
+    val listEditText: List<EditText> by lazy { listOf(edPlace, edStart, edFinish, edCoeff) }
 
     val textWatcher = object : TextWatcher {
         override fun afterTextChanged(p0: Editable?) {
@@ -39,7 +37,7 @@ class DialogProductCreatePalletFragment :
 
         override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
             viewModel.setDataChangeListener(
-                barcode = edBarcode.text.toString(),
+                barcode = edPlace.text.toString(),
                 start = edStart.text.toString(),
                 finish = edFinish.text.toString(),
                 coff = edCoeff.text.toString()
@@ -58,7 +56,7 @@ class DialogProductCreatePalletFragment :
         }
 
         tvInfo.text = product?.nameProduct
-        edBarcode.setText(product?.barcode ?: "")
+        edPlace.setText(product?.barcode ?: "")
         edStart.setText(product?.weightStartProduct.toString())
         edFinish.setText(product?.weightEndProduct.toString())
 

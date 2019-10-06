@@ -46,9 +46,16 @@
         <action
                 android:id="@+id/action_palletCreatePalletFragment_to_dialogProductCreatePalletFragment"
                 app:destination="@id/dialogProductCreatePalletFragment" />
+        <action
+            android:id="@+id/action_palletCreatePalletFragment_to_boxCreatePalletFragment"
+            app:destination="@id/boxCreatePalletFragment" />
     </fragment>
     <fragment
             android:id="@+id/dialogProductCreatePalletFragment"
             android:name="fun.gladkikh.fastpallet5.ui.fragment.creatpallet.dialodproduct.DialogProductCreatePalletFragment"
             android:label="DialogProductCreatePalletFragment" />
+    <fragment
+        android:id="@+id/boxCreatePalletFragment"
+        android:name="fun.gladkikh.fastpallet5.ui.fragment.creatpallet.box.BoxCreatePalletFragment"
+        android:label="BoxCreatePalletFragment" />
 </navigation>

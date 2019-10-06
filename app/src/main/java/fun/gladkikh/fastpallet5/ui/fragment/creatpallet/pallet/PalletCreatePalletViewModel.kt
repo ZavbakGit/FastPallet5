@@ -1,14 +1,13 @@
 package `fun`.gladkikh.fastpallet5.ui.fragment.creatpallet.pallet
 
+import `fun`.gladkikh.fastpallet5.domain.cheskEditDoc
 import `fun`.gladkikh.fastpallet5.domain.extend.InfoListBoxWrap
 import `fun`.gladkikh.fastpallet5.domain.extend.getInfoWrap
 import `fun`.gladkikh.fastpallet5.domain.extend.getWeightByBarcode
-import `fun`.gladkikh.fastpallet5.domain.intety.Box
-import `fun`.gladkikh.fastpallet5.domain.intety.CreatePallet
-import `fun`.gladkikh.fastpallet5.domain.intety.Pallet
-import `fun`.gladkikh.fastpallet5.domain.intety.Product
+import `fun`.gladkikh.fastpallet5.domain.intety.*
 import `fun`.gladkikh.fastpallet5.repository.CreatePalletRepository
 import `fun`.gladkikh.fastpallet5.ui.base.BaseViewModel
+import `fun`.gladkikh.fastpallet5.ui.base.SingleLiveEvent
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
@@ -22,16 +21,19 @@ import java.util.concurrent.TimeUnit
 
 
 class PalletCreatePalletViewModel :
-    BaseViewModel<WrapDataPalletCreatePallet?, PalletCreatPalletViewState>() {
+    BaseViewModel<PalletWrapDataCreatePallet?, PalletCreatPalletViewState>() {
 
 
-    private var liveDataMerger: MediatorLiveData<WrapDataPalletCreatePallet> = MediatorLiveData()
+    private var liveDataMerger: MediatorLiveData<PalletWrapDataCreatePallet> = MediatorLiveData()
 
     private val dataPublishSubject = PublishSubject.create<List<Box>?>()
     private val infoWrap = MutableLiveData<InfoListBoxWrap>()
     fun getInfoWrap(): LiveData<InfoListBoxWrap> = infoWrap
 
-    private val documentObserver = Observer<WrapDataPalletCreatePallet> {
+    private val commandOpenBoxFormLd = SingleLiveEvent<String>()
+    fun getCommandOpenBoxFormLd(): LiveData<String> = commandOpenBoxFormLd
+
+    private val documentObserver = Observer<PalletWrapDataCreatePallet> {
         viewStateLiveData.value = PalletCreatPalletViewState(
             wrapData = it
         )
@@ -62,6 +64,11 @@ class PalletCreatePalletViewModel :
 
     fun addBox(barcode: String) {
 
+        if (!cheskEditDoc(liveDataMerger.value?.doc)) {
+            messageError.value = "Нельзя изменять документ!"
+            return
+        }
+
         val product = liveDataMerger.value?.product!!
 
         val weight = getWeightByBarcode(
@@ -84,6 +91,7 @@ class PalletCreatePalletViewModel :
             data = Date()
         )
         CreatePalletRepository.saveBox(box, liveDataMerger.value?.pallet?.guid!!)
+        commandOpenBoxFormLd.postValue(box.guid)
     }
 
     override fun onCleared() {
@@ -95,7 +103,7 @@ class PalletCreatePalletViewModel :
     fun setGuid(guidDoc: String, guidProduct: String, guidPallet: String) {
         liveDataMerger.addSource(CreatePalletRepository.getDocByGuid(guidDoc)) {
             liveDataMerger.value =
-                WrapDataPalletCreatePallet(
+                PalletWrapDataCreatePallet(
                     doc = it,
                     product = liveDataMerger.value?.product ?: Product(),
                     pallet = liveDataMerger.value?.pallet ?: Pallet()
@@ -104,7 +112,7 @@ class PalletCreatePalletViewModel :
 
         liveDataMerger.addSource(CreatePalletRepository.getProductByGuid(guidProduct)) {
             liveDataMerger.value =
-                WrapDataPalletCreatePallet(
+                PalletWrapDataCreatePallet(
                     doc = liveDataMerger.value?.doc ?: CreatePallet(),
                     product = it,
                     pallet = liveDataMerger.value?.pallet ?: Pallet()
@@ -115,7 +123,7 @@ class PalletCreatePalletViewModel :
 
         liveDataMerger.addSource(CreatePalletRepository.getPalletByGuid(guidPallet)) {
             liveDataMerger.value =
-                WrapDataPalletCreatePallet(
+                PalletWrapDataCreatePallet(
                     doc = liveDataMerger.value?.doc ?: CreatePallet(),
                     product = liveDataMerger.value?.product ?: Product(),
                     pallet = it
@@ -125,7 +133,7 @@ class PalletCreatePalletViewModel :
 
         liveDataMerger.addSource(CreatePalletRepository.getListBoxByPallet(guidPallet)) { list ->
             liveDataMerger.value =
-                WrapDataPalletCreatePallet(
+                PalletWrapDataCreatePallet(
                     doc = liveDataMerger.value?.doc ?: CreatePallet(),
                     product = liveDataMerger.value?.product ?: Product(),
                     pallet = (liveDataMerger.value?.pallet ?: Pallet()).apply { this.boxes = list }
