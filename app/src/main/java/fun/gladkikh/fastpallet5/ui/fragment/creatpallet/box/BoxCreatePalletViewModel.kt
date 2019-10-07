@@ -1,7 +1,7 @@
 package `fun`.gladkikh.fastpallet5.ui.fragment.creatpallet.box
 
 
-import `fun`.gladkikh.fastpallet5.domain.cheskEditDoc
+import `fun`.gladkikh.fastpallet5.domain.checkEditDoc
 import `fun`.gladkikh.fastpallet5.domain.extend.InfoListBoxWrap
 import `fun`.gladkikh.fastpallet5.domain.extend.getInfoWrap
 import `fun`.gladkikh.fastpallet5.domain.extend.getWeightByBarcode
@@ -39,9 +39,7 @@ class BoxCreatePalletViewModel :
         )
     }
 
-    var getBoxGetListBoxByPalletld: LiveData<List<Box>> = MutableLiveData<List<Box>>()
-
-    val createPalletRepository = CreatePalletRepository
+    private val createPalletRepository = CreatePalletRepository
 
     init {
         viewStateLiveData.value = BoxCreatePalletViewState()
@@ -51,8 +49,8 @@ class BoxCreatePalletViewModel :
         disposables.add(
             dataPublishSubject.toFlowable(BackpressureStrategy.BUFFER)
                 .debounce(300, TimeUnit.MILLISECONDS)
-                .switchMap {
-                    return@switchMap Flowable.just(it).map { it.getInfoWrap() }
+                .switchMap { list ->
+                    return@switchMap Flowable.just(list).map { it.getInfoWrap() }
                 }
                 .doOnNext {
                     infoWrap.postValue(it)
@@ -70,68 +68,84 @@ class BoxCreatePalletViewModel :
         liveDataMerger.value?.pallet?.boxes?.let { dataPublishSubject.onNext(it) }
     }
 
-    private fun addSurseGetListBoxByPallet(guidPallet: String, guidBox: String) {
-        liveDataMerger.removeSource(getBoxGetListBoxByPalletld)
-        getBoxGetListBoxByPalletld = createPalletRepository.getListBoxByPallet(guidPallet)
-
-        liveDataMerger.addSource(getBoxGetListBoxByPalletld) { list ->
-
-            val pallet = (liveDataMerger.value?.pallet ?: Pallet()).apply { this.boxes = list }
-
-            liveDataMerger.value =
-                BoxWrapDataCreatePallet(
-                    doc = liveDataMerger.value?.doc ?: CreatePallet(),
-                    product = liveDataMerger.value?.product ?: Product(),
-                    pallet = pallet,
-                    box = pallet.boxes.find { it.guid == guidBox }
-                )
-
-            refreshInfo()
-
-        }
-    }
 
     fun setGuid(guidDoc: String, guidProduct: String, guidPallet: String, guidBox: String) {
-        liveDataMerger.addSource(createPalletRepository.getDocByGuid(guidDoc)) {
-            liveDataMerger.value =
-                BoxWrapDataCreatePallet(
-                    doc = it,
-                    product = liveDataMerger.value?.product ?: Product(),
-                    pallet = liveDataMerger.value?.pallet ?: Pallet(),
-                    box = liveDataMerger.value?.box ?: Box()
-                )
+
+        //Обязательно добавляем и удаляем
+        cleanSourseMediator(liveDataMerger)
+
+        liveDataMerger.apply {
+
+            var doc: CreatePallet? = null
+            var product: Product? = null
+            var pallet: Pallet? = null
+            var box: Box? = null
+            var listBox: List<Box>? = null
+
+            fun update() {
+                if (doc != null && product != null
+                    && pallet != null && box != null
+                    && listBox != null
+                ) {
+
+                    pallet!!.boxes = listBox!!
+
+                    value = BoxWrapDataCreatePallet(
+                        doc = doc,
+                        product = product,
+                        pallet = pallet,
+                        box = box
+                    )
+                }
+            }
+
+
+            CreatePalletRepository.getDocByGuid(guidDoc).apply {
+                addSource(this) {
+                    doc = it
+                    update()
+                }
+                listSourse.add(this)
+
+            }
+
+            CreatePalletRepository.getProductByGuid(guidProduct).apply {
+                addSource(this) {
+                    product = it
+                    update()
+                }
+                listSourse.add(this)
+            }
+
+
+            CreatePalletRepository.getPalletByGuid(guidPallet).apply {
+                addSource(this) {
+                    pallet = it
+                    update()
+                }
+                listSourse.add(this)
+
+            }
+
+            createPalletRepository.getListBoxByPallet(guidPallet).apply {
+                addSource(this) { list ->
+                    listBox = list.sortedByDescending { it.data }
+                    box = list.find { it.guid == guidBox }
+                    update()
+                    refreshInfo()
+                }
+                listSourse.add(this)
+            }
+
+
         }
 
-        liveDataMerger.addSource(createPalletRepository.getProductByGuid(guidProduct)) {
-            liveDataMerger.value =
-                BoxWrapDataCreatePallet(
-                    doc = liveDataMerger.value?.doc ?: CreatePallet(),
-                    product = it,
-                    pallet = liveDataMerger.value?.pallet ?: Pallet(),
-                    box = liveDataMerger.value?.box ?: Box()
 
-                )
-        }
-
-
-        liveDataMerger.addSource(createPalletRepository.getPalletByGuid(guidPallet)) {
-            liveDataMerger.value =
-                BoxWrapDataCreatePallet(
-                    doc = liveDataMerger.value?.doc ?: CreatePallet(),
-                    product = liveDataMerger.value?.product ?: Product(),
-                    pallet = it,
-                    box = liveDataMerger.value?.box ?: Box()
-                )
-        }
-
-
-        //Эту подписку будем менять
-        addSurseGetListBoxByPallet(guidPallet, guidBox)
     }
 
     fun addBox(barcode: String) {
 
-        if (!cheskEditDoc(liveDataMerger.value?.doc)) {
+        if (!checkEditDoc(liveDataMerger.value?.doc)) {
             messageError.value = "Нельзя изменять документ!"
             return
         }
@@ -159,15 +173,20 @@ class BoxCreatePalletViewModel :
         )
         createPalletRepository.addBox(box, liveDataMerger.value?.pallet?.guid!!)
 
-        //Подпишимся заново
-        addSurseGetListBoxByPallet(liveDataMerger.value?.pallet?.guid!!, box.guid)
+        setGuid(
+            guidDoc = liveDataMerger.value?.doc!!.guid,
+            guidProduct = liveDataMerger.value?.product!!.guid,
+            guidPallet = liveDataMerger.value?.pallet!!.guid,
+            guidBox = box.guid
+        )
+
     }
 
     /**
      * Намеренье удалить
      */
     fun dell() {
-        if (!cheskEditDoc(liveDataMerger.value?.doc)) {
+        if (!checkEditDoc(liveDataMerger.value?.doc)) {
             messageError.value = "Нельзя изменять документ!"
             return
         }
@@ -192,7 +211,7 @@ class BoxCreatePalletViewModel :
     }
 
     fun onFragmentDestroy() {
-        if (!cheskEditDoc(liveDataMerger.value?.doc)) {
+        if (!checkEditDoc(liveDataMerger.value?.doc)) {
             messageError.value = "Нельзя изменять документ!"
             return
         }

@@ -50,7 +50,8 @@ class LoadDocumentsFromServer {
                     )
                 } ?: listOf()
 
-                val createPallet = CreatePallet(
+
+                CreatePallet(
                     guid = UUID.randomUUID().toString(),
                     date = it.date,
                     number = it.number,
@@ -63,9 +64,6 @@ class LoadDocumentsFromServer {
                     typeFromServer = it.type,
                     listProduct = listProd
                 )
-
-
-               return@map createPallet
 
             }
         }

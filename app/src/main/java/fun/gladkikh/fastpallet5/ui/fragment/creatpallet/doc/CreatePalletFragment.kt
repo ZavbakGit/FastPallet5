@@ -17,8 +17,8 @@ class CreatePalletFragment : BaseFragment<CreatePallet?, CreatPalletViewState>()
 
     override val layoutRes: Int = R.layout.documents_frag
 
-    override val viewModel: CreatPalletViewModel by lazy {
-        ViewModelProviders.of(this).get(CreatPalletViewModel::class.java)
+    override val viewModel: CreatePalletViewModel by lazy {
+        ViewModelProviders.of(this).get(CreatePalletViewModel::class.java)
     }
 
     companion object {
@@ -55,6 +55,8 @@ class CreatePalletFragment : BaseFragment<CreatePallet?, CreatPalletViewState>()
             holder as ViewHolder
             holder.tvInfo.text = item.nameProduct
             holder.tvLeft.text =    "${item.count}".plus(" / ").plus(item.countBox)
+
+            //ToDo Пересчитать причем постораться в другом потоке
             holder.tvRight.text = "10 / 100"
         }
 
