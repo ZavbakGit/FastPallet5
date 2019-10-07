@@ -1,15 +1,17 @@
 package `fun`.gladkikh.fastpallet5.ui.fragment.creatpallet.pallet
 
-import `fun`.gladkikh.fastpallet5.domain.cheskEditDoc
+import `fun`.gladkikh.fastpallet5.domain.checkEditDoc
 import `fun`.gladkikh.fastpallet5.domain.extend.InfoListBoxWrap
 import `fun`.gladkikh.fastpallet5.domain.extend.getInfoWrap
 import `fun`.gladkikh.fastpallet5.domain.extend.getWeightByBarcode
-import `fun`.gladkikh.fastpallet5.domain.intety.*
+import `fun`.gladkikh.fastpallet5.domain.intety.Box
+import `fun`.gladkikh.fastpallet5.domain.intety.CreatePallet
+import `fun`.gladkikh.fastpallet5.domain.intety.Pallet
+import `fun`.gladkikh.fastpallet5.domain.intety.Product
 import `fun`.gladkikh.fastpallet5.repository.CreatePalletRepository
 import `fun`.gladkikh.fastpallet5.ui.base.BaseViewModel
-import `fun`.gladkikh.fastpallet5.ui.fragment.common.Command
-import `fun`.gladkikh.fastpallet5.ui.fragment.common.Command.*
-import `fun`.gladkikh.fastpallet5.ui.fragment.creatpallet.product.WrapDataProductCreatePallet
+import `fun`.gladkikh.fastpallet5.ui.fragment.common.Command.ConfirmDialog
+import `fun`.gladkikh.fastpallet5.ui.fragment.common.Command.OpenForm
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
@@ -45,8 +47,8 @@ class PalletCreatePalletViewModel :
         disposables.add(
             dataPublishSubject.toFlowable(BackpressureStrategy.BUFFER)
                 .debounce(300, TimeUnit.MILLISECONDS)
-                .switchMap {
-                    return@switchMap Flowable.just(it).map { it.getInfoWrap() }
+                .switchMap { list ->
+                    return@switchMap Flowable.just(list).map { it.getInfoWrap() }
                 }
                 .doOnNext {
                     infoWrap.postValue(it)
@@ -57,13 +59,13 @@ class PalletCreatePalletViewModel :
 
     }
 
-    fun refreshInfo() {
+    private fun refreshInfo() {
         liveDataMerger.value?.pallet?.boxes?.let { dataPublishSubject.onNext(it) }
     }
 
     fun addBox(barcode: String) {
 
-        if (!cheskEditDoc(liveDataMerger.value?.doc)) {
+        if (!checkEditDoc(liveDataMerger.value?.doc)) {
             messageError.value = "Нельзя изменять документ!"
             return
         }
@@ -166,7 +168,7 @@ class PalletCreatePalletViewModel :
     }
 
     fun dell(position: Int) {
-        if (!cheskEditDoc(liveDataMerger.value?.doc)) {
+        if (!checkEditDoc(liveDataMerger.value?.doc)) {
             messageError.postValue("Нельзя изменять документ с этим статусом")
             return
         }

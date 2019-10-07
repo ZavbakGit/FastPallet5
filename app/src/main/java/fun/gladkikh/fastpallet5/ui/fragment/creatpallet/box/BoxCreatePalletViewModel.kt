@@ -1,7 +1,7 @@
 package `fun`.gladkikh.fastpallet5.ui.fragment.creatpallet.box
 
 
-import `fun`.gladkikh.fastpallet5.domain.cheskEditDoc
+import `fun`.gladkikh.fastpallet5.domain.checkEditDoc
 import `fun`.gladkikh.fastpallet5.domain.extend.InfoListBoxWrap
 import `fun`.gladkikh.fastpallet5.domain.extend.getInfoWrap
 import `fun`.gladkikh.fastpallet5.domain.extend.getWeightByBarcode
@@ -39,7 +39,7 @@ class BoxCreatePalletViewModel :
         )
     }
 
-    val createPalletRepository = CreatePalletRepository
+    private val createPalletRepository = CreatePalletRepository
 
     init {
         viewStateLiveData.value = BoxCreatePalletViewState()
@@ -49,8 +49,8 @@ class BoxCreatePalletViewModel :
         disposables.add(
             dataPublishSubject.toFlowable(BackpressureStrategy.BUFFER)
                 .debounce(300, TimeUnit.MILLISECONDS)
-                .switchMap {
-                    return@switchMap Flowable.just(it).map { it.getInfoWrap() }
+                .switchMap { list ->
+                    return@switchMap Flowable.just(list).map { it.getInfoWrap() }
                 }
                 .doOnNext {
                     infoWrap.postValue(it)
@@ -145,7 +145,7 @@ class BoxCreatePalletViewModel :
 
     fun addBox(barcode: String) {
 
-        if (!cheskEditDoc(liveDataMerger.value?.doc)) {
+        if (!checkEditDoc(liveDataMerger.value?.doc)) {
             messageError.value = "Нельзя изменять документ!"
             return
         }
@@ -186,7 +186,7 @@ class BoxCreatePalletViewModel :
      * Намеренье удалить
      */
     fun dell() {
-        if (!cheskEditDoc(liveDataMerger.value?.doc)) {
+        if (!checkEditDoc(liveDataMerger.value?.doc)) {
             messageError.value = "Нельзя изменять документ!"
             return
         }
@@ -211,7 +211,7 @@ class BoxCreatePalletViewModel :
     }
 
     fun onFragmentDestroy() {
-        if (!cheskEditDoc(liveDataMerger.value?.doc)) {
+        if (!checkEditDoc(liveDataMerger.value?.doc)) {
             messageError.value = "Нельзя изменять документ!"
             return
         }

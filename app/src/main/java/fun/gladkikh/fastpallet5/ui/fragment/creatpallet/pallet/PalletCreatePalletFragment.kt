@@ -6,8 +6,8 @@ import `fun`.gladkikh.fastpallet5.common.toSimpleString
 import `fun`.gladkikh.fastpallet5.domain.intety.Box
 import `fun`.gladkikh.fastpallet5.ui.adapter.MyBaseAdapter
 import `fun`.gladkikh.fastpallet5.ui.base.BaseFragment
-import `fun`.gladkikh.fastpallet5.ui.fragment.common.Command
-import `fun`.gladkikh.fastpallet5.ui.fragment.common.Command.*
+import `fun`.gladkikh.fastpallet5.ui.fragment.common.Command.ConfirmDialog
+import `fun`.gladkikh.fastpallet5.ui.fragment.common.Command.OpenForm
 import `fun`.gladkikh.fastpallet5.ui.fragment.common.startConfirmDialog
 import `fun`.gladkikh.fastpallet5.ui.fragment.creatpallet.box.BoxCreatePalletFragment
 import `fun`.gladkikh.fastpallet5.ui.fragment.creatpallet.dialodproduct.DialogProductCreatePalletFragment
@@ -42,6 +42,8 @@ class PalletCreatePalletFragment :
         data?.pallet?.boxes?.let {
             adapter.list = data.pallet.boxes
         }
+
+        tv_info_doc_left.text = ""
 
 
     }
@@ -118,7 +120,6 @@ class PalletCreatePalletFragment :
             when (key) {
                 //Проверяем, что нажата dell
                 Constants.KEY_DELL -> {
-
                     //Проверяем, что выбрана строка
                     listView.selectedItemPosition.takeUnless { position ->
                         position == -1
@@ -174,7 +175,7 @@ class PalletCreatePalletFragment :
                 //.plus("\n").plus(item.guid)
                 .plus("\n").plus(item.barcode)
 
-            //holder.tvLeft.text = item.countBox.toString()
+            holder.tvLeft.text = ""
             holder.tvRight.text = ""
                 .plus(item.countBox.toString())
                 .plus(" / ")

@@ -22,7 +22,7 @@ class DocumentsFragment : BaseFragment<List<Document>?, DocumentsViewState>() {
 
     override val viewModel: DocumentsViewModel by viewModel()
 
-    private lateinit var adapter: DocumentsFragment.Adapter
+    private lateinit var adapter: Adapter
 
     override fun renderData(data: List<Document>?) {
         listView.adapter = adapter

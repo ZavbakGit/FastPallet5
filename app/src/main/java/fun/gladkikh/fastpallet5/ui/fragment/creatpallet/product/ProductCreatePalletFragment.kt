@@ -6,15 +6,13 @@ import `fun`.gladkikh.fastpallet5.common.toSimpleString
 import `fun`.gladkikh.fastpallet5.domain.intety.Pallet
 import `fun`.gladkikh.fastpallet5.ui.adapter.MyBaseAdapter
 import `fun`.gladkikh.fastpallet5.ui.base.BaseFragment
-import `fun`.gladkikh.fastpallet5.ui.fragment.common.Command
-import `fun`.gladkikh.fastpallet5.ui.fragment.common.Command.*
+import `fun`.gladkikh.fastpallet5.ui.fragment.common.Command.ConfirmDialog
 import `fun`.gladkikh.fastpallet5.ui.fragment.common.startConfirmDialog
 import `fun`.gladkikh.fastpallet5.ui.fragment.creatpallet.pallet.PalletCreatePalletFragment
 import android.content.Context
 import android.os.Bundle
 import android.view.View
 import android.widget.TextView
-import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import kotlinx.android.synthetic.main.documents_frag.*
@@ -36,6 +34,8 @@ class ProductCreatePalletFragment :
     private lateinit var adapter: Adapter
 
     override fun renderData(data: WrapDataProductCreatePallet?) {
+
+        //ToDo Вывести план факт на товар и факт в списке
         tvInfo.text = data?.product?.nameProduct
         listView.adapter = adapter
         data?.product?.pallets?.let {

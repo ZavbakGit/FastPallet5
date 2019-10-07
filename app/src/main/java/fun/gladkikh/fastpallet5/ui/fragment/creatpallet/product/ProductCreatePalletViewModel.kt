@@ -1,6 +1,6 @@
 package `fun`.gladkikh.fastpallet5.ui.fragment.creatpallet.product
 
-import `fun`.gladkikh.fastpallet5.domain.cheskEditDoc
+import `fun`.gladkikh.fastpallet5.domain.checkEditDoc
 import `fun`.gladkikh.fastpallet5.domain.extend.ValidationResult
 import `fun`.gladkikh.fastpallet5.domain.extend.getNumberDocByBarCode
 import `fun`.gladkikh.fastpallet5.domain.extend.isPallet
@@ -67,7 +67,6 @@ class ProductCreatePalletViewModel :
 
             }
 
-
             CreatePalletRepository.getProductByGuid(guidProduct).apply {
                 addSource(this) {
                     product = it
@@ -114,7 +113,7 @@ class ProductCreatePalletViewModel :
 
         if (!isPallet(barcode)) return ValidationResult(false, "Этот штрих код не паллеты")
 
-        if (!cheskEditDoc(liveDataMerger.value?.doc)) return ValidationResult(
+        if (!checkEditDoc(liveDataMerger.value?.doc)) return ValidationResult(
             false,
             "Нельзя изменять документ с этим статусом"
         )
@@ -141,7 +140,7 @@ class ProductCreatePalletViewModel :
 
     fun dell(position: Int) {
 
-        if (!cheskEditDoc(liveDataMerger.value?.doc)) {
+        if (!checkEditDoc(liveDataMerger.value?.doc)) {
             messageError.postValue("Нельзя изменять документ с этим статусом")
             return
         }

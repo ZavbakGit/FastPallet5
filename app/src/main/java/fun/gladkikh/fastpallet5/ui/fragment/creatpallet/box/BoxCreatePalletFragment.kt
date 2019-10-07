@@ -2,7 +2,7 @@ package `fun`.gladkikh.fastpallet5.ui.fragment.creatpallet.box
 
 import `fun`.gladkikh.fastpallet5.R
 import `fun`.gladkikh.fastpallet5.common.toSimpleString
-import `fun`.gladkikh.fastpallet5.domain.cheskEditDoc
+import `fun`.gladkikh.fastpallet5.domain.checkEditDoc
 import `fun`.gladkikh.fastpallet5.ui.base.BaseFragment
 import `fun`.gladkikh.fastpallet5.ui.fragment.common.Command.Close
 import `fun`.gladkikh.fastpallet5.ui.fragment.common.Command.ConfirmDialog
@@ -28,12 +28,12 @@ class BoxCreatePalletFragment :
         val EXTRA_GUID_BOX = this::class.java.name + "extra.GUID.BOX"
     }
 
-    val listEditText: List<EditText> by lazy { listOf(edPlace, edWeight) }
+    private val listEditText: List<EditText> by lazy { listOf(edPlace, edWeight) }
 
     override fun renderData(data: BoxWrapDataCreatePallet?) {
         tvInfo.text = data?.product?.nameProduct
             ?.plus("\n")
-            ?.plus(data?.pallet?.number)
+            ?.plus(data.pallet?.number)
 
         tv_info_doc_left.text = "".plus(data?.product?.countBox ?: 0)
             .plus(" / ")
@@ -47,7 +47,7 @@ class BoxCreatePalletFragment :
 
         listEditText.forEach {
             if (data?.doc != null) {
-                if (!cheskEditDoc(data.doc)){
+                if (!checkEditDoc(data.doc)){
                     it.isEnabled = false
                 }
             }

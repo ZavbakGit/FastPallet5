@@ -1,4 +1,4 @@
-package com.anit.fastpallet4.domain.intity
+package `fun`.gladkikh.fastpallet5.domain.intety
 
 enum class Type(val id: Int, val fullName: String, val nameServer: String) {
     CREATE_PALLET(1, "Создание паллет", "ФормированиеПалет"),

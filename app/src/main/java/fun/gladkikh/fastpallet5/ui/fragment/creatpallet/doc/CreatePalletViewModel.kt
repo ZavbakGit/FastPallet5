@@ -4,19 +4,11 @@ import `fun`.gladkikh.fastpallet5.domain.intety.CreatePallet
 import `fun`.gladkikh.fastpallet5.domain.intety.Product
 import `fun`.gladkikh.fastpallet5.repository.CreatePalletRepository
 import `fun`.gladkikh.fastpallet5.ui.base.BaseViewModel
-import `fun`.gladkikh.fastpallet5.ui.base.myZip2
-import `fun`.gladkikh.fastpallet5.ui.base.zip2
-import android.os.Handler
 import androidx.lifecycle.MediatorLiveData
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 
 
-class CreatPalletViewModel : BaseViewModel<CreatePallet?, CreatPalletViewState>() {
-
-    val live1 = MutableLiveData<String>()
-    val live2 = MutableLiveData<String>()
-
+class CreatePalletViewModel : BaseViewModel<CreatePallet?, CreatPalletViewState>() {
 
     private var liveDataMerger: MediatorLiveData<CreatePallet> = MediatorLiveData()
 
@@ -71,7 +63,6 @@ class CreatPalletViewModel : BaseViewModel<CreatePallet?, CreatPalletViewState>(
                 }
                 listSourse.add(this)
             }
-
 
 
         }
