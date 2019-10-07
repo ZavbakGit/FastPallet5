@@ -9,9 +9,9 @@ import androidx.lifecycle.Observer
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 
-class DocumentsViewModel : BaseViewModel<List<Document>?, DocumentsViewState>() {
+class DocumentsViewModel(val documetRepository: DocumetRepository) : BaseViewModel<List<Document>?, DocumentsViewState>() {
 
-    private val repositoryDocument = DocumetRepository.getDocumetListLiveData()
+    private val documentListLd = documetRepository.getDocumetListLiveData()
 
     private val documentsObserver = Observer<List<Document>> {
         viewStateLiveData.value = DocumentsViewState(
@@ -21,14 +21,14 @@ class DocumentsViewModel : BaseViewModel<List<Document>?, DocumentsViewState>() 
 
     override fun onCleared() {
         super.onCleared()
-        repositoryDocument.removeObserver(documentsObserver)
+        documentListLd.removeObserver(documentsObserver)
     }
 
 
 
     init {
         viewStateLiveData.value = DocumentsViewState()
-        repositoryDocument.observeForever(documentsObserver)
+        documentListLd.observeForever(documentsObserver)
     }
 
     fun loadDocs() {
