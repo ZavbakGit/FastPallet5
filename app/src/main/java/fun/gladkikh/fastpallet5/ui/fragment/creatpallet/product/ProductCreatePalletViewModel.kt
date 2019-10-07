@@ -31,6 +31,8 @@ class ProductCreatePalletViewModel :
         viewStateLiveData.value = ProductCreatPalletViewState()
         liveDataMerger.observeForever(documentObserver)
 
+
+
     }
 
     override fun onCleared() {
