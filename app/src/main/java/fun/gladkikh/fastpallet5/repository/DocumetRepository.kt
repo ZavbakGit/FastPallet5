@@ -5,10 +5,10 @@ import `fun`.gladkikh.fastpallet5.domain.intety.Document
 import `fun`.gladkikh.fastpallet5.maping.toCreatPallet
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Transformations
-import com.anit.fastpallet4.domain.intity.Type.CREATE_PALLET
+import `fun`.gladkikh.fastpallet5.domain.intety.Type.CREATE_PALLET
 
 object DocumetRepository {
-    fun getDocumetListLiveData(): LiveData<List<Document>> = Transformations.map(
+    fun getDocumentListLiveData(): LiveData<List<Document>> = Transformations.map(
         App.database.getCreatPalletDao().getAllLd()
     ) {
         it.map { doc ->

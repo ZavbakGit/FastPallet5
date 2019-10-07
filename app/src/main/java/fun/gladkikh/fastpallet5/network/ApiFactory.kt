@@ -3,7 +3,7 @@ package `fun`.gladkikh.fastpallet5.network
 import `fun`.gladkikh.fastpallet5.Constants
 import `fun`.gladkikh.fastpallet5.network.util.intity.ReqestObj
 import `fun`.gladkikh.fastpallet5.network.util.intity.ResponseObj
-import `fun`.gladkikh.fastpallet5.network.util.AutoritationUtil
+import `fun`.gladkikh.fastpallet5.network.util.AutorithationUtil
 import `fun`.gladkikh.fastpallet5.network.util.LogJSONInterceptor
 import android.annotation.SuppressLint
 import com.gladkikh.netreqest.entity.model.ResponseModel
@@ -94,7 +94,7 @@ object ApiFactory {
             strDataIn = gson.toJson(objReqest)
         )
 
-        val strAuth = AutoritationUtil.getStringAutorization(username, pass)
+        val strAuth = AutorithationUtil.getStringAutorization(username, pass)
 
 
         return api.getDataFromServer(

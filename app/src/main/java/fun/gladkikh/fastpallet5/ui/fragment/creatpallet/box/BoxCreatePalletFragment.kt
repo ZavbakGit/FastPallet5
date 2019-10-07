@@ -2,16 +2,15 @@ package `fun`.gladkikh.fastpallet5.ui.fragment.creatpallet.box
 
 import `fun`.gladkikh.fastpallet5.R
 import `fun`.gladkikh.fastpallet5.common.toSimpleString
+import `fun`.gladkikh.fastpallet5.domain.checkEditDoc
 import `fun`.gladkikh.fastpallet5.ui.base.BaseFragment
-import `fun`.gladkikh.fastpallet5.ui.fragment.common.Command.*
+import `fun`.gladkikh.fastpallet5.ui.fragment.common.Command.Close
+import `fun`.gladkikh.fastpallet5.ui.fragment.common.Command.ConfirmDialog
+import `fun`.gladkikh.fastpallet5.ui.fragment.common.startConfirmDialog
 import android.widget.EditText
-import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import kotlinx.android.synthetic.main.box_scr.*
-import kotlinx.android.synthetic.main.box_scr.edPlace
-import kotlinx.android.synthetic.main.box_scr.edWeight
-import kotlinx.android.synthetic.main.box_scr.tvInfo
 
 class BoxCreatePalletFragment :
     BaseFragment<BoxWrapDataCreatePallet?, BoxCreatePalletViewState>() {
@@ -29,12 +28,12 @@ class BoxCreatePalletFragment :
         val EXTRA_GUID_BOX = this::class.java.name + "extra.GUID.BOX"
     }
 
-    val listEditText: List<EditText> by lazy { listOf(edPlace, edWeight) }
+    private val listEditText: List<EditText> by lazy { listOf(edPlace, edWeight) }
 
     override fun renderData(data: BoxWrapDataCreatePallet?) {
         tvInfo.text = data?.product?.nameProduct
             ?.plus("\n")
-            ?.plus(data?.pallet?.number)
+            ?.plus(data.pallet?.number)
 
         tv_info_doc_left.text = "".plus(data?.product?.countBox ?: 0)
             .plus(" / ")
@@ -45,6 +44,15 @@ class BoxCreatePalletFragment :
         tvDate.text = data?.box?.data?.toSimpleString()
 
         tvbarcode.text = data?.box?.barcode ?: ""
+
+        listEditText.forEach {
+            if (data?.doc != null) {
+                if (!checkEditDoc(data.doc)){
+                    it.isEnabled = false
+                }
+            }
+        }
+
     }
 
     override fun initSubscription() {
@@ -68,32 +76,35 @@ class BoxCreatePalletFragment :
                 is Close -> {
                     hostActivity.getNavController().popBackStack()
                 }
-                is Confirm -> {
-                    //ToDo Вынести в общие
-                    AlertDialog.Builder(activity!!)
-                        .setTitle("Вы уверены!")
-                        .setMessage(it.message)
-                        .setNegativeButton(android.R.string.cancel, null) // dismisses by default
-                        .setPositiveButton("Да") { dialog, which ->
-                            viewModel.confirmedDell()
-                        }
-                        .show()
+                is ConfirmDialog -> {
+                    startConfirmDialog(activity!!, "Удалить запись?") {
+                        viewModel.confirmedDell()
+                    }
+
                 }
             }
 
         })
 
-
         hostActivity.getBarcodeSingleLiveData().observe(viewLifecycleOwner, Observer {
-            //viewModel.addBox(it)
+            viewModel.addBox(it)
         })
 
         tvInfo.setOnClickListener {
+            //ToDo this is test
             viewModel.addBox("${(10..99).random()}123456789")
         }
 
-        tvMenu.setOnClickListener {
+        btDell.setOnClickListener {
             viewModel.dell()
         }
     }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        viewModel.onFragmentDestroy()
+
+    }
+
+
 }

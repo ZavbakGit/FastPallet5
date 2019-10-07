@@ -24,9 +24,9 @@ class DialogProductCreatePalletFragment :
         val EXTRA_GUID_DOC = DialogProductCreatePalletFragment::class.java.name + "extra.GUID.DOC"
     }
 
-    val listEditText: List<EditText> by lazy { listOf(edPlace, edStart, edFinish, edCoeff) }
+    private val listEditText: List<EditText> by lazy { listOf(edPlace, edStart, edFinish, edCoeff) }
 
-    val textWatcher = object : TextWatcher {
+    private val textWatcher = object : TextWatcher {
         override fun afterTextChanged(p0: Editable?) {
 
         }

@@ -1,6 +1,8 @@
 package `fun`.gladkikh.fastpallet5
 
 import `fun`.gladkikh.fastpallet5.common.toSimpleString
+import `fun`.gladkikh.fastpallet5.ui.base.zip2
+import androidx.lifecycle.MutableLiveData
 import org.junit.Test
 
 import org.junit.Assert.*
@@ -15,8 +17,30 @@ class ExampleUnitTest {
     @Test
     fun addition_isCorrect() {
 
-        var s: Date? = null
-        println(s?.toSimpleString())
+
+
+
+
+
+
+//        var k: String? = "1"
+//
+//        k?.takeIf {
+//            it == "1"
+//        }?.run {
+//            println(this)
+//        }
+
+
+        //println(s)
+
+//        s.takeUnless {
+//            s != null
+//        }.let {
+//            println(it)
+//        }
+
+        //
         assertEquals(4, 2 + 2)
     }
 }

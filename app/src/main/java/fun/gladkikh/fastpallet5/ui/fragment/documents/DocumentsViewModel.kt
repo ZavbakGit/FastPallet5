@@ -9,9 +9,9 @@ import androidx.lifecycle.Observer
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 
-class DocumentsViewModel(val documetRepository: DocumetRepository) : BaseViewModel<List<Document>?, DocumentsViewState>() {
+class DocumentsViewModel(documentRepository: DocumetRepository) : BaseViewModel<List<Document>?, DocumentsViewState>() {
 
-    private val documentListLd = documetRepository.getDocumetListLiveData()
+    private val documentListLd = documentRepository.getDocumentListLiveData()
 
     private val documentsObserver = Observer<List<Document>> {
         viewStateLiveData.value = DocumentsViewState(
@@ -37,7 +37,7 @@ class DocumentsViewModel(val documetRepository: DocumetRepository) : BaseViewMod
                 .doOnSuccess {
                     CreatePalletRepository.saveCreatPallet(it)
                     it.forEach { doc ->
-                        CreatePalletRepository.saveListProduct(doc.listProduct, doc.guid)
+                        CreatePalletRepository.addListProduct(doc.listProduct, doc.guid)
                     }
                 }
                 .doOnSubscribe {

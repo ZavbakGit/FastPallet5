@@ -1,19 +1,15 @@
 package `fun`.gladkikh.fastpallet5.ui.fragment.creatpallet.product
 
-import `fun`.gladkikh.fastpallet5.domain.cheskEditDoc
+import `fun`.gladkikh.fastpallet5.domain.checkEditDoc
 import `fun`.gladkikh.fastpallet5.domain.extend.ValidationResult
 import `fun`.gladkikh.fastpallet5.domain.extend.getNumberDocByBarCode
 import `fun`.gladkikh.fastpallet5.domain.extend.isPallet
 import `fun`.gladkikh.fastpallet5.domain.intety.CreatePallet
 import `fun`.gladkikh.fastpallet5.domain.intety.Pallet
 import `fun`.gladkikh.fastpallet5.domain.intety.Product
-import `fun`.gladkikh.fastpallet5.domain.intety.Status
-import `fun`.gladkikh.fastpallet5.domain.intety.Status.LOADED
-import `fun`.gladkikh.fastpallet5.domain.intety.Status.NEW
 import `fun`.gladkikh.fastpallet5.repository.CreatePalletRepository
 import `fun`.gladkikh.fastpallet5.ui.base.BaseViewModel
-import `fun`.gladkikh.fastpallet5.ui.base.SingleLiveEvent
-import androidx.lifecycle.LiveData
+import `fun`.gladkikh.fastpallet5.ui.fragment.common.Command
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.Observer
 import java.util.*
@@ -21,9 +17,6 @@ import java.util.*
 
 class ProductCreatePalletViewModel :
     BaseViewModel<WrapDataProductCreatePallet?, ProductCreatPalletViewState>() {
-
-    private val confirmDellDialog =
-        SingleLiveEvent<DataDialogConfirmDell>()
 
     private var liveDataMerger: MediatorLiveData<WrapDataProductCreatePallet> = MediatorLiveData()
 
@@ -33,11 +26,11 @@ class ProductCreatePalletViewModel :
         )
     }
 
-    fun getConfirmDellDialogLd(): LiveData<DataDialogConfirmDell> = confirmDellDialog
 
     init {
         viewStateLiveData.value = ProductCreatPalletViewState()
         liveDataMerger.observeForever(documentObserver)
+
 
     }
 
@@ -48,34 +41,47 @@ class ProductCreatePalletViewModel :
     }
 
     fun setGuid(guidDoc: String, guidProduct: String) {
-        liveDataMerger.addSource(CreatePalletRepository.getDocByGuid(guidDoc)) {
-            val product = liveDataMerger.value?.product ?: Product()
-            liveDataMerger.value = WrapDataProductCreatePallet(
-                doc = it,
-                product = liveDataMerger.value?.product
-            )
-        }
 
-        liveDataMerger.addSource(CreatePalletRepository.getProductByGuid(guidProduct)) {
+        liveDataMerger.apply {
+            var doc: CreatePallet? = null
+            var product: Product? = null
+            var listPallet: List<Pallet>? = null
 
-            val doc = liveDataMerger.value?.doc ?: CreatePallet()
+            fun update() {
+                if (doc != null && product != null && listPallet != null) {
+                    product!!.pallets = listPallet!!
 
-            liveDataMerger.value = WrapDataProductCreatePallet(
-                product = it,
-                doc = doc
-            )
-        }
+                    value = WrapDataProductCreatePallet(
+                        doc = doc,
+                        product = product
+                    )
+                }
+            }
 
-        liveDataMerger.addSource(CreatePalletRepository.getListPalletByProductLd(guidProduct)) { list ->
-            //Если прочитаем вперед
-            val doc = liveDataMerger.value?.doc ?: CreatePallet()
-            val product = liveDataMerger.value?.product ?: Product()
-            product.pallets = list
+            CreatePalletRepository.getDocByGuid(guidDoc).apply {
+                addSource(this) {
+                    doc = it
+                    update()
+                }
+                listSourse.add(this)
 
-            liveDataMerger.value = WrapDataProductCreatePallet(
-                product = product,
-                doc = doc
-            )
+            }
+
+            CreatePalletRepository.getProductByGuid(guidProduct).apply {
+                addSource(this) {
+                    product = it
+                    update()
+                }
+                listSourse.add(this)
+            }
+
+            CreatePalletRepository.getListPalletByProductLd(guidProduct).apply {
+                addSource(this) { list ->
+                    listPallet = list.sortedByDescending { it.dataChanged }
+                    update()
+                }
+                listSourse.add(this)
+            }
         }
     }
 
@@ -98,7 +104,7 @@ class ProductCreatePalletViewModel :
                 state = null
             )
 
-            CreatePalletRepository.savePallet(pallet, liveDataMerger.value?.product?.guid!!)
+            CreatePalletRepository.addPallet(pallet, liveDataMerger.value?.product?.guid!!)
         }
 
     }
@@ -107,7 +113,7 @@ class ProductCreatePalletViewModel :
 
         if (!isPallet(barcode)) return ValidationResult(false, "Этот штрих код не паллеты")
 
-        if (cheskEditDoc(liveDataMerger.value?.doc)) return ValidationResult(
+        if (!checkEditDoc(liveDataMerger.value?.doc)) return ValidationResult(
             false,
             "Нельзя изменять документ с этим статусом"
         )
@@ -132,27 +138,17 @@ class ProductCreatePalletViewModel :
         return ValidationResult(true)
     }
 
-    fun keyPressDell(position: Int) {
+    fun dell(position: Int) {
 
-        val status = liveDataMerger.value?.doc?.status?.let {
-            Status.getStatusById(it)
-        }
-
-        if (status !in listOf(LOADED, NEW)) {
+        if (!checkEditDoc(liveDataMerger.value?.doc)) {
             messageError.postValue("Нельзя изменять документ с этим статусом")
             return
         }
 
-        liveDataMerger.value?.product?.pallets?.get(position)?.number?.let {
-            confirmDellDialog.postValue(
-                DataDialogConfirmDell(
-                    "Удалить паллету № $it", position
-                )
-            )
-        }
+        commandLd.value = Command.ConfirmDialog("Удалить?", position)
     }
 
-    fun dialogConfirmedDell(position: Int) {
+    fun confirmedDell(position: Int) {
         liveDataMerger.value?.product?.pallets?.get(position)?.let {
             CreatePalletRepository.dellPallet(
                 liveDataMerger.value?.product?.pallets?.get(position)!!,
@@ -162,5 +158,4 @@ class ProductCreatePalletViewModel :
     }
 
 
-    data class DataDialogConfirmDell(var message: String, var position: Int)
 }

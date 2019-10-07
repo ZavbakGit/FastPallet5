@@ -4,12 +4,12 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 fun Date.toSimpleString() : String {
-    val format = SimpleDateFormat("dd-mm-yyyyy hh:mm:ss")
+    val format = SimpleDateFormat("dd.mm.yyyy hh:mm:ss")
     return format.format(this)
 }
 
 fun String.getDecimalStr():String{
-    return "[^\\d,.]".toRegex().replace(this?:"", "").replace(",",".")
+    return "[^\\d,.]".toRegex().replace(this, "").replace(",",".")
 }
 
 fun String.getIntByParseStr():Int{

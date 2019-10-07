@@ -4,7 +4,7 @@ package fun.gladkikh.fastpallet5.network.util;
  * Return String autorithation Russin
  */
 
-public class AutoritationUtil {
+public class AutorithationUtil {
 
 
     private static StringBuffer encode(byte[] data, int start, int len, StringBuffer buf) {

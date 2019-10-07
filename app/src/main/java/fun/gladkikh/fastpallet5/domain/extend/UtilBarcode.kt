@@ -35,16 +35,14 @@ fun getWeightByBarcode(barcode: String, start: Int, finish: Int, coff: Float): F
         return 0F
     }
 
-    if (barcode.length == 0) return 0F
+    if (barcode.isEmpty()) return 0F
     if (start >= finish) return 0F
     if (barcode.length < finish) return 0F
 
-    var weightInt: Int
-
-    try {
-        weightInt = barcode.subSequence(start - 1, finish).toString().toIntOrNull() ?: 0
+    val weightInt: Int = try {
+        barcode.subSequence(start - 1, finish).toString().toIntOrNull() ?: 0
     } catch (e: Exception) {
-        weightInt = 0
+        0
     }
 
     return BigDecimal(weightInt)
@@ -62,13 +60,13 @@ fun getNumberDocByBarCode(barcode: String): String {
         throw Throwable("Не паллета!")
     }
 
-    var strCode = barcode.replace("<pal>", "").replace("</pal>", "")
+    val strCode = barcode.replace("<pal>", "").replace("</pal>", "")
 
 
-    var finishPref = 2 + strCode.substring(0, 2).toInt()
-    var strKir = strCode.substring(2, finishPref)
+    val finishPref = 2 + strCode.substring(0, 2).toInt()
+    val strKir = strCode.substring(2, finishPref)
 
-    var prefKir = Flowable.fromIterable(strKir.toCharArray().toList())
+    val prefKir = Flowable.fromIterable(strKir.toCharArray().toList())
         .buffer(2)
         .map {
             getCyrillicLetterByNumber(it.joinToString(""))

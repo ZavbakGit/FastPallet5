@@ -1,13 +1,17 @@
 package `fun`.gladkikh.fastpallet5.ui.fragment.creatpallet.pallet
 
-import `fun`.gladkikh.fastpallet5.domain.cheskEditDoc
+import `fun`.gladkikh.fastpallet5.domain.checkEditDoc
 import `fun`.gladkikh.fastpallet5.domain.extend.InfoListBoxWrap
 import `fun`.gladkikh.fastpallet5.domain.extend.getInfoWrap
 import `fun`.gladkikh.fastpallet5.domain.extend.getWeightByBarcode
-import `fun`.gladkikh.fastpallet5.domain.intety.*
+import `fun`.gladkikh.fastpallet5.domain.intety.Box
+import `fun`.gladkikh.fastpallet5.domain.intety.CreatePallet
+import `fun`.gladkikh.fastpallet5.domain.intety.Pallet
+import `fun`.gladkikh.fastpallet5.domain.intety.Product
 import `fun`.gladkikh.fastpallet5.repository.CreatePalletRepository
 import `fun`.gladkikh.fastpallet5.ui.base.BaseViewModel
-import `fun`.gladkikh.fastpallet5.ui.base.SingleLiveEvent
+import `fun`.gladkikh.fastpallet5.ui.fragment.common.Command.ConfirmDialog
+import `fun`.gladkikh.fastpallet5.ui.fragment.common.Command.OpenForm
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
@@ -30,9 +34,6 @@ class PalletCreatePalletViewModel :
     private val infoWrap = MutableLiveData<InfoListBoxWrap>()
     fun getInfoWrap(): LiveData<InfoListBoxWrap> = infoWrap
 
-    private val commandOpenBoxFormLd = SingleLiveEvent<String>()
-    fun getCommandOpenBoxFormLd(): LiveData<String> = commandOpenBoxFormLd
-
     private val documentObserver = Observer<PalletWrapDataCreatePallet> {
         viewStateLiveData.value = PalletCreatPalletViewState(
             wrapData = it
@@ -46,8 +47,8 @@ class PalletCreatePalletViewModel :
         disposables.add(
             dataPublishSubject.toFlowable(BackpressureStrategy.BUFFER)
                 .debounce(300, TimeUnit.MILLISECONDS)
-                .switchMap {
-                    return@switchMap Flowable.just(it).map { it.getInfoWrap() }
+                .switchMap { list ->
+                    return@switchMap Flowable.just(list).map { it.getInfoWrap() }
                 }
                 .doOnNext {
                     infoWrap.postValue(it)
@@ -58,13 +59,13 @@ class PalletCreatePalletViewModel :
 
     }
 
-    fun refreshInfo() {
+    private fun refreshInfo() {
         liveDataMerger.value?.pallet?.boxes?.let { dataPublishSubject.onNext(it) }
     }
 
     fun addBox(barcode: String) {
 
-        if (!cheskEditDoc(liveDataMerger.value?.doc)) {
+        if (!checkEditDoc(liveDataMerger.value?.doc)) {
             messageError.value = "Нельзя изменять документ!"
             return
         }
@@ -90,8 +91,9 @@ class PalletCreatePalletViewModel :
             weight = weight,
             data = Date()
         )
-        CreatePalletRepository.saveBox(box, liveDataMerger.value?.pallet?.guid!!)
-        commandOpenBoxFormLd.postValue(box.guid)
+        CreatePalletRepository.addBox(box, liveDataMerger.value?.pallet?.guid!!)
+
+        commandLd.postValue(OpenForm(box.guid))
     }
 
     override fun onCleared() {
@@ -101,47 +103,84 @@ class PalletCreatePalletViewModel :
     }
 
     fun setGuid(guidDoc: String, guidProduct: String, guidPallet: String) {
-        liveDataMerger.addSource(CreatePalletRepository.getDocByGuid(guidDoc)) {
-            liveDataMerger.value =
-                PalletWrapDataCreatePallet(
-                    doc = it,
-                    product = liveDataMerger.value?.product ?: Product(),
-                    pallet = liveDataMerger.value?.pallet ?: Pallet()
-                )
-        }
 
-        liveDataMerger.addSource(CreatePalletRepository.getProductByGuid(guidProduct)) {
-            liveDataMerger.value =
-                PalletWrapDataCreatePallet(
-                    doc = liveDataMerger.value?.doc ?: CreatePallet(),
-                    product = it,
-                    pallet = liveDataMerger.value?.pallet ?: Pallet()
+        //Обязательно добавляем и удаляем
+        cleanSourseMediator(liveDataMerger)
 
-                )
-        }
+        liveDataMerger.apply {
+
+            var doc: CreatePallet? = null
+            var product: Product? = null
+            var pallet: Pallet? = null
+            var listBox: List<Box>? = null
+
+            fun update() {
+                if (doc != null && product != null
+                    && pallet != null && listBox != null
+                ) {
+
+                    pallet!!.boxes = listBox!!
+
+                    value = PalletWrapDataCreatePallet(
+                        doc = doc,
+                        product = product,
+                        pallet = pallet
+                    )
+                }
+            }
+
+            CreatePalletRepository.getDocByGuid(guidDoc).apply {
+                addSource(this) {
+                    doc = it
+                    update()
+                }
+                listSourse.add(this)
+            }
+
+            CreatePalletRepository.getProductByGuid(guidProduct).apply {
+                addSource(this) {
+                    product = it
+                    update()
+                }
+                listSourse.add(this)
+            }
 
 
-        liveDataMerger.addSource(CreatePalletRepository.getPalletByGuid(guidPallet)) {
-            liveDataMerger.value =
-                PalletWrapDataCreatePallet(
-                    doc = liveDataMerger.value?.doc ?: CreatePallet(),
-                    product = liveDataMerger.value?.product ?: Product(),
+            CreatePalletRepository.getPalletByGuid(guidPallet).apply {
+                addSource(this) {
                     pallet = it
-                )
+                    update()
+                }
+                listSourse.add(this)
+            }
+
+            CreatePalletRepository.getListBoxByPallet(guidPallet).apply {
+                addSource(this) { list ->
+                    listBox = list.sortedByDescending { it.data }
+                    update()
+                    refreshInfo()
+                }
+                listSourse.add(this)
+            }
+
         }
 
+    }
 
-        liveDataMerger.addSource(CreatePalletRepository.getListBoxByPallet(guidPallet)) { list ->
-            liveDataMerger.value =
-                PalletWrapDataCreatePallet(
-                    doc = liveDataMerger.value?.doc ?: CreatePallet(),
-                    product = liveDataMerger.value?.product ?: Product(),
-                    pallet = (liveDataMerger.value?.pallet ?: Pallet()).apply { this.boxes = list }
-                )
+    fun dell(position: Int) {
+        if (!checkEditDoc(liveDataMerger.value?.doc)) {
+            messageError.postValue("Нельзя изменять документ с этим статусом")
+            return
+        }
+        commandLd.value = ConfirmDialog("Удалить?", position)
+    }
 
-            refreshInfo()
-
-
+    fun confirmedDell(position: Int) {
+        liveDataMerger.value?.pallet?.boxes?.get(position)?.let {
+            CreatePalletRepository.dellBox(
+                liveDataMerger.value?.pallet?.boxes?.get(position)!!,
+                liveDataMerger.value?.pallet!!.guid
+            )
         }
     }
 

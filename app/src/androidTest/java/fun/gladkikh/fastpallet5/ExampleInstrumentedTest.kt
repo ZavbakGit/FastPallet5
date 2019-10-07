@@ -4,6 +4,8 @@ import `fun`.gladkikh.fastpallet5.network.ApiFactory
 import `fun`.gladkikh.fastpallet5.network.ReqestModel
 import `fun`.gladkikh.fastpallet5.network.intity.GetListDocsRequest
 import `fun`.gladkikh.fastpallet5.network.intity.ListDocResponse
+import `fun`.gladkikh.fastpallet5.ui.base.zip2
+import androidx.lifecycle.MutableLiveData
 import androidx.test.InstrumentationRegistry
 import androidx.test.runner.AndroidJUnit4
 import com.google.gson.GsonBuilder
@@ -18,6 +20,13 @@ import org.junit.runner.RunWith
  */
 @RunWith(AndroidJUnit4::class)
 class ExampleInstrumentedTest {
+
+
+    @Test
+    fun testZip(){
+
+
+    }
 
     @Test
     fun useAppContext() {

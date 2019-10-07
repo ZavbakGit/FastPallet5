@@ -6,12 +6,13 @@ import `fun`.gladkikh.fastpallet5.common.toSimpleString
 import `fun`.gladkikh.fastpallet5.domain.intety.Pallet
 import `fun`.gladkikh.fastpallet5.ui.adapter.MyBaseAdapter
 import `fun`.gladkikh.fastpallet5.ui.base.BaseFragment
+import `fun`.gladkikh.fastpallet5.ui.fragment.common.Command.ConfirmDialog
+import `fun`.gladkikh.fastpallet5.ui.fragment.common.startConfirmDialog
 import `fun`.gladkikh.fastpallet5.ui.fragment.creatpallet.pallet.PalletCreatePalletFragment
 import android.content.Context
 import android.os.Bundle
 import android.view.View
 import android.widget.TextView
-import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import kotlinx.android.synthetic.main.documents_frag.*
@@ -33,6 +34,8 @@ class ProductCreatePalletFragment :
     private lateinit var adapter: Adapter
 
     override fun renderData(data: WrapDataProductCreatePallet?) {
+
+        //ToDo Вывести план факт на товар и факт в списке
         tvInfo.text = data?.product?.nameProduct
         listView.adapter = adapter
         data?.product?.pallets?.let {
@@ -52,10 +55,19 @@ class ProductCreatePalletFragment :
 
         listView.setOnItemClickListener { _, _, i, _ ->
             val bundle = Bundle()
-            bundle.putString(PalletCreatePalletFragment.EXTRA_GUID_DOC, arguments?.get(EXTRA_GUID_DOC) as String)
-            bundle.putString(PalletCreatePalletFragment.EXTRA_GUID_PRODUCT, arguments?.get(EXTRA_GUID_PRODUCT) as String)
+            bundle.putString(
+                PalletCreatePalletFragment.EXTRA_GUID_DOC,
+                arguments?.get(EXTRA_GUID_DOC) as String
+            )
+            bundle.putString(
+                PalletCreatePalletFragment.EXTRA_GUID_PRODUCT,
+                arguments?.get(EXTRA_GUID_PRODUCT) as String
+            )
             bundle.putString(PalletCreatePalletFragment.EXTRA_GUID_PALLET, adapter.list[i].guid)
-            hostActivity.getNavController().navigate(R.id.action_productCreatePalletFragment_to_palletCreatePalletFragment, bundle)
+            hostActivity.getNavController().navigate(
+                R.id.action_productCreatePalletFragment_to_palletCreatePalletFragment,
+                bundle
+            )
         }
 
         hostActivity.getBarcodeSingleLiveData().observe(viewLifecycleOwner, Observer {
@@ -67,30 +79,34 @@ class ProductCreatePalletFragment :
                 //Проверяем, что нажата dell
                 KEY_DELL -> {
                     //Проверяем, что выбрана строка
-                    listView.selectedItemPosition.takeUnless { position -> position == -1 }?.let {
-                        viewModel.keyPressDell(it)
+                    listView.selectedItemPosition.takeUnless { position ->
+                        position == -1
+                    }?.run {
+                        viewModel.dell(this)
                     }
                 }
             }
         })
 
         //Открываю диалог подтверждения
-        viewModel.getConfirmDellDialogLd().observe(viewLifecycleOwner, Observer {
-            AlertDialog.Builder(activity!!)
-                .setTitle(it.message)
-                .setMessage("Удалить")
-                .setNegativeButton(android.R.string.cancel, null) // dismisses by default
-                .setPositiveButton("Да") { dialog, which ->
-                    viewModel.dialogConfirmedDell(it.position)
+        viewModel.getCommandLd().observe(viewLifecycleOwner, Observer {
+            when (it) {
+                is ConfirmDialog -> {
+                    val position = it.data as? Int
+
+                    position?.run {
+                        startConfirmDialog(activity!!, "Удалить паллету?") {
+                            viewModel.confirmedDell(this)
+                        }
+                    }
                 }
-                .show()
+            }
         })
 
         tvInfo.setOnClickListener {
             viewModel.addPallet("<pal>0214000000${(10..99).random()}</pal>")
         }
     }
-
 
 
     private class Adapter(mContext: Context) : MyBaseAdapter<Pallet>(mContext) {
