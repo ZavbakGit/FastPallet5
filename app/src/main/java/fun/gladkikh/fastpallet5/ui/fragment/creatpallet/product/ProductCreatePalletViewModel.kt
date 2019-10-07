@@ -7,13 +7,9 @@ import `fun`.gladkikh.fastpallet5.domain.extend.isPallet
 import `fun`.gladkikh.fastpallet5.domain.intety.CreatePallet
 import `fun`.gladkikh.fastpallet5.domain.intety.Pallet
 import `fun`.gladkikh.fastpallet5.domain.intety.Product
-import `fun`.gladkikh.fastpallet5.domain.intety.Status
-import `fun`.gladkikh.fastpallet5.domain.intety.Status.LOADED
-import `fun`.gladkikh.fastpallet5.domain.intety.Status.NEW
 import `fun`.gladkikh.fastpallet5.repository.CreatePalletRepository
 import `fun`.gladkikh.fastpallet5.ui.base.BaseViewModel
-import `fun`.gladkikh.fastpallet5.ui.base.SingleLiveEvent
-import androidx.lifecycle.LiveData
+import `fun`.gladkikh.fastpallet5.ui.fragment.common.Command
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.Observer
 import java.util.*
@@ -21,9 +17,6 @@ import java.util.*
 
 class ProductCreatePalletViewModel :
     BaseViewModel<WrapDataProductCreatePallet?, ProductCreatPalletViewState>() {
-
-    private val confirmDellDialog =
-        SingleLiveEvent<DataDialogConfirmDell>()
 
     private var liveDataMerger: MediatorLiveData<WrapDataProductCreatePallet> = MediatorLiveData()
 
@@ -33,11 +26,12 @@ class ProductCreatePalletViewModel :
         )
     }
 
-    fun getConfirmDellDialogLd(): LiveData<DataDialogConfirmDell> = confirmDellDialog
 
     init {
         viewStateLiveData.value = ProductCreatPalletViewState()
         liveDataMerger.observeForever(documentObserver)
+
+
 
     }
 
@@ -70,7 +64,7 @@ class ProductCreatePalletViewModel :
             //Если прочитаем вперед
             val doc = liveDataMerger.value?.doc ?: CreatePallet()
             val product = liveDataMerger.value?.product ?: Product()
-            product.pallets = list
+            product.pallets = list.sortedByDescending { it.dataChanged }
 
             liveDataMerger.value = WrapDataProductCreatePallet(
                 product = product,
@@ -98,7 +92,7 @@ class ProductCreatePalletViewModel :
                 state = null
             )
 
-            CreatePalletRepository.savePallet(pallet, liveDataMerger.value?.product?.guid!!)
+            CreatePalletRepository.addPallet(pallet, liveDataMerger.value?.product?.guid!!)
         }
 
     }
@@ -107,7 +101,7 @@ class ProductCreatePalletViewModel :
 
         if (!isPallet(barcode)) return ValidationResult(false, "Этот штрих код не паллеты")
 
-        if (cheskEditDoc(liveDataMerger.value?.doc)) return ValidationResult(
+        if (!cheskEditDoc(liveDataMerger.value?.doc)) return ValidationResult(
             false,
             "Нельзя изменять документ с этим статусом"
         )
@@ -132,27 +126,17 @@ class ProductCreatePalletViewModel :
         return ValidationResult(true)
     }
 
-    fun keyPressDell(position: Int) {
+    fun dell(position: Int) {
 
-        val status = liveDataMerger.value?.doc?.status?.let {
-            Status.getStatusById(it)
-        }
-
-        if (status !in listOf(LOADED, NEW)) {
+        if (!cheskEditDoc(liveDataMerger.value?.doc)){
             messageError.postValue("Нельзя изменять документ с этим статусом")
             return
         }
 
-        liveDataMerger.value?.product?.pallets?.get(position)?.number?.let {
-            confirmDellDialog.postValue(
-                DataDialogConfirmDell(
-                    "Удалить паллету № $it", position
-                )
-            )
-        }
+        commandLd.value = Command.ConfirmDialog("Удалить?",position)
     }
 
-    fun dialogConfirmedDell(position: Int) {
+    fun confirmedDell(position: Int) {
         liveDataMerger.value?.product?.pallets?.get(position)?.let {
             CreatePalletRepository.dellPallet(
                 liveDataMerger.value?.product?.pallets?.get(position)!!,
@@ -162,5 +146,4 @@ class ProductCreatePalletViewModel :
     }
 
 
-    data class DataDialogConfirmDell(var message: String, var position: Int)
 }

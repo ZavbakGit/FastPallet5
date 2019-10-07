@@ -1,5 +1,6 @@
 package `fun`.gladkikh.fastpallet5.ui.base
 
+import `fun`.gladkikh.fastpallet5.ui.fragment.common.Command
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -12,6 +13,9 @@ open class BaseViewModel<T, S : BaseViewState<T>> : ViewModel() {
     val message = SingleLiveEvent<String>()
     val messageError = SingleLiveEvent<String>()
     val showProgress = MutableLiveData<Boolean>()
+
+    protected val commandLd = SingleLiveEvent<Command>()
+    fun getCommandLd(): LiveData<Command> = commandLd
 
     protected val disposables = CompositeDisposable()
     override fun onCleared() {

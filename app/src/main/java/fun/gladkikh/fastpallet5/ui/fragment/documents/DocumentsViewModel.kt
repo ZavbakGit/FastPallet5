@@ -37,7 +37,7 @@ class DocumentsViewModel(val documetRepository: DocumetRepository) : BaseViewMod
                 .doOnSuccess {
                     CreatePalletRepository.saveCreatPallet(it)
                     it.forEach { doc ->
-                        CreatePalletRepository.saveListProduct(doc.listProduct, doc.guid)
+                        CreatePalletRepository.addListProduct(doc.listProduct, doc.guid)
                     }
                 }
                 .doOnSubscribe {

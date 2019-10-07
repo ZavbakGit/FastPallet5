@@ -1,10 +1,14 @@
 package `fun`.gladkikh.fastpallet5.ui.fragment.creatpallet.pallet
 
+import `fun`.gladkikh.fastpallet5.Constants
 import `fun`.gladkikh.fastpallet5.R
 import `fun`.gladkikh.fastpallet5.common.toSimpleString
 import `fun`.gladkikh.fastpallet5.domain.intety.Box
 import `fun`.gladkikh.fastpallet5.ui.adapter.MyBaseAdapter
 import `fun`.gladkikh.fastpallet5.ui.base.BaseFragment
+import `fun`.gladkikh.fastpallet5.ui.fragment.common.Command
+import `fun`.gladkikh.fastpallet5.ui.fragment.common.Command.*
+import `fun`.gladkikh.fastpallet5.ui.fragment.common.startConfirmDialog
 import `fun`.gladkikh.fastpallet5.ui.fragment.creatpallet.box.BoxCreatePalletFragment
 import `fun`.gladkikh.fastpallet5.ui.fragment.creatpallet.dialodproduct.DialogProductCreatePalletFragment
 import android.content.Context
@@ -36,7 +40,7 @@ class PalletCreatePalletFragment :
         tvInfo.text = data?.pallet?.number
         listView.adapter = adapter
         data?.pallet?.boxes?.let {
-            adapter.list = data.pallet.boxes.sortedByDescending { it.data }
+            adapter.list = data.pallet.boxes
         }
 
 
@@ -88,9 +92,44 @@ class PalletCreatePalletFragment :
             openBox(adapter.list[i].guid)
         }
 
-        viewModel.getCommandOpenBoxFormLd().observe(viewLifecycleOwner, Observer {
-            openBox(it)
+        viewModel.getCommandLd().observe(viewLifecycleOwner, Observer {
+
+            when (it) {
+                is ConfirmDialog -> {
+                    val position = it.data as? Int
+
+                    position?.run {
+                        startConfirmDialog(activity!!, "Удалить запись?") {
+                            viewModel.confirmedDell(this)
+                        }
+                    }
+                }
+
+                is OpenForm -> {
+                    openBox(it.data as String)
+                }
+            }
+
+
         })
+
+
+        hostActivity.getKeyListenerLd().observe(viewLifecycleOwner, Observer { key ->
+            when (key) {
+                //Проверяем, что нажата dell
+                Constants.KEY_DELL -> {
+
+                    //Проверяем, что выбрана строка
+                    listView.selectedItemPosition.takeUnless { position ->
+                        position == -1
+                    }?.run {
+                        viewModel.dell(this)
+                    }
+                }
+            }
+        })
+
+
 
         tvMenu.setOnClickListener {
             //            Flowable.interval(300, TimeUnit.MILLISECONDS)

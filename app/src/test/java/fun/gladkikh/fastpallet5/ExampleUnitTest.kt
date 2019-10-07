@@ -15,8 +15,24 @@ class ExampleUnitTest {
     @Test
     fun addition_isCorrect() {
 
-        var s: Date? = null
-        println(s?.toSimpleString())
+        var k: String? = "1"
+
+        k?.takeIf {
+            it == "1"
+        }?.run {
+            println(this)
+        }
+
+
+        //println(s)
+
+//        s.takeUnless {
+//            s != null
+//        }.let {
+//            println(it)
+//        }
+
+        //
         assertEquals(4, 2 + 2)
     }
 }

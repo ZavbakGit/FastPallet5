@@ -72,15 +72,16 @@ object CreatePalletRepository {
             it.toCreatePalletDb()
         })
 
-    fun saveListProduct(list: List<Product>, guidDoc: String) =
+    fun addListProduct(list: List<Product>, guidDoc: String) =
         App.database.getCreatPalletDao().insertProdList(list.map {
             it.toProductCreatePalletDb(guidDoc)
         })
 
-    fun savePallet(pallet: Pallet, guidProduct: String) =
+    fun addPallet(pallet: Pallet, guidProduct: String) =
         App.database.getCreatPalletDao().insert(pallet.toPalletCreatePalletDb(guidProduct))
 
-    fun saveBox(box: Box,guidPallet:String) = App.database.getCreatPalletDao().insert(box.toBoxCreatPalletDb(guidPallet))
+    fun addBox(box: Box, guidPallet:String) = App.database.getCreatPalletDao().insert(box.toBoxCreatPalletDb(guidPallet))
+    fun update(box: Box, guidPallet:String) = App.database.getCreatPalletDao().update(box.toBoxCreatPalletDb(guidPallet))
 
     fun dellPallet(pallet: Pallet,guidProduct:String){
         App.database.getCreatPalletDao().dellPallet(pallet.toPalletCreatePalletDb(guidProduct))

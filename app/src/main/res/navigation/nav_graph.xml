@@ -8,10 +8,6 @@
               android:name="fun.gladkikh.fastpallet5.ui.fragment.SettingsFragment"
               android:label="SettingsFragment"/>
 
-
-
-
-
     <fragment
             android:id="@+id/documentsFragment"
             android:name="fun.gladkikh.fastpallet5.ui.fragment.documents.DocumentsFragment"
