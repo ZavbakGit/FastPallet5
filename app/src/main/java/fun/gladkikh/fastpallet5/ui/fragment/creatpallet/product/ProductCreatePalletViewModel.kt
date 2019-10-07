@@ -42,6 +42,9 @@ class ProductCreatePalletViewModel :
 
     fun setGuid(guidDoc: String, guidProduct: String) {
 
+        //Обязательно добавляем и удаляем
+        cleanSourseMediator(liveDataMerger)
+
         liveDataMerger.apply {
             var doc: CreatePallet? = null
             var product: Product? = null
