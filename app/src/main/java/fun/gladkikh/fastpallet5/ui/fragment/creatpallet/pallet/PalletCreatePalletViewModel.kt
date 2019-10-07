@@ -7,7 +7,8 @@ import `fun`.gladkikh.fastpallet5.domain.extend.getWeightByBarcode
 import `fun`.gladkikh.fastpallet5.domain.intety.*
 import `fun`.gladkikh.fastpallet5.repository.CreatePalletRepository
 import `fun`.gladkikh.fastpallet5.ui.base.BaseViewModel
-import `fun`.gladkikh.fastpallet5.ui.base.SingleLiveEvent
+import `fun`.gladkikh.fastpallet5.ui.fragment.common.Command
+import `fun`.gladkikh.fastpallet5.ui.fragment.common.Command.*
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
@@ -29,9 +30,6 @@ class PalletCreatePalletViewModel :
     private val dataPublishSubject = PublishSubject.create<List<Box>?>()
     private val infoWrap = MutableLiveData<InfoListBoxWrap>()
     fun getInfoWrap(): LiveData<InfoListBoxWrap> = infoWrap
-
-    private val commandOpenBoxFormLd = SingleLiveEvent<String>()
-    fun getCommandOpenBoxFormLd(): LiveData<String> = commandOpenBoxFormLd
 
     private val documentObserver = Observer<PalletWrapDataCreatePallet> {
         viewStateLiveData.value = PalletCreatPalletViewState(
@@ -90,8 +88,9 @@ class PalletCreatePalletViewModel :
             weight = weight,
             data = Date()
         )
-        CreatePalletRepository.saveBox(box, liveDataMerger.value?.pallet?.guid!!)
-        commandOpenBoxFormLd.postValue(box.guid)
+        CreatePalletRepository.addBox(box, liveDataMerger.value?.pallet?.guid!!)
+
+        commandLd.postValue(OpenForm(box.guid))
     }
 
     override fun onCleared() {
@@ -136,12 +135,29 @@ class PalletCreatePalletViewModel :
                 PalletWrapDataCreatePallet(
                     doc = liveDataMerger.value?.doc ?: CreatePallet(),
                     product = liveDataMerger.value?.product ?: Product(),
-                    pallet = (liveDataMerger.value?.pallet ?: Pallet()).apply { this.boxes = list }
+                    pallet = (liveDataMerger.value?.pallet ?: Pallet()).apply { this.boxes = list.sortedByDescending { it.data } }
                 )
 
             refreshInfo()
 
 
+        }
+    }
+
+    fun dell(position: Int) {
+        if (!cheskEditDoc(liveDataMerger.value?.doc)){
+            messageError.postValue("Нельзя изменять документ с этим статусом")
+            return
+        }
+        commandLd.value = ConfirmDialog("Удалить?",position)
+    }
+
+    fun confirmedDell(position: Int) {
+        liveDataMerger.value?.pallet?.boxes?.get(position)?.let {
+            CreatePalletRepository.dellBox(
+                liveDataMerger.value?.pallet?.boxes?.get(position)!!,
+                liveDataMerger.value?.pallet!!.guid
+            )
         }
     }
 

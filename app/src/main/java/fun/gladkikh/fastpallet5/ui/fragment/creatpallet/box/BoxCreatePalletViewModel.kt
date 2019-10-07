@@ -10,7 +10,6 @@ import `fun`.gladkikh.fastpallet5.repository.CreatePalletRepository
 
 
 import `fun`.gladkikh.fastpallet5.ui.base.BaseViewModel
-import `fun`.gladkikh.fastpallet5.ui.fragment.common.Command
 import `fun`.gladkikh.fastpallet5.ui.fragment.common.Command.*
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
@@ -33,9 +32,6 @@ class BoxCreatePalletViewModel :
 
     private val infoWrap = MutableLiveData<InfoListBoxWrap>()
     fun getInfoWrap(): LiveData<InfoListBoxWrap> = infoWrap
-
-    private val commandLd = MutableLiveData<Command>()
-    fun getCommandLd(): LiveData<Command> = commandLd
 
     private val documentObserver = Observer<BoxWrapDataCreatePallet> {
         viewStateLiveData.value = BoxCreatePalletViewState(
@@ -161,7 +157,7 @@ class BoxCreatePalletViewModel :
             weight = weight,
             data = Date()
         )
-        createPalletRepository.saveBox(box, liveDataMerger.value?.pallet?.guid!!)
+        createPalletRepository.addBox(box, liveDataMerger.value?.pallet?.guid!!)
 
         //Подпишимся заново
         addSurseGetListBoxByPallet(liveDataMerger.value?.pallet?.guid!!, box.guid)
@@ -175,7 +171,7 @@ class BoxCreatePalletViewModel :
             messageError.value = "Нельзя изменять документ!"
             return
         }
-        commandLd.value = Confirm("Удалить?")
+        commandLd.value = ConfirmDialog("Удалить?")
     }
 
     /**
@@ -192,6 +188,20 @@ class BoxCreatePalletViewModel :
     override fun onCleared() {
         super.onCleared()
         liveDataMerger.removeObserver(documentObserver)
+
+    }
+
+    fun onFragmentDestroy() {
+        if (!cheskEditDoc(liveDataMerger.value?.doc)) {
+            messageError.value = "Нельзя изменять документ!"
+            return
+        }
+
+        liveDataMerger.value?.box?.let { box ->
+            liveDataMerger.value?.pallet?.guid?.let { palletGuid ->
+                CreatePalletRepository.update(box, palletGuid)
+            }
+        }
 
     }
 }
