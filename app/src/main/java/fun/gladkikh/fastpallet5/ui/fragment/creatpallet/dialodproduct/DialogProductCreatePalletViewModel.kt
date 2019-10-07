@@ -12,7 +12,8 @@ import androidx.lifecycle.Observer
 class DialogProductCreatePalletViewModel :
     BaseViewModel<WrapDataDialogProductCreatePallet?, DialogProductCreatePalletViewState>() {
 
-    private var liveDataMerger: MediatorLiveData<WrapDataDialogProductCreatePallet> = MediatorLiveData()
+    private var liveDataMerger: MediatorLiveData<WrapDataDialogProductCreatePallet> =
+        MediatorLiveData()
 
     private val documentObserver = Observer<WrapDataDialogProductCreatePallet> {
         viewStateLiveData.value = DialogProductCreatePalletViewState(
@@ -30,37 +31,47 @@ class DialogProductCreatePalletViewModel :
         liveDataMerger.removeObserver(documentObserver)
     }
 
-    fun setGuid(guidProduct: String,guidDoc:String) {
+    fun setGuid(guidProduct: String, guidDoc: String) {
 
-        liveDataMerger.addSource(CreatePalletRepository.getDocByGuid(guidDoc)) {
-            val product = liveDataMerger.value?.product ?: Product()
-            liveDataMerger.value = WrapDataDialogProductCreatePallet(
-                doc = it,
-                product = product,
-                weight = getWeightByBarcode(
-                    barcode = it.barcode ?: "",
-                    start = product.weightStartProduct?:0,
-                    finish = product.weightEndProduct?:0,
-                    coff = product.weightCoffProduct?:0f
-                )
-            )
+        //Обязательно добавляем и удаляем
+        cleanSourseMediator(liveDataMerger)
+
+        liveDataMerger.apply {
+
+            var doc: CreatePallet? = null
+            var product: Product? = null
+
+            fun update() {
+                if (doc != null && product != null
+                ) {
+                    value = WrapDataDialogProductCreatePallet(
+                        doc = doc,
+                        product = product
+                    )
+                }
+            }
+
+            CreatePalletRepository.getDocByGuid(guidDoc).apply {
+                addSource(this) {
+                    doc = it
+                    update()
+                }
+                listSourse.add(this)
+            }
+
+            CreatePalletRepository.getProductByGuid(guidProduct).apply {
+                addSource(this) {
+                    product = it
+                    update()
+                }
+                listSourse.add(this)
+            }
+
+
         }
 
-        liveDataMerger.addSource(CreatePalletRepository.getProductByGuid(guidProduct)) {
-            val doc = liveDataMerger.value?.doc ?: CreatePallet()
-
-            liveDataMerger.value = WrapDataDialogProductCreatePallet(
-                product = it,
-                weight = getWeightByBarcode(
-                    barcode = it.barcode ?: "",
-                    start = it.weightStartProduct?:0,
-                    finish = it.weightEndProduct?:0,
-                    coff = it.weightCoffProduct?:0f
-                ),
-                doc = doc
-            )
-        }
     }
+
 
     fun setDataChangeListener(barcode: String?, start: String?, finish: String?, coff: String?) {
         val product = liveDataMerger.value?.product
@@ -77,17 +88,18 @@ class DialogProductCreatePalletViewModel :
             product = product,
             weight = getWeightByBarcode(
                 barcode = product?.barcode ?: "",
-                start = product?.weightStartProduct?:0,
-                finish = product?.weightEndProduct?:0,
-                coff = product?.weightCoffProduct?:0f
+                start = product?.weightStartProduct ?: 0,
+                finish = product?.weightEndProduct ?: 0,
+                coff = product?.weightCoffProduct ?: 0f
             )
         )
     }
 
     fun onFragmentDestroy() {
-        liveDataMerger.value?.product?.let {prod->
+        liveDataMerger.value?.product?.let { prod ->
             liveDataMerger.value?.doc?.guid?.let { guid ->
-                CreatePalletRepository.saveProduct(prod,
+                CreatePalletRepository.saveProduct(
+                    prod,
                     guid
                 )
             }

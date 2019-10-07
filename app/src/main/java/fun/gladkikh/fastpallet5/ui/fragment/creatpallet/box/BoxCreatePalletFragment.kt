@@ -45,8 +45,6 @@ class BoxCreatePalletFragment :
 
         tvbarcode.text = data?.box?.barcode ?: ""
 
-
-
         listEditText.forEach {
             if (data?.doc != null) {
                 if (!cheskEditDoc(data.doc)){
@@ -79,7 +77,6 @@ class BoxCreatePalletFragment :
                     hostActivity.getNavController().popBackStack()
                 }
                 is ConfirmDialog -> {
-                    //ToDo Вынести в общие
                     startConfirmDialog(activity!!, "Удалить запись?") {
                         viewModel.confirmedDell()
                     }

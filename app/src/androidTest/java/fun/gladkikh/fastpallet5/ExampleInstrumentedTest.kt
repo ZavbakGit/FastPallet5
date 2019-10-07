@@ -24,10 +24,7 @@ class ExampleInstrumentedTest {
 
     @Test
     fun testZip(){
-        val live1 = MutableLiveData<String>()
-        val live2 = MutableLiveData<String>()
 
-        //zip2(live1,live2){ name: String, age: Int -> "name: $name, age: $age" }
 
     }
 

@@ -1,13 +1,21 @@
 package `fun`.gladkikh.fastpallet5.ui.fragment.creatpallet.doc
 
 import `fun`.gladkikh.fastpallet5.domain.intety.CreatePallet
+import `fun`.gladkikh.fastpallet5.domain.intety.Product
 import `fun`.gladkikh.fastpallet5.repository.CreatePalletRepository
 import `fun`.gladkikh.fastpallet5.ui.base.BaseViewModel
+import `fun`.gladkikh.fastpallet5.ui.base.myZip2
+import `fun`.gladkikh.fastpallet5.ui.base.zip2
+import android.os.Handler
 import androidx.lifecycle.MediatorLiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 
 
 class CreatPalletViewModel : BaseViewModel<CreatePallet?, CreatPalletViewState>() {
+
+    val live1 = MutableLiveData<String>()
+    val live2 = MutableLiveData<String>()
 
 
     private var liveDataMerger: MediatorLiveData<CreatePallet> = MediatorLiveData()
@@ -34,22 +42,41 @@ class CreatPalletViewModel : BaseViewModel<CreatePallet?, CreatPalletViewState>(
     }
 
     fun setGuid(guid: String) {
-        liveDataMerger.addSource(CreatePalletRepository.getDocByGuid(guid)) {
-            val doc = it
-            liveDataMerger.value?.listProduct?.let {
-                doc.listProduct = liveDataMerger.value?.listProduct!!
+
+        //Обязательно добавляем и удаляем
+        cleanSourseMediator(liveDataMerger)
+
+        liveDataMerger.apply {
+            var doc: CreatePallet? = null
+            var listProduct: List<Product>? = null
+
+            fun update() {
+                if (doc != null && listProduct != null) {
+                    doc!!.listProduct = listProduct!!
+                    value = doc
+                }
+            }
+            CreatePalletRepository.getDocByGuid(guid).apply {
+                addSource(this) {
+                    doc = it
+                    update()
+                }
+                listSourse.add(this)
             }
 
-            liveDataMerger.value = doc
+            CreatePalletRepository.getListProductByDoc(guid).apply {
+                addSource(this) {
+                    listProduct = it
+                    update()
+                }
+                listSourse.add(this)
+            }
+
+
+
         }
 
-        liveDataMerger.addSource(CreatePalletRepository.getListProductByDoc(guid)) {list->
-            //Если это событие прийдет раньше первого
-            var doc = liveDataMerger.value?:CreatePallet()
 
-            doc.listProduct = list
-            liveDataMerger.value = doc
-        }
     }
 
 }
