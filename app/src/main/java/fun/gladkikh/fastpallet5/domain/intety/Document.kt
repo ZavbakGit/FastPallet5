@@ -1,13 +1,24 @@
 package `fun`.gladkikh.fastpallet5.domain.intety
 
+
 import java.util.*
 
-data class Document(
-    val guid: String,
-    val status: Int?,
-    val number: String?,
-    val date: Date?,
-    val description: String?,
-    val type: Int,
-    val dataChange:Date?
-)
+sealed class Document
+data class CreatePallet(
+    var guid: String = "",
+    var guidServer: String? = null,
+    var typeFromServer: String? = "",
+
+    var status: Int? = null,
+    var number: String? = null,
+
+    var date: Date? = null,
+
+    var dataChanged: Date? = null,
+
+    var isWasLoadedLastTime: Boolean? = null,
+    var description: String? = null,
+    var barcode: String? = null,
+
+    var listProduct: List<Product> = listOf()
+) : Document()

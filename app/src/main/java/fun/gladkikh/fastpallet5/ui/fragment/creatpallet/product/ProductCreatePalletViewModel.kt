@@ -61,7 +61,7 @@ class ProductCreatePalletViewModel :
                 }
             }
 
-            CreatePalletRepository.getDocByGuid(guidDoc).apply {
+            CreatePalletRepository.getDocByGuidLd(guidDoc).apply {
                 addSource(this) {
                     doc = it
                     update()
@@ -107,7 +107,7 @@ class ProductCreatePalletViewModel :
                 state = null
             )
 
-            CreatePalletRepository.addPallet(pallet, liveDataMerger.value?.product?.guid!!)
+            CreatePalletRepository.savePallet(pallet, liveDataMerger.value?.product?.guid!!)
         }
 
     }

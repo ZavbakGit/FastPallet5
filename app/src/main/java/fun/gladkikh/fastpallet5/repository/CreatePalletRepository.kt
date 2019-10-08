@@ -10,20 +10,42 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.Transformations
 
 object CreatePalletRepository {
-    fun getDocByGuid(guidDoc: String): LiveData<CreatePallet> = Transformations.map(
-        App.database.getCreatPalletDao().getDocByGuidLd(guidDoc)
-    ) {
-        it.toCreatPallet()
+
+    //region Doc
+    fun saveDoc(creatPallet: CreatePallet) {
+        App.database.getCreatPalletDao().insertOrUpdate(creatPallet.toCreatePalletDb())
     }
 
+    fun dellDoc(creatPallet: CreatePallet) =
+        App.database.getCreatPalletDao().dellDoc(creatPallet.toCreatePalletDb())
 
-    fun getListProductByDoc(guidDoc: String): LiveData<List<Product>> = Transformations.map(
+    fun getDocByGuidServer(guidServer: String) =
+        App.database.getCreatPalletDao().getDocByGuidServer(guidServer)?.toCreatePallet()
+
+    fun getDocByGuidLd(guidDoc: String): LiveData<CreatePallet> = Transformations.map(
+        App.database.getCreatPalletDao().getDocByGuidLd(guidDoc)
+    ) {
+        it.toCreatePallet()
+    }
+
+    fun getDocByGuid(guidServer: String): CreatePallet? =
+        App.database.getCreatPalletDao().getDocByGuidServer(guidServer)?.toCreatePallet()
+    //endregion
+
+    //region Product
+    fun getListProductByDocLd(guidDoc: String): LiveData<List<Product>> = Transformations.map(
         App.database.getCreatPalletDao().getProductByDocLd(guidDoc)
     ) {
         it.map { prod ->
             prod.toProduct()
         }
     }
+
+    fun getListProductByDoc(guidDoc: String) =
+        App.database.getCreatPalletDao().getProductByDoc(guidDoc).map {
+            it.toProduct()
+        }
+
 
     fun getProductByGuid(guidProduct: String): LiveData<Product> = Transformations.map(
         App.database.getCreatPalletDao().getProductByGuidLd(guidProduct)
@@ -32,7 +54,18 @@ object CreatePalletRepository {
     }
 
     fun saveProduct(product: Product, guidDoc: String) =
-        App.database.getCreatPalletDao().update(product.toProductCreatePalletDb(guidDoc))
+        App.database.getCreatPalletDao().insertOrUpdate(product.toProductCreatePalletDb(guidDoc))
+
+    fun dellProduct(product: Product, guidDoc: String) =
+        App.database.getCreatPalletDao().dellProduct(product.toProductCreatePalletDb(guidDoc))
+    //endregion
+
+    //region Pallet
+    fun savePallet(pallet: Pallet, guidProduct: String) =
+        App.database.getCreatPalletDao().insertOrUpdate(pallet.toPalletCreatePalletDb(guidProduct))
+
+    //Для Теста
+    fun getPalletAll() = App.database.getCreatPalletDao().getPalletAll()
 
     fun getListPalletByProductLd(guidProduct: String): LiveData<List<Pallet>> = Transformations.map(
         App.database.getCreatPalletDao().getListPalletByProductLd(guidProduct)
@@ -43,7 +76,9 @@ object CreatePalletRepository {
     }
 
     fun getListPalletByProduct(guidProduct: String) =
-        App.database.getCreatPalletDao().getListPalletByProduct(guidProduct)
+        App.database.getCreatPalletDao().getListPalletByProduct(guidProduct).map {
+            it.toPallet()
+        }
 
     fun getPalletByGuid(guidPallet: String): LiveData<Pallet> = Transformations.map(
         App.database.getCreatPalletDao().getPalletByGuidLd(guidPallet)
@@ -58,33 +93,21 @@ object CreatePalletRepository {
             box.toBox()
         }
     }
+    //endregion
 
-    fun saveCreatPallet(creatPallet: List<CreatePallet>) =
-        App.database.getCreatPalletDao().insert(creatPallet.map {
-            it.toCreatePalletDb()
-        })
-
-    fun addListProduct(list: List<Product>, guidDoc: String) =
-        App.database.getCreatPalletDao().insertProdList(list.map {
-            it.toProductCreatePalletDb(guidDoc)
-        })
-
-    fun addPallet(pallet: Pallet, guidProduct: String) =
-        App.database.getCreatPalletDao().insert(pallet.toPalletCreatePalletDb(guidProduct))
-
-    fun addBox(box: Box, guidPallet: String) =
-        App.database.getCreatPalletDao().insert(box.toBoxCreatPalletDb(guidPallet))
+    //region Box
+    fun saveBox(box: Box, guidPallet: String) =
+        App.database.getCreatPalletDao().insertOrUpdate(box.toBoxCreatePalletDb(guidPallet))
 
     fun update(box: Box, guidPallet: String) =
-        App.database.getCreatPalletDao().update(box.toBoxCreatPalletDb(guidPallet))
+        App.database.getCreatPalletDao().update(box.toBoxCreatePalletDb(guidPallet))
 
     fun dellPallet(pallet: Pallet, guidProduct: String) {
         App.database.getCreatPalletDao().dellPallet(pallet.toPalletCreatePalletDb(guidProduct))
     }
 
     fun dellBox(box: Box, guidPallet: String) {
-        App.database.getCreatPalletDao().dellBox(box.toBoxCreatPalletDb(guidPallet))
+        App.database.getCreatPalletDao().dellBox(box.toBoxCreatePalletDb(guidPallet))
     }
-
-
+    //endregion
 }
