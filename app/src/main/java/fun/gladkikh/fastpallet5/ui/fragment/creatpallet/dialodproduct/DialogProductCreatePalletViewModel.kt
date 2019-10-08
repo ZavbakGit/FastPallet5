@@ -51,7 +51,7 @@ class DialogProductCreatePalletViewModel :
                 }
             }
 
-            CreatePalletRepository.getDocByGuid(guidDoc).apply {
+            CreatePalletRepository.getDocByGuidLd(guidDoc).apply {
                 addSource(this) {
                     doc = it
                     update()

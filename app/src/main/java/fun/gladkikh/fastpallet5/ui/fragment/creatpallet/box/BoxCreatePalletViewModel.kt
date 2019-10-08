@@ -100,7 +100,7 @@ class BoxCreatePalletViewModel :
             }
 
 
-            CreatePalletRepository.getDocByGuid(guidDoc).apply {
+            CreatePalletRepository.getDocByGuidLd(guidDoc).apply {
                 addSource(this) {
                     doc = it
                     update()
@@ -171,7 +171,7 @@ class BoxCreatePalletViewModel :
             weight = weight,
             data = Date()
         )
-        createPalletRepository.addBox(box, liveDataMerger.value?.pallet?.guid!!)
+        createPalletRepository.saveBox(box, liveDataMerger.value?.pallet?.guid!!)
 
         setGuid(
             guidDoc = liveDataMerger.value?.doc!!.guid,
@@ -201,7 +201,7 @@ class BoxCreatePalletViewModel :
             liveDataMerger.value?.box!!,
             liveDataMerger.value?.pallet!!.guid
         )
-        commandLd.value = Close()
+        commandLd.value = Close
     }
 
     override fun onCleared() {

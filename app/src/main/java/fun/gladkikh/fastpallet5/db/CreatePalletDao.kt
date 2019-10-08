@@ -5,22 +5,31 @@ import `fun`.gladkikh.fastpallet5.db.initity.BoxCreatPalletDb
 import `fun`.gladkikh.fastpallet5.db.initity.CreatePalletDb
 import `fun`.gladkikh.fastpallet5.db.initity.PalletCreatePalletDb
 import `fun`.gladkikh.fastpallet5.db.initity.ProductCreatePalletDb
+import `fun`.gladkikh.fastpallet5.domain.intety.Product
 import androidx.lifecycle.LiveData
 import androidx.room.*
 
 @Dao
 interface CreatePalletDao {
 
-    //CreatePallet
-
-    @Insert
-    fun insert(createPallet: CreatePalletDb)
+    //region Doc
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    fun insertIgnore(createPallet: CreatePalletDb): Long
 
     @Insert
     fun insert(createPallet: List<CreatePalletDb>)
 
     @Update
     fun update(createPallet: CreatePalletDb)
+
+
+    @Transaction
+    fun insertOrUpdate(createPallet: CreatePalletDb) {
+        if (insertIgnore(createPallet) == -1L) {
+            update(createPallet)
+        }
+    }
+
 
     @Query("DELETE FROM CreatePalletDb")
     fun dellCreatePalletALL()
@@ -29,85 +38,120 @@ interface CreatePalletDao {
     fun getAllLd(): LiveData<List<CreatePalletDb>>
 
     @Query("SELECT * FROM CreatePalletDb WHERE guid = :guid")
-    fun getDocByGuidLd(guid:String): LiveData<CreatePalletDb>
+    fun getDocByGuidLd(guid: String): LiveData<CreatePalletDb>
+
+    @Query("SELECT * FROM CreatePalletDb WHERE guidServer = :guidServer")
+    fun getDocByGuidServer(guidServer: String): CreatePalletDb?
 
     @Query("SELECT * FROM CreatePalletDb WHERE guid = :guid")
-    fun getDocByGuid(guid:String): CreatePalletDb
+    fun getDocByGuid(guid: String): CreatePalletDb?
+
+    @Delete
+    fun dellDoc(createPallet: CreatePalletDb)
+    //endregion
 
 
-    //Product
 
-    @Insert
-    fun insert(productCreatePalletDb: ProductCreatePalletDb)
-
-    @Insert
-    fun insertProdList(listProductCreatePalletDb: List<ProductCreatePalletDb>)
+    //region Product
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    fun insertIgnore(productCreatePalletDb: ProductCreatePalletDb): Long
 
     @Update
     fun update(productCreatePalletDb: ProductCreatePalletDb)
 
+    @Transaction
+    fun insertOrUpdate(productCreatePalletDb: ProductCreatePalletDb) {
+        if (insertIgnore(productCreatePalletDb) == -1L) {
+            update(productCreatePalletDb)
+        }
+    }
+
+
     @Query("SELECT * FROM ProductCreatePalletDb WHERE guidDoc = :guidDoc")
-    fun getProductByDocLd(guidDoc:String):LiveData<List<ProductCreatePalletDb>>
+    fun getProductByDocLd(guidDoc: String): LiveData<List<ProductCreatePalletDb>>
+
+    @Query("SELECT * FROM ProductCreatePalletDb WHERE guidDoc = :guidDoc")
+    fun getProductByDoc(guidDoc: String): List<ProductCreatePalletDb>
+
 
     @Query("SELECT * FROM ProductCreatePalletDb WHERE guid = :guid")
-    fun getProductByGuidLd(guid:String): LiveData<ProductCreatePalletDb>
+    fun getProductByGuidLd(guid: String): LiveData<ProductCreatePalletDb>
 
     @Query("SELECT * FROM ProductCreatePalletDb WHERE guid = :guid")
-    fun getProductByGuid(guid:String): ProductCreatePalletDb
-
-
-    //Pallet
-
-    @Insert
-    fun insert(palletCreatePalletDb: PalletCreatePalletDb)
+    fun getProductByGuid(guid: String): ProductCreatePalletDb
 
     @Delete
-    fun dellPallet(palletCreatePalletDb: PalletCreatePalletDb)
+    fun dellProduct(productCreatePalletDb: ProductCreatePalletDb)
+    //endregion
 
-    @Insert
-    fun insertPalletList(listPalletCreatePalletDb: List<PalletCreatePalletDb>)
+
+
+    //region Pallet
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    fun insertIgnore(palletCreatePalletDb: PalletCreatePalletDb): Long
 
     @Update
     fun update(palletCreatePalletDb: PalletCreatePalletDb)
 
+    @Transaction
+    fun insertOrUpdate(palletCreatePalletDb: PalletCreatePalletDb) {
+        if (insertIgnore(palletCreatePalletDb) == -1L) {
+            update(palletCreatePalletDb)
+        }
+    }
+
+
+    @Delete
+    fun dellPallet(palletCreatePalletDb: PalletCreatePalletDb)
+
+
     @Query("SELECT * FROM PalletCreatePalletDb")
-    fun getPalletAllLd(): LiveData<List<PalletCreatePalletDb>>
+    fun getPalletAll(): List<PalletCreatePalletDb>
 
     @Query("SELECT * FROM PalletCreatePalletDb WHERE guid = :guid")
-    fun getPalletByGuidLd(guid:String): LiveData<PalletCreatePalletDb>
+    fun getPalletByGuidLd(guid: String): LiveData<PalletCreatePalletDb>
 
     @Query("SELECT * FROM PalletCreatePalletDb WHERE guid = :guid")
-    fun getPalletByGuid(guid:String): PalletCreatePalletDb
+    fun getPalletByGuid(guid: String): PalletCreatePalletDb
 
     @Query("SELECT * FROM PalletCreatePalletDb WHERE guidProduct = :guidProduct")
-    fun getListPalletByProductLd(guidProduct:String):LiveData<List<PalletCreatePalletDb>>
+    fun getListPalletByProductLd(guidProduct: String): LiveData<List<PalletCreatePalletDb>>
 
     @Query("SELECT * FROM PalletCreatePalletDb WHERE guidProduct = :guidProduct")
-    fun getListPalletByProduct(guidProduct:String):List<PalletCreatePalletDb>
+    fun getListPalletByProduct(guidProduct: String): List<PalletCreatePalletDb>
+    //endregion
 
-    //Box
-    @Insert
-    fun insert(boxCreatPalletDb: BoxCreatPalletDb)
 
-    @Insert
-    fun insertBoxList(boxCreatPalletDb: List<BoxCreatPalletDb>)
+
+    //region Box
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    fun insertIgnore(boxCreatPalletDb: BoxCreatPalletDb): Long
 
     @Update
     fun update(boxCreatPalletDb: BoxCreatPalletDb)
 
+    @Transaction
+    fun insertOrUpdate(boxCreatPalletDb: BoxCreatPalletDb) {
+        if (insertIgnore(boxCreatPalletDb) == -1L) {
+            update(boxCreatPalletDb)
+        }
+    }
+
+
     @Query("SELECT * FROM BoxCreatPalletDb")
-    fun getBoxAllLd(): LiveData<List<BoxCreatPalletDb>>
+    fun getBoxAll(): List<BoxCreatPalletDb>
 
     @Query("SELECT * FROM BoxCreatPalletDb WHERE guid = :guid")
-    fun getBoxByGuidLd(guid:String): LiveData<BoxCreatPalletDb>
+    fun getBoxByGuidLd(guid: String): LiveData<BoxCreatPalletDb>
 
     @Query("SELECT * FROM BoxCreatPalletDb WHERE guid = :guid")
-    fun getBoxByGuid(guid:String): BoxCreatPalletDb
+    fun getBoxByGuid(guid: String): BoxCreatPalletDb
 
     @Query("SELECT * FROM BoxCreatPalletDb WHERE guidPallet = :guidPallet")
-    fun getListBoxByPalletLd(guidPallet:String):LiveData<List<BoxCreatPalletDb>>
+    fun getListBoxByPalletLd(guidPallet: String): LiveData<List<BoxCreatPalletDb>>
 
     @Delete
     fun dellBox(boxCreatPalletDb: BoxCreatPalletDb)
+    //endregion
 
 }

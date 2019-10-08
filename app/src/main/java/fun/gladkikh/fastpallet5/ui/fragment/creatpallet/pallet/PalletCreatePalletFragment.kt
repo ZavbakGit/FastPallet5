@@ -138,7 +138,7 @@ class PalletCreatePalletFragment :
 //                .subscribeOn(Schedulers.io())
 //                .observeOn(AndroidSchedulers.mainThread())
 //                .subscribe {
-//                    viewModel.addBox("${(10..99).random()}123456789")
+//                    viewModel.saveBox("${(10..99).random()}123456789")
 //                }
 
             viewModel.addBox("${(10..99).random()}123456789")

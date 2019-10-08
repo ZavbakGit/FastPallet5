@@ -1,19 +1,22 @@
 package `fun`.gladkikh.fastpallet5.ui.fragment.documents
 
-import `fun`.gladkikh.fastpallet5.domain.intety.Document
-import `fun`.gladkikh.fastpallet5.domain.usecase.LoadDocumentsFromServer
-import `fun`.gladkikh.fastpallet5.repository.CreatePalletRepository
-import `fun`.gladkikh.fastpallet5.repository.DocumetRepository
+import `fun`.gladkikh.fastpallet5.domain.checkEditDoc
+import `fun`.gladkikh.fastpallet5.domain.intety.ItemDocument
+import `fun`.gladkikh.fastpallet5.domain.usecase.getListDocumentsDbFromServer
+import `fun`.gladkikh.fastpallet5.repository.DocumentRepository
 import `fun`.gladkikh.fastpallet5.ui.base.BaseViewModel
+import `fun`.gladkikh.fastpallet5.ui.fragment.common.Command
 import androidx.lifecycle.Observer
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 
-class DocumentsViewModel(documentRepository: DocumetRepository) : BaseViewModel<List<Document>?, DocumentsViewState>() {
+class DocumentsViewModel(val documentRepository: DocumentRepository) :
+    BaseViewModel<List<ItemDocument>?, DocumentsViewState>() {
+
 
     private val documentListLd = documentRepository.getDocumentListLiveData()
 
-    private val documentsObserver = Observer<List<Document>> {
+    private val documentsObserver = Observer<List<ItemDocument>> {
         viewStateLiveData.value = DocumentsViewState(
             documents = it
         )
@@ -25,7 +28,6 @@ class DocumentsViewModel(documentRepository: DocumetRepository) : BaseViewModel<
     }
 
 
-
     init {
         viewStateLiveData.value = DocumentsViewState()
         documentListLd.observeForever(documentsObserver)
@@ -33,11 +35,10 @@ class DocumentsViewModel(documentRepository: DocumetRepository) : BaseViewModel<
 
     fun loadDocs() {
         disposables.add(
-            LoadDocumentsFromServer().getCreatePaletDbFromServer()
+            getListDocumentsDbFromServer()
                 .doOnSuccess {
-                    CreatePalletRepository.saveCreatPallet(it)
                     it.forEach { doc ->
-                        CreatePalletRepository.addListProduct(doc.listProduct, doc.guid)
+                        DocumentRepository.saveDocument(doc)
                     }
                 }
                 .doOnSubscribe {
@@ -54,6 +55,14 @@ class DocumentsViewModel(documentRepository: DocumetRepository) : BaseViewModel<
                     message.value = it.message
                 })
         )
+    }
+
+    fun confirmedDell(position: Int) {
+        documentListLd.value?.get(position)?.document?.let { documentRepository.dellDocument(it) }
+    }
+
+    fun dell(position: Int) {
+        commandLd.value = Command.ConfirmDialog("Удалить?", position)
     }
 
 }

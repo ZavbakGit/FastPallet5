@@ -10,7 +10,7 @@ import `fun`.gladkikh.fastpallet5.domain.intety.Pallet
 import `fun`.gladkikh.fastpallet5.domain.intety.Product
 import java.util.*
 
-fun CreatePalletDb.toCreatPallet(): CreatePallet {
+fun CreatePalletDb.toCreatePallet(): CreatePallet {
 
     return CreatePallet(
         guid = this.guid,
@@ -126,7 +126,7 @@ fun BoxCreatPalletDb.toBox(): Box {
     )
 }
 
-fun Box.toBoxCreatPalletDb(guidPallet:String):BoxCreatPalletDb{
+fun Box.toBoxCreatePalletDb(guidPallet:String):BoxCreatPalletDb{
     return BoxCreatPalletDb(
         guid = this.guid,
         weight = this.weight,
