@@ -1,11 +1,15 @@
 package `fun`.gladkikh.fastpallet5.ui.fragment.documents
 
 import `fun`.gladkikh.fastpallet5.Constants
+import `fun`.gladkikh.fastpallet5.Constants.KEY_DELL
+import `fun`.gladkikh.fastpallet5.Constants.KEY_MENU
 import `fun`.gladkikh.fastpallet5.R
-import `fun`.gladkikh.fastpallet5.domain.intety.Document
+import `fun`.gladkikh.fastpallet5.domain.intety.ItemDocument
 import `fun`.gladkikh.fastpallet5.domain.intety.Status
 import `fun`.gladkikh.fastpallet5.ui.adapter.MyBaseAdapter
 import `fun`.gladkikh.fastpallet5.ui.base.BaseFragment
+import `fun`.gladkikh.fastpallet5.ui.fragment.common.Command
+import `fun`.gladkikh.fastpallet5.ui.fragment.common.startConfirmDialog
 import `fun`.gladkikh.fastpallet5.ui.fragment.creatpallet.doc.CreatePalletFragment
 import android.content.Context
 import android.os.Bundle
@@ -16,7 +20,7 @@ import androidx.lifecycle.Observer
 import kotlinx.android.synthetic.main.documents_frag.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class DocumentsFragment : BaseFragment<List<Document>?, DocumentsViewState>() {
+class DocumentsFragment : BaseFragment<List<ItemDocument>?, DocumentsViewState>() {
 
     override val layoutRes: Int = R.layout.documents_frag
 
@@ -24,7 +28,7 @@ class DocumentsFragment : BaseFragment<List<Document>?, DocumentsViewState>() {
 
     private lateinit var adapter: Adapter
 
-    override fun renderData(data: List<Document>?) {
+    override fun renderData(data: List<ItemDocument>?) {
         listView.adapter = adapter
         data?.let {
             adapter.list = it
@@ -36,10 +40,38 @@ class DocumentsFragment : BaseFragment<List<Document>?, DocumentsViewState>() {
         adapter = Adapter(activity as Context)
 
 
-        //Кнопка меню
-        hostActivity.getKeyListenerLd().observe(viewLifecycleOwner, Observer {
-            if (it == Constants.KEY_MENU) {
-                showMenu()
+        viewModel.getCommandLd().observe(viewLifecycleOwner, Observer {
+
+            when (it) {
+                is Command.ConfirmDialog -> {
+                    val position = it.data as? Int
+
+                    position?.run {
+                        startConfirmDialog(activity!!, "Удалить запись?") {
+                            viewModel.confirmedDell(this)
+                        }
+                    }
+                }
+            }
+
+
+        })
+
+
+        hostActivity.getKeyListenerLd().observe(viewLifecycleOwner, Observer { key ->
+            when (key) {
+                KEY_DELL -> {
+
+                    listView.selectedItemPosition.takeUnless { position ->
+                        position == -1
+                    }?.run {
+                        viewModel.dell(this)
+                    }
+                }
+                KEY_MENU -> {
+                    showMenu()
+                }
+
             }
         })
 
@@ -51,7 +83,8 @@ class DocumentsFragment : BaseFragment<List<Document>?, DocumentsViewState>() {
         listView.setOnItemClickListener { _, _, i, _ ->
             val bundle = Bundle()
             bundle.putString(CreatePalletFragment.EXTRA_GUID, adapter.list[i].guid)
-            hostActivity.getNavController().navigate(R.id.action_documentsFragment_to_creatPalletFragment, bundle)
+            hostActivity.getNavController()
+                .navigate(R.id.action_documentsFragment_to_creatPalletFragment, bundle)
         }
 
     }
@@ -67,7 +100,7 @@ class DocumentsFragment : BaseFragment<List<Document>?, DocumentsViewState>() {
                             .navigate(R.id.action_documentsFragment_to_settingsFragment)
                         return@setOnMenuItemClickListener true
                     }
-                    R.id.download ->{
+                    R.id.download -> {
                         viewModel.loadDocs()
                         return@setOnMenuItemClickListener true
                     }
@@ -78,11 +111,11 @@ class DocumentsFragment : BaseFragment<List<Document>?, DocumentsViewState>() {
         }
     }
 
-    private class Adapter(mContext: Context) : MyBaseAdapter<Document>(mContext) {
-        override fun bindView(item: Document, holder: Any) {
+    private class Adapter(mContext: Context) : MyBaseAdapter<ItemDocument>(mContext) {
+        override fun bindView(item: ItemDocument, holder: Any) {
             holder as ViewHolder
             holder.tvInfo.text = item.description
-            holder.tvLeft.text = Status.getStatusById(item.status?:0)?.fullName
+            holder.tvLeft.text = Status.getStatusById(item.status ?: 0)?.fullName
             holder.tvRight.text = ""
         }
 

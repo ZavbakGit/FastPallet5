@@ -91,7 +91,7 @@ class PalletCreatePalletViewModel :
             weight = weight,
             data = Date()
         )
-        CreatePalletRepository.addBox(box, liveDataMerger.value?.pallet?.guid!!)
+        CreatePalletRepository.saveBox(box, liveDataMerger.value?.pallet?.guid!!)
 
         commandLd.postValue(OpenForm(box.guid))
     }
@@ -129,7 +129,7 @@ class PalletCreatePalletViewModel :
                 }
             }
 
-            CreatePalletRepository.getDocByGuid(guidDoc).apply {
+            CreatePalletRepository.getDocByGuidLd(guidDoc).apply {
                 addSource(this) {
                     doc = it
                     update()

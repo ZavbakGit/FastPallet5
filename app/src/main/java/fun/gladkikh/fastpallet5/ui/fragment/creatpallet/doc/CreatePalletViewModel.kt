@@ -48,7 +48,7 @@ class CreatePalletViewModel : BaseViewModel<CreatePallet?, CreatPalletViewState>
                     value = doc
                 }
             }
-            CreatePalletRepository.getDocByGuid(guid).apply {
+            CreatePalletRepository.getDocByGuidLd(guid).apply {
                 addSource(this) {
                     doc = it
                     update()
@@ -56,7 +56,7 @@ class CreatePalletViewModel : BaseViewModel<CreatePallet?, CreatPalletViewState>
                 listSourse.add(this)
             }
 
-            CreatePalletRepository.getListProductByDoc(guid).apply {
+            CreatePalletRepository.getListProductByDocLd(guid).apply {
                 addSource(this) {
                     listProduct = it
                     update()

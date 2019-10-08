@@ -1,7 +1,6 @@
 package `fun`.gladkikh.fastpallet5.ui.activity
 
 import `fun`.gladkikh.fastpallet5.R
-import `fun`.gladkikh.fastpallet5.repository.DocumetRepository
 import `fun`.gladkikh.fastpallet5.ui.base.SingleLiveEvent
 import android.os.Bundle
 import android.view.View
