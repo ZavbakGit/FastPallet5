@@ -127,6 +127,7 @@ class PalletCreatePalletFragment :
                         viewModel.dell(this)
                     }
                 }
+
             }
         })
 
@@ -140,8 +141,10 @@ class PalletCreatePalletFragment :
 //                .subscribe {
 //                    viewModel.saveBox("${(10..99).random()}123456789")
 //                }
+            //(0..20).forEach {
+                viewModel.addBox("${(10..99).random()}123456789")
+            //}
 
-            viewModel.addBox("${(10..99).random()}123456789")
         }
 
     }

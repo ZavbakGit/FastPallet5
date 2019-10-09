@@ -22,3 +22,4 @@ data class CreatePallet(
 
     var listProduct: List<Product> = listOf()
 ) : Document()
+
