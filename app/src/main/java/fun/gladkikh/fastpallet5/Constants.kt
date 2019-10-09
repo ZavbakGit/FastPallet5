@@ -16,7 +16,7 @@ object Constants {
 
     val KEY_MENU = 12 // 5
     val KEY_DELL = 16 // 9
-    val KEY_LOAD = 11 // 4
+    val KEY_UNLOAD = 11 // 4
     val KEY_ADD = 8 // 1
     val KEY_TEST = 7 // 0
 }
