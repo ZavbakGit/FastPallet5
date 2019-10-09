@@ -71,6 +71,14 @@ class DocumentsFragment : BaseFragment<List<ItemDocument>?, DocumentsViewState>(
                 KEY_MENU -> {
                     showMenu()
                 }
+                Constants.KEY_UNLOAD -> {
+                    //Выгружаем документ
+                    listView.selectedItemPosition.takeUnless { position ->
+                        position == -1
+                    }?.run {
+                        viewModel.sendDocToServer(this)
+                    }
+                }
 
             }
         })

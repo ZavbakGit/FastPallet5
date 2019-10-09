@@ -6,6 +6,7 @@ import `fun`.gladkikh.fastpallet5.maping.toDocument
 import `fun`.gladkikh.fastpallet5.network.ApiFactory
 import `fun`.gladkikh.fastpallet5.network.intity.GetListDocsRequest
 import `fun`.gladkikh.fastpallet5.network.intity.ListDocResponse
+import `fun`.gladkikh.fastpallet5.repository.DocumentRepository
 import io.reactivex.Single
 
 /**
@@ -35,6 +36,11 @@ fun getListDocumentsDbFromServer(): Single<List<Document>> {
     }.flatMap {
         //Отправляем подтверждение и проверяем что в 1С применился новый статус
         confirmLoadDocuments(it)
+    }.doOnSuccess {
+        //Записываем
+        it.forEach { doc ->
+            DocumentRepository.saveDocument(doc)
+        }
     }
 }
 

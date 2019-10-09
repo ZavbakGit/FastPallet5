@@ -1,8 +1,10 @@
 package `fun`.gladkikh.fastpallet5.ui.fragment.documents
 
 import `fun`.gladkikh.fastpallet5.domain.checkEditDoc
+import `fun`.gladkikh.fastpallet5.domain.intety.CreatePallet
 import `fun`.gladkikh.fastpallet5.domain.intety.ItemDocument
 import `fun`.gladkikh.fastpallet5.domain.usecase.getListDocumentsDbFromServer
+import `fun`.gladkikh.fastpallet5.domain.usecase.sendCreatPalletToServer
 import `fun`.gladkikh.fastpallet5.repository.DocumentRepository
 import `fun`.gladkikh.fastpallet5.ui.base.BaseViewModel
 import `fun`.gladkikh.fastpallet5.ui.fragment.common.Command
@@ -36,11 +38,6 @@ class DocumentsViewModel(val documentRepository: DocumentRepository) :
     fun loadDocs() {
         disposables.add(
             getListDocumentsDbFromServer()
-                .doOnSuccess {
-                    it.forEach { doc ->
-                        DocumentRepository.saveDocument(doc)
-                    }
-                }
                 .doOnSubscribe {
                     showProgress.postValue(true)
                 }
@@ -55,6 +52,36 @@ class DocumentsViewModel(val documentRepository: DocumentRepository) :
                     message.value = it.message
                 })
         )
+    }
+
+    fun sendDocToServer(position: Int) {
+        val doc = documentListLd.value?.get(position)?.document
+
+        if (!checkEditDoc(doc)) {
+            messageError.value = "Нельзя изменять документ!"
+            return
+        }
+
+        when (doc) {
+            is CreatePallet -> {
+                disposables.add(
+                    sendCreatPalletToServer(doc)
+                        .doOnSubscribe {
+                            showProgress.postValue(true)
+                        }
+                        .doFinally {
+                            showProgress.postValue(false)
+                        }
+                        .subscribeOn(Schedulers.io())
+                        .observeOn(AndroidSchedulers.mainThread())
+                        .subscribe({
+                            message.value = "Отправили"
+                        }, {
+                            message.value = it.message
+                        })
+                )
+            }
+        }
     }
 
     fun confirmedDell(position: Int) {
