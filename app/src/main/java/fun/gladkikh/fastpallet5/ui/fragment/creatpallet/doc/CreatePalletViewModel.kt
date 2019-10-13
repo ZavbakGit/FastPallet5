@@ -9,19 +9,19 @@ import androidx.lifecycle.Observer
 
 
 class CreatePalletViewModel(private val createPalletRepository: CreatePalletRepository)
-    : BaseViewModel<CreatePallet?, CreatPalletViewState>() {
+    : BaseViewModel<CreatePallet?, CreatePalletViewState>() {
 
     private var liveDataMerger: MediatorLiveData<CreatePallet> = MediatorLiveData()
 
     private val documentObserver = Observer<CreatePallet> {
-        viewStateLiveData.value = CreatPalletViewState(
+        viewStateLiveData.value = CreatePalletViewState(
             document = it
         )
     }
 
 
     init {
-        viewStateLiveData.value = CreatPalletViewState(
+        viewStateLiveData.value = CreatePalletViewState(
             document = CreatePallet()
         )
         liveDataMerger.observeForever(documentObserver)
