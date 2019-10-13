@@ -8,7 +8,8 @@ import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.Observer
 
 
-class CreatePalletViewModel : BaseViewModel<CreatePallet?, CreatPalletViewState>() {
+class CreatePalletViewModel(private val createPalletRepository: CreatePalletRepository)
+    : BaseViewModel<CreatePallet?, CreatPalletViewState>() {
 
     private var liveDataMerger: MediatorLiveData<CreatePallet> = MediatorLiveData()
 
@@ -48,7 +49,7 @@ class CreatePalletViewModel : BaseViewModel<CreatePallet?, CreatPalletViewState>
                     value = doc
                 }
             }
-            CreatePalletRepository.getDocByGuidLd(guid).apply {
+            createPalletRepository.getDocByGuidLd(guid).apply {
                 addSource(this) {
                     doc = it
                     update()
@@ -56,7 +57,7 @@ class CreatePalletViewModel : BaseViewModel<CreatePallet?, CreatPalletViewState>
                 listSourse.add(this)
             }
 
-            CreatePalletRepository.getListProductByDocLd(guid).apply {
+            createPalletRepository.getListProductByDocLd(guid).apply {
                 addSource(this) {
                     listProduct = it
                     update()
