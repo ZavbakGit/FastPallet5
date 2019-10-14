@@ -4,9 +4,10 @@ import `fun`.gladkikh.fastpallet5.domain.intety.CreatePallet
 import `fun`.gladkikh.fastpallet5.domain.intety.Document
 import `fun`.gladkikh.fastpallet5.domain.intety.ItemDocument
 import `fun`.gladkikh.fastpallet5.domain.intety.Type.CREATE_PALLET
-import `fun`.gladkikh.fastpallet5.maping.toCreatePallet
+import `fun`.gladkikh.fastpallet5.maping.creatpallet.toCreatePallet
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Transformations
+import java.util.*
 
 class DocumentRepository(private val createPalletRepository: CreatePalletRepository) {
 
@@ -35,6 +36,14 @@ class DocumentRepository(private val createPalletRepository: CreatePalletReposit
                     createPalletRepository.getDocByGuidServer(document.guidServer!!)
 
                 val doc = createPalletFromDb?.apply { document.mixWithDb(this) } ?: document
+                doc.apply {
+                    this.status = document.status
+                    this.barcode = document.barcode
+                    this.dataChanged = Date()
+                    this.description = document.description
+                    this.isWasLoadedLastTime = true
+                    this.number = document.number
+                }
 
                 createPalletRepository.saveDoc(doc)
                 doc.listProduct.forEach {

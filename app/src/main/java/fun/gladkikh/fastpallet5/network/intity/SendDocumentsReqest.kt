@@ -1,7 +1,7 @@
 package `fun`.gladkikh.fastpallet5.network.intity
 
 
-import `fun`.gladkikh.fastpallet5.domain.intety.Document
+import `fun`.gladkikh.fastpallet5.network.intity.old.MetaObjServer
 import `fun`.gladkikh.fastpallet5.network.util.intity.ReqestObj
 import `fun`.gladkikh.fastpallet5.network.util.intity.ResponseObj
 import com.google.gson.annotations.SerializedName
@@ -9,7 +9,7 @@ import com.google.gson.annotations.SerializedName
 
 data class SendDocumentsReqest(
     @SerializedName("codeTSD") val codeTSD: String,
-    val list: List<Document>
+    val list: List<MetaObjServer>
 ) : ReqestObj
 
 data class SendDocumentsResponse(val listConfirm: List<ItemConfimResponse>) : ResponseObj

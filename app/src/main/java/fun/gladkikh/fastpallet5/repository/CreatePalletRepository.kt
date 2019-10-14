@@ -6,7 +6,7 @@ import `fun`.gladkikh.fastpallet5.domain.intety.Box
 import `fun`.gladkikh.fastpallet5.domain.intety.CreatePallet
 import `fun`.gladkikh.fastpallet5.domain.intety.Pallet
 import `fun`.gladkikh.fastpallet5.domain.intety.Product
-import `fun`.gladkikh.fastpallet5.maping.*
+import `fun`.gladkikh.fastpallet5.maping.creatpallet.*
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Transformations
 
@@ -31,8 +31,24 @@ class CreatePalletRepository(private val createPalletDao: CreatePalletDao) {
         it.toCreatePallet()
     }
 
-    fun getDocByGuid(guidServer: String): CreatePallet? =
-        createPalletDao.getDocByGuidServer(guidServer)?.toCreatePallet()
+    fun getFullDocByGuid(guid: String): CreatePallet {
+        val doc = createPalletDao.getDocByGuid(guid)?.toCreatePallet()!!
+        doc?.listProduct = getListProductByDoc(guid)
+
+        doc?.listProduct?.forEach { product ->
+            product.pallets = getListPalletByProduct(product.guid)
+            product.pallets.forEach { pallet ->
+                pallet.boxes = getListBoxByPallet(pallet.guid)
+            }
+        }
+
+        return doc
+    }
+
+
+    //fun getFullDocByGuid()
+
+
     //endregion
 
     //region Product
@@ -63,7 +79,7 @@ class CreatePalletRepository(private val createPalletDao: CreatePalletDao) {
         createPalletDao.dellProduct(product.toProductCreatePalletDb(guidDoc))
     //endregion
 
-    //region Pallet
+    //region PalletServer
     fun savePallet(pallet: Pallet, guidProduct: String) =
         createPalletDao.insertOrUpdate(pallet.toPalletCreatePalletDb(guidProduct))
 
@@ -89,16 +105,24 @@ class CreatePalletRepository(private val createPalletDao: CreatePalletDao) {
         it.toPallet()
     }
 
-    fun getListBoxByPallet(guidPallet: String): LiveData<List<Box>> = Transformations.map(
+
+    //endregion
+
+    //region Box
+
+    fun getListBoxByPalletLd(guidPallet: String): LiveData<List<Box>> = Transformations.map(
         createPalletDao.getListBoxByPalletLd(guidPallet)
     ) {
         it.map { box ->
             box.toBox()
         }
     }
-    //endregion
 
-    //region Box
+    fun getListBoxByPallet(guidPallet: String) =
+        createPalletDao.getListBoxByPallet(guidPallet).map {
+            it.toBox()
+        }
+
     fun saveBox(box: Box, guidPallet: String) =
         createPalletDao.insertOrUpdate(box.toBoxCreatePalletDb(guidPallet))
 

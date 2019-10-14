@@ -126,7 +126,7 @@ class BoxCreatePalletViewModel(private val createPalletRepository: CreatePalletR
 
             }
 
-            createPalletRepository.getListBoxByPallet(guidPallet).apply {
+            createPalletRepository.getListBoxByPalletLd(guidPallet).apply {
                 addSource(this) { list ->
                     listBox = list.sortedByDescending { it.data }
                     box = list.find { it.guid == guidBox }
@@ -208,6 +208,26 @@ class BoxCreatePalletViewModel(private val createPalletRepository: CreatePalletR
         liveDataMerger.removeObserver(documentObserver)
 
     }
+
+    fun setDataChangeListener(weight: String?, countBox: String?) {
+        val product = liveDataMerger.value?.product
+        val doc = liveDataMerger.value?.doc
+        val pallet = liveDataMerger.value?.pallet
+        val box = liveDataMerger.value?.box
+
+        box?.weight = weight?.toFloatOrNull()
+        box?.countBox = countBox?.toIntOrNull()
+
+        liveDataMerger.value = BoxWrapDataCreatePallet(
+            doc = doc,
+            product = product,
+            pallet = pallet,
+            box = box
+        )
+
+        refreshInfo()
+    }
+
 
     fun onFragmentDestroy() {
         if (!checkEditDoc(liveDataMerger.value?.doc)) {

@@ -1,4 +1,4 @@
-package `fun`.gladkikh.fastpallet5.maping
+package `fun`.gladkikh.fastpallet5.maping.creatpallet
 
 import `fun`.gladkikh.fastpallet5.db.initity.BoxCreatPalletDb
 import `fun`.gladkikh.fastpallet5.db.initity.CreatePalletDb

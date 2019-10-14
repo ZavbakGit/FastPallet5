@@ -154,7 +154,7 @@ class PalletCreatePalletViewModel(private val createPalletRepository: CreatePall
                 listSourse.add(this)
             }
 
-            createPalletRepository.getListBoxByPallet(guidPallet).apply {
+            createPalletRepository.getListBoxByPalletLd(guidPallet).apply {
                 addSource(this) { list ->
                     listBox = list.sortedByDescending { it.data }
                     update()

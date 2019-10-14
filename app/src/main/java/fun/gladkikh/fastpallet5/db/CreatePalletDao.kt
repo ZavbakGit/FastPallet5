@@ -86,7 +86,7 @@ interface CreatePalletDao {
 
 
 
-    //region Pallet
+    //region PalletServer
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     fun insertIgnore(palletCreatePalletDb: PalletCreatePalletDb): Long
 
@@ -123,7 +123,7 @@ interface CreatePalletDao {
 
 
 
-    //region Box
+    //region BoxServer
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     fun insertIgnore(boxCreatPalletDb: BoxCreatPalletDb): Long
 
@@ -149,6 +149,10 @@ interface CreatePalletDao {
 
     @Query("SELECT * FROM BoxCreatPalletDb WHERE guidPallet = :guidPallet")
     fun getListBoxByPalletLd(guidPallet: String): LiveData<List<BoxCreatPalletDb>>
+
+    @Query("SELECT * FROM BoxCreatPalletDb WHERE guidPallet = :guidPallet")
+    fun getListBoxByPallet(guidPallet: String): List<BoxCreatPalletDb>
+
 
     @Delete
     fun dellBox(boxCreatPalletDb: BoxCreatPalletDb)

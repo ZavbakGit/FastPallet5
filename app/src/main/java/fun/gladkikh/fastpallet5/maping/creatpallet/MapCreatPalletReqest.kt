@@ -1,4 +1,4 @@
-package `fun`.gladkikh.fastpallet5.maping
+package `fun`.gladkikh.fastpallet5.maping.creatpallet
 
 import `fun`.gladkikh.fastpallet5.common.getFloatByParseStr
 import `fun`.gladkikh.fastpallet5.common.getIntByParseStr
