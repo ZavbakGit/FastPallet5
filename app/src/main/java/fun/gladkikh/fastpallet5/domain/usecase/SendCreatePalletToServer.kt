@@ -9,9 +9,11 @@ import `fun`.gladkikh.fastpallet5.repository.CreatePalletRepository
 import io.reactivex.Completable
 
 
-fun sendCreatPalletToServer(createPallet: CreatePallet): Completable {
+fun sendCreatPalletToServer(createPallet: CreatePallet,
+                            createPalletRepository:CreatePalletRepository): Completable {
     //ToDo Взять из настроек
     val objReqest = SendDocumentsReqest(codeTSD = "333", list = listOf(createPallet))
+
 
     return ApiFactory.reqest(
         command = "command_send_doc",
@@ -25,10 +27,10 @@ fun sendCreatPalletToServer(createPallet: CreatePallet): Completable {
         }
         .doOnSuccess { response ->
             response.listConfirm.forEach {
-                val doc = CreatePalletRepository.getDocByGuid(it.guid).apply {
+                val doc = createPalletRepository.getDocByGuid(it.guid).apply {
                     this?.status = Status.getStatusByString(it.status).id
                 }
-                CreatePalletRepository.saveDoc(doc!!)
+                createPalletRepository.saveDoc(doc!!)
             }
         }
         .ignoreElement()

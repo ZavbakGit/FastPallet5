@@ -11,15 +11,14 @@ import android.widget.EditText
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import kotlinx.android.synthetic.main.box_scr.*
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class BoxCreatePalletFragment :
     BaseFragment<BoxWrapDataCreatePallet?, BoxCreatePalletViewState>() {
 
     override val layoutRes: Int = R.layout.box_scr
 
-    override val viewModel: BoxCreatePalletViewModel by lazy {
-        ViewModelProviders.of(this).get(BoxCreatePalletViewModel::class.java)
-    }
+    override val viewModel: BoxCreatePalletViewModel by viewModel()
 
     companion object {
         val EXTRA_GUID_DOC = this::class.java.name + "extra.GUID.DOC"

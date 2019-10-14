@@ -5,6 +5,7 @@ import `fun`.gladkikh.fastpallet5.domain.intety.CreatePallet
 import `fun`.gladkikh.fastpallet5.domain.intety.ItemDocument
 import `fun`.gladkikh.fastpallet5.domain.usecase.getListDocumentsDbFromServer
 import `fun`.gladkikh.fastpallet5.domain.usecase.sendCreatPalletToServer
+import `fun`.gladkikh.fastpallet5.repository.CreatePalletRepository
 import `fun`.gladkikh.fastpallet5.repository.DocumentRepository
 import `fun`.gladkikh.fastpallet5.ui.base.BaseViewModel
 import `fun`.gladkikh.fastpallet5.ui.fragment.common.Command
@@ -12,7 +13,8 @@ import androidx.lifecycle.Observer
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 
-class DocumentsViewModel(val documentRepository: DocumentRepository) :
+class DocumentsViewModel(private val documentRepository: DocumentRepository,
+                         private val createPalletRepository: CreatePalletRepository) :
     BaseViewModel<List<ItemDocument>?, DocumentsViewState>() {
 
 
@@ -37,7 +39,7 @@ class DocumentsViewModel(val documentRepository: DocumentRepository) :
 
     fun loadDocs() {
         disposables.add(
-            getListDocumentsDbFromServer()
+            getListDocumentsDbFromServer(documentRepository)
                 .doOnSubscribe {
                     showProgress.postValue(true)
                 }
@@ -65,7 +67,7 @@ class DocumentsViewModel(val documentRepository: DocumentRepository) :
         when (doc) {
             is CreatePallet -> {
                 disposables.add(
-                    sendCreatPalletToServer(doc)
+                    sendCreatPalletToServer(doc,createPalletRepository)
                         .doOnSubscribe {
                             showProgress.postValue(true)
                         }

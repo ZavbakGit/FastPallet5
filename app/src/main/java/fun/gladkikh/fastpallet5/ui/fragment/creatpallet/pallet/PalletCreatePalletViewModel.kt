@@ -24,7 +24,7 @@ import java.util.*
 import java.util.concurrent.TimeUnit
 
 
-class PalletCreatePalletViewModel :
+class PalletCreatePalletViewModel(private val createPalletRepository: CreatePalletRepository) :
     BaseViewModel<PalletWrapDataCreatePallet?, PalletCreatPalletViewState>() {
 
 
@@ -91,7 +91,7 @@ class PalletCreatePalletViewModel :
             weight = weight,
             data = Date()
         )
-        CreatePalletRepository.saveBox(box, liveDataMerger.value?.pallet?.guid!!)
+        createPalletRepository.saveBox(box, liveDataMerger.value?.pallet?.guid!!)
 
         commandLd.postValue(OpenForm(box.guid))
     }
@@ -129,7 +129,7 @@ class PalletCreatePalletViewModel :
                 }
             }
 
-            CreatePalletRepository.getDocByGuidLd(guidDoc).apply {
+            createPalletRepository.getDocByGuidLd(guidDoc).apply {
                 addSource(this) {
                     doc = it
                     update()
@@ -137,7 +137,7 @@ class PalletCreatePalletViewModel :
                 listSourse.add(this)
             }
 
-            CreatePalletRepository.getProductByGuid(guidProduct).apply {
+            createPalletRepository.getProductByGuid(guidProduct).apply {
                 addSource(this) {
                     product = it
                     update()
@@ -146,7 +146,7 @@ class PalletCreatePalletViewModel :
             }
 
 
-            CreatePalletRepository.getPalletByGuid(guidPallet).apply {
+            createPalletRepository.getPalletByGuid(guidPallet).apply {
                 addSource(this) {
                     pallet = it
                     update()
@@ -154,7 +154,7 @@ class PalletCreatePalletViewModel :
                 listSourse.add(this)
             }
 
-            CreatePalletRepository.getListBoxByPallet(guidPallet).apply {
+            createPalletRepository.getListBoxByPallet(guidPallet).apply {
                 addSource(this) { list ->
                     listBox = list.sortedByDescending { it.data }
                     update()
@@ -177,7 +177,7 @@ class PalletCreatePalletViewModel :
 
     fun confirmedDell(position: Int) {
         liveDataMerger.value?.pallet?.boxes?.get(position)?.let {
-            CreatePalletRepository.dellBox(
+            createPalletRepository.dellBox(
                 liveDataMerger.value?.pallet?.boxes?.get(position)!!,
                 liveDataMerger.value?.pallet!!.guid
             )

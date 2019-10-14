@@ -15,7 +15,7 @@ import androidx.lifecycle.Observer
 import java.util.*
 
 
-class ProductCreatePalletViewModel :
+class ProductCreatePalletViewModel(private val createPalletRepository: CreatePalletRepository) :
     BaseViewModel<WrapDataProductCreatePallet?, ProductCreatPalletViewState>() {
 
     private var liveDataMerger: MediatorLiveData<WrapDataProductCreatePallet> = MediatorLiveData()
@@ -61,7 +61,7 @@ class ProductCreatePalletViewModel :
                 }
             }
 
-            CreatePalletRepository.getDocByGuidLd(guidDoc).apply {
+            createPalletRepository.getDocByGuidLd(guidDoc).apply {
                 addSource(this) {
                     doc = it
                     update()
@@ -70,7 +70,7 @@ class ProductCreatePalletViewModel :
 
             }
 
-            CreatePalletRepository.getProductByGuid(guidProduct).apply {
+            createPalletRepository.getProductByGuid(guidProduct).apply {
                 addSource(this) {
                     product = it
                     update()
@@ -78,7 +78,7 @@ class ProductCreatePalletViewModel :
                 listSourse.add(this)
             }
 
-            CreatePalletRepository.getListPalletByProductLd(guidProduct).apply {
+            createPalletRepository.getListPalletByProductLd(guidProduct).apply {
                 addSource(this) { list ->
                     listPallet = list.sortedByDescending { it.dataChanged }
                     update()
@@ -107,7 +107,7 @@ class ProductCreatePalletViewModel :
                 state = null
             )
 
-            CreatePalletRepository.savePallet(pallet, liveDataMerger.value?.product?.guid!!)
+            createPalletRepository.savePallet(pallet, liveDataMerger.value?.product?.guid!!)
         }
 
     }
@@ -130,7 +130,7 @@ class ProductCreatePalletViewModel :
         }
 
 
-        if (CreatePalletRepository.getListPalletByProduct(liveDataMerger.value?.product?.guid!!).find {
+        if (createPalletRepository.getListPalletByProduct(liveDataMerger.value?.product?.guid!!).find {
                 it.number.equals(
                     number
                 )
@@ -153,7 +153,7 @@ class ProductCreatePalletViewModel :
 
     fun confirmedDell(position: Int) {
         liveDataMerger.value?.product?.pallets?.get(position)?.let {
-            CreatePalletRepository.dellPallet(
+            createPalletRepository.dellPallet(
                 liveDataMerger.value?.product?.pallets?.get(position)!!,
                 liveDataMerger.value?.product!!.guid
             )

@@ -16,15 +16,14 @@ import android.widget.TextView
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import kotlinx.android.synthetic.main.documents_frag.*
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class ProductCreatePalletFragment :
     BaseFragment<WrapDataProductCreatePallet?, ProductCreatPalletViewState>() {
 
     override val layoutRes: Int = R.layout.documents_frag
 
-    override val viewModel: ProductCreatePalletViewModel by lazy {
-        ViewModelProviders.of(this).get(ProductCreatePalletViewModel::class.java)
-    }
+    override val viewModel: ProductCreatePalletViewModel by viewModel()
 
     companion object {
         val EXTRA_GUID_PRODUCT = ProductCreatePalletFragment::class.java.name + "extra.GUID.PRODUCT"

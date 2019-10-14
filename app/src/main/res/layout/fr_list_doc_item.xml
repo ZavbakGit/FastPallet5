@@ -1,46 +1,44 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="8dp">
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="8dp">
 
     <TextView
-            android:textSize="16sp"
-            android:textColor="@color/colorBlack"
-            android:layout_margin="16dp"
-            android:text="Описание"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/tv_item_info"
-            android:layout_alignParentLeft="true"/>
+        android:id="@+id/tv_item_info"
+        style="@style/Text.Primary.Bold"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_margin="8dp"
+        android:text="Описание" />
 
 
     <TextView
-            android:textSize="16sp"
-            android:textColor="@color/colorPrimaryDark"
-            android:text="Лево"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/tv_info_doc_left"
-            android:layout_below="@+id/tv_item_info"
-            android:layout_margin="16dp"/>
+        android:id="@+id/tv_info_doc_left"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/tv_item_info"
+        android:layout_margin="8dp"
+        android:text="Лево"
+
+        style="@style/TextView.Secondary" />
 
     <TextView
-            android:textSize="16sp"
-            android:textColor="@color/colorPrimaryDark"
-            android:text="Право"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/tv_info_doc_right"
-            android:layout_below="@+id/tv_item_info"
-            android:layout_alignParentRight="true"
-            android:layout_margin="16dp"
-    />
+        android:id="@+id/tv_info_doc_right"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/tv_item_info"
+        android:layout_alignParentRight="true"
+        android:layout_margin="8dp"
+        android:text="Право"
+        style="@style/TextView.Secondary"/>
+
     <View
-            android:layout_below="@+id/tv_info_doc_right"
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="@android:color/darker_gray"/>
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_below="@+id/tv_info_doc_right"
+        android:background="@android:color/darker_gray" />
 
 
 </RelativeLayout>
