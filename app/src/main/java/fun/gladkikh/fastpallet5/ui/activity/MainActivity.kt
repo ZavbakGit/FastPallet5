@@ -9,7 +9,8 @@ import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import com.gladkikh.mylibrary.BarcodeHelper
 import com.google.android.material.snackbar.Snackbar
-import kotlinx.android.synthetic.main.item_box.*
+import kotlinx.android.synthetic.main.activity_main.*
+
 import kotlinx.android.synthetic.main.progress_overlay.*
 
 

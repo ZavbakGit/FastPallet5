@@ -9,15 +9,14 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import kotlinx.android.synthetic.main.dialog_product_scr.*
 import kotlinx.android.synthetic.main.documents_frag.tvInfo
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class DialogProductCreatePalletFragment :
     BaseFragment<WrapDataDialogProductCreatePallet?, DialogProductCreatePalletViewState>() {
 
     override val layoutRes: Int = R.layout.dialog_product_scr
 
-    override val viewModel: DialogProductCreatePalletViewModel by lazy {
-        ViewModelProviders.of(this).get(DialogProductCreatePalletViewModel::class.java)
-    }
+    override val viewModel: DialogProductCreatePalletViewModel by viewModel()
 
     companion object {
         val EXTRA_GUID_PRODUCT = DialogProductCreatePalletFragment::class.java.name + "extra.GUID.PRODUCT"

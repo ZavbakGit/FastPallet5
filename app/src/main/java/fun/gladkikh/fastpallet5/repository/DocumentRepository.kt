@@ -1,18 +1,17 @@
 package `fun`.gladkikh.fastpallet5.repository
 
-import `fun`.gladkikh.fastpallet5.App
 import `fun`.gladkikh.fastpallet5.domain.intety.CreatePallet
 import `fun`.gladkikh.fastpallet5.domain.intety.Document
 import `fun`.gladkikh.fastpallet5.domain.intety.ItemDocument
+import `fun`.gladkikh.fastpallet5.domain.intety.Type.CREATE_PALLET
 import `fun`.gladkikh.fastpallet5.maping.toCreatePallet
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Transformations
-import `fun`.gladkikh.fastpallet5.domain.intety.Type.CREATE_PALLET
 
-object DocumentRepository {
+class DocumentRepository(private val createPalletRepository: CreatePalletRepository) {
 
     fun getDocumentListLiveData(): LiveData<List<ItemDocument>> = Transformations.map(
-        App.database.getCreatPalletDao().getAllLd()
+        createPalletRepository.getListDoc()
     ) {
         it.map { doc ->
             val createPallet = doc.toCreatePallet()
@@ -33,13 +32,13 @@ object DocumentRepository {
         when (document) {
             is CreatePallet -> {
                 val createPalletFromDb =
-                    CreatePalletRepository.getDocByGuidServer(document.guidServer!!)
+                    createPalletRepository.getDocByGuidServer(document.guidServer!!)
 
-                var doc = createPalletFromDb?.apply { document.mixWithDb(this) } ?: document
+                val doc = createPalletFromDb?.apply { document.mixWithDb(this) } ?: document
 
-                CreatePalletRepository.saveDoc(doc)
+                createPalletRepository.saveDoc(doc)
                 doc.listProduct.forEach {
-                    CreatePalletRepository.saveProduct(it, document.guid)
+                    createPalletRepository.saveProduct(it, document.guid)
                 }
 
             }
@@ -49,45 +48,46 @@ object DocumentRepository {
     fun dellDocument(document: Document) {
         when (document) {
             is CreatePallet -> {
-                CreatePalletRepository.dellDoc(document)
+                createPalletRepository.dellDoc(document)
                 //var list =  CreatePalletRepository.getPalletAll()
             }
         }
     }
 
-}
+    private fun CreatePallet.mixWithDb(createPalletFromDb: CreatePallet): CreatePallet {
 
-fun CreatePallet.mixWithDb(createPalletFromDb: CreatePallet): CreatePallet {
+        this.guid = createPalletFromDb.guid
+        var oldProduct = createPalletRepository.getListProductByDoc(this.guid)
 
-    this.guid = createPalletFromDb.guid
-    var oldProduct = CreatePalletRepository.getListProductByDoc(this.guid)
-
-    //Удаляем каскадно все что без паллет
-    oldProduct.forEach { prod ->
-        prod.apply {
-            pallets = CreatePalletRepository.getListPalletByProduct(prod.guid)
+        //Удаляем каскадно все что без паллет
+        oldProduct.forEach { prod ->
+            prod.apply {
+                pallets = createPalletRepository.getListPalletByProduct(prod.guid)
+            }
+            if (prod.pallets.isEmpty()) {
+                createPalletRepository.dellProduct(
+                    product = prod
+                    , guidDoc = this.guid
+                )
+            }
         }
-        if (prod.pallets.isEmpty()) {
-            CreatePalletRepository.dellProduct(
-                product = prod
-                , guidDoc = this.guid
-            )
-        }
+
+        //Читаем Еще раз
+        oldProduct = createPalletRepository.getListProductByDoc(this.guid)
+
+        //Оставили только те которых нет в старом списке
+        val newList =
+            this.listProduct
+                .filter { product ->
+                    product.guidProduct !in oldProduct.map { it.guidProduct }
+                }
+
+        //Сложили два списка
+        createPalletFromDb.listProduct = oldProduct + newList
+
+        return createPalletFromDb
+
     }
 
-    //Читаем Еще раз
-    oldProduct = CreatePalletRepository.getListProductByDoc(this.guid)
-
-    //Оставили только те которых нет в старом списке
-    val newList =
-        this.listProduct
-            .filter { product ->
-                product.guidProduct !in oldProduct.map { it.guidProduct }
-            }
-
-    //Сложили два списка
-    createPalletFromDb.listProduct = oldProduct + newList
-
-    return createPalletFromDb
-
 }
+

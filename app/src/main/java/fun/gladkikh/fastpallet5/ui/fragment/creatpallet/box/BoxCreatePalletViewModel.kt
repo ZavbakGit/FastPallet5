@@ -23,7 +23,7 @@ import java.util.*
 import java.util.concurrent.TimeUnit
 
 
-class BoxCreatePalletViewModel :
+class BoxCreatePalletViewModel(private val createPalletRepository: CreatePalletRepository) :
     BaseViewModel<BoxWrapDataCreatePallet?, BoxCreatePalletViewState>() {
 
     private var liveDataMerger: MediatorLiveData<BoxWrapDataCreatePallet> = MediatorLiveData()
@@ -39,7 +39,6 @@ class BoxCreatePalletViewModel :
         )
     }
 
-    private val createPalletRepository = CreatePalletRepository
 
     init {
         viewStateLiveData.value = BoxCreatePalletViewState()
@@ -100,7 +99,7 @@ class BoxCreatePalletViewModel :
             }
 
 
-            CreatePalletRepository.getDocByGuidLd(guidDoc).apply {
+            createPalletRepository.getDocByGuidLd(guidDoc).apply {
                 addSource(this) {
                     doc = it
                     update()
@@ -109,7 +108,7 @@ class BoxCreatePalletViewModel :
 
             }
 
-            CreatePalletRepository.getProductByGuid(guidProduct).apply {
+            createPalletRepository.getProductByGuid(guidProduct).apply {
                 addSource(this) {
                     product = it
                     update()
@@ -118,7 +117,7 @@ class BoxCreatePalletViewModel :
             }
 
 
-            CreatePalletRepository.getPalletByGuid(guidPallet).apply {
+            createPalletRepository.getPalletByGuid(guidPallet).apply {
                 addSource(this) {
                     pallet = it
                     update()
@@ -218,7 +217,7 @@ class BoxCreatePalletViewModel :
 
         liveDataMerger.value?.box?.let { box ->
             liveDataMerger.value?.pallet?.guid?.let { palletGuid ->
-                CreatePalletRepository.update(box, palletGuid)
+                createPalletRepository.update(box, palletGuid)
             }
         }
 

@@ -17,7 +17,7 @@ import io.reactivex.Single
  *    проставляем новый пришедщий в подтверждении статус
  * 4. Потом при сохранении не будем убивать все
  */
-fun getListDocumentsDbFromServer(): Single<List<Document>> {
+fun getListDocumentsDbFromServer(documentRepository: DocumentRepository): Single<List<Document>> {
     //ToDo Взять из настроек
     val getListDocsRequest = GetListDocsRequest(codeTSD = "333")
 
@@ -39,7 +39,7 @@ fun getListDocumentsDbFromServer(): Single<List<Document>> {
     }.doOnSuccess {
         //Записываем
         it.forEach { doc ->
-            DocumentRepository.saveDocument(doc)
+            documentRepository.saveDocument(doc)
         }
     }
 }
