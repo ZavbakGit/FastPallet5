@@ -91,5 +91,4 @@ class DialogProductCreatePalletViewModel(private val cretePalletRepository: Crea
             doc.guid
         )
     }
-
 }

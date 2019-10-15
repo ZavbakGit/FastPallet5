@@ -126,9 +126,6 @@ class CreatePalletRepository(private val createPalletDao: CreatePalletDao) {
     fun saveBox(box: Box, guidPallet: String) =
         createPalletDao.insertOrUpdate(box.toBoxCreatePalletDb(guidPallet))
 
-    fun update(box: Box, guidPallet: String) =
-        createPalletDao.update(box.toBoxCreatePalletDb(guidPallet))
-
     fun dellPallet(pallet: Pallet, guidProduct: String) {
         createPalletDao.dellPallet(pallet.toPalletCreatePalletDb(guidProduct))
     }

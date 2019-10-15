@@ -224,19 +224,4 @@ class BoxCreatePalletViewModel(private val createPalletRepository: CreatePalletR
 
         createPalletRepository.saveBox(box, pallet.guid)
     }
-
-
-    fun onFragmentDestroy() {
-        if (!checkEditDoc(liveDataMerger.value?.doc)) {
-            messageError.value = "Нельзя изменять документ!"
-            return
-        }
-
-        liveDataMerger.value?.box?.let { box ->
-            liveDataMerger.value?.pallet?.guid?.let { palletGuid ->
-                createPalletRepository.update(box, palletGuid)
-            }
-        }
-
-    }
 }
