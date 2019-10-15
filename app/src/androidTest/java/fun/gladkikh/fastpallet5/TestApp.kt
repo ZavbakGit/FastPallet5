@@ -1,6 +1,5 @@
 package `fun`.gladkikh.fastpallet5
 
-import `fun`.gladkikh.fastpallet5.di.DependeciesModule
 import android.app.Application
 import org.koin.core.context.startKoin
 

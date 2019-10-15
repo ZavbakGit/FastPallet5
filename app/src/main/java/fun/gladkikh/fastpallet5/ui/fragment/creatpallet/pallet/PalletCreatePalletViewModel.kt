@@ -63,6 +63,22 @@ class PalletCreatePalletViewModel(private val createPalletRepository: CreatePall
         liveDataMerger.value?.pallet?.boxes?.let { dataPublishSubject.onNext(it) }
     }
 
+
+    fun addBox() {
+        if (!checkEditDoc(liveDataMerger.value?.doc)) {
+            messageError.value = "Нельзя изменять документ!"
+            return
+        }
+        val pallet = liveDataMerger.value?.pallet?:return
+
+        val box = Box(
+            guid = UUID.randomUUID().toString(),
+            data = Date()
+        )
+        createPalletRepository.saveBox(box,pallet.guid)
+        commandLd.postValue(OpenForm(box.guid))
+    }
+
     fun addBox(barcode: String) {
 
         if (!checkEditDoc(liveDataMerger.value?.doc)) {
@@ -70,6 +86,7 @@ class PalletCreatePalletViewModel(private val createPalletRepository: CreatePall
             return
         }
 
+        val pallet = liveDataMerger.value?.pallet?:return
         val product = liveDataMerger.value?.product!!
 
         val weight = getWeightByBarcode(
@@ -91,7 +108,7 @@ class PalletCreatePalletViewModel(private val createPalletRepository: CreatePall
             weight = weight,
             data = Date()
         )
-        createPalletRepository.saveBox(box, liveDataMerger.value?.pallet?.guid!!)
+        createPalletRepository.saveBox(box, pallet.guid)
 
         commandLd.postValue(OpenForm(box.guid))
     }

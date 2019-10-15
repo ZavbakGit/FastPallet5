@@ -5,12 +5,14 @@ import `fun`.gladkikh.fastpallet5.domain.checkEditDoc
 import `fun`.gladkikh.fastpallet5.domain.extend.InfoListBoxWrap
 import `fun`.gladkikh.fastpallet5.domain.extend.getInfoWrap
 import `fun`.gladkikh.fastpallet5.domain.extend.getWeightByBarcode
-import `fun`.gladkikh.fastpallet5.domain.intety.*
+import `fun`.gladkikh.fastpallet5.domain.intety.Box
+import `fun`.gladkikh.fastpallet5.domain.intety.CreatePallet
+import `fun`.gladkikh.fastpallet5.domain.intety.Pallet
+import `fun`.gladkikh.fastpallet5.domain.intety.Product
 import `fun`.gladkikh.fastpallet5.repository.CreatePalletRepository
-
-
 import `fun`.gladkikh.fastpallet5.ui.base.BaseViewModel
-import `fun`.gladkikh.fastpallet5.ui.fragment.common.Command.*
+import `fun`.gladkikh.fastpallet5.ui.fragment.common.Command.Close
+import `fun`.gladkikh.fastpallet5.ui.fragment.common.Command.ConfirmDialog
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
@@ -28,7 +30,7 @@ class BoxCreatePalletViewModel(private val createPalletRepository: CreatePalletR
 
     private var liveDataMerger: MediatorLiveData<BoxWrapDataCreatePallet> = MediatorLiveData()
 
-    private val dataPublishSubject = PublishSubject.create<List<Box>?>()
+    private val refreshPublishSubject = PublishSubject.create<List<Box>?>()
 
     private val infoWrap = MutableLiveData<InfoListBoxWrap>()
     fun getInfoWrap(): LiveData<InfoListBoxWrap> = infoWrap
@@ -46,7 +48,7 @@ class BoxCreatePalletViewModel(private val createPalletRepository: CreatePalletR
 
         //Подписка на пересчет
         disposables.add(
-            dataPublishSubject.toFlowable(BackpressureStrategy.BUFFER)
+            refreshPublishSubject.toFlowable(BackpressureStrategy.BUFFER)
                 .debounce(300, TimeUnit.MILLISECONDS)
                 .switchMap { list ->
                     return@switchMap Flowable.just(list).map { it.getInfoWrap() }
@@ -64,7 +66,7 @@ class BoxCreatePalletViewModel(private val createPalletRepository: CreatePalletR
      * Пересчитываем колличество
      */
     private fun refreshInfo() {
-        liveDataMerger.value?.pallet?.boxes?.let { dataPublishSubject.onNext(it) }
+        liveDataMerger.value?.pallet?.boxes?.let { refreshPublishSubject.onNext(it) }
     }
 
 
@@ -95,6 +97,8 @@ class BoxCreatePalletViewModel(private val createPalletRepository: CreatePalletR
                         pallet = pallet,
                         box = box
                     )
+
+                    refreshInfo()
                 }
             }
 
@@ -131,7 +135,7 @@ class BoxCreatePalletViewModel(private val createPalletRepository: CreatePalletR
                     listBox = list.sortedByDescending { it.data }
                     box = list.find { it.guid == guidBox }
                     update()
-                    refreshInfo()
+
                 }
                 listSourse.add(this)
             }
@@ -209,23 +213,16 @@ class BoxCreatePalletViewModel(private val createPalletRepository: CreatePalletR
 
     }
 
-    fun setDataChangeListener(weight: String?, countBox: String?) {
-        val product = liveDataMerger.value?.product
-        val doc = liveDataMerger.value?.doc
-        val pallet = liveDataMerger.value?.pallet
-        val box = liveDataMerger.value?.box
+    fun save(weight: String?, countBox: String?) {
+        val box = liveDataMerger.value?.box ?: return
+        val pallet = liveDataMerger.value?.pallet?:return
 
-        box?.weight = weight?.toFloatOrNull()
-        box?.countBox = countBox?.toIntOrNull()
+        box.apply {
+            this.weight = weight?.toFloatOrNull() ?: 0f
+            this.countBox = countBox?.toIntOrNull() ?: 0
+        }
 
-        liveDataMerger.value = BoxWrapDataCreatePallet(
-            doc = doc,
-            product = product,
-            pallet = pallet,
-            box = box
-        )
-
-        refreshInfo()
+        createPalletRepository.saveBox(box, pallet.guid)
     }
 
 

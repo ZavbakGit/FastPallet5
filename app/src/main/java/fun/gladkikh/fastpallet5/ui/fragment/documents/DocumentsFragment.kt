@@ -53,8 +53,6 @@ class DocumentsFragment : BaseFragment<List<ItemDocument>?, DocumentsViewState>(
                     }
                 }
             }
-
-
         })
 
 
@@ -79,7 +77,6 @@ class DocumentsFragment : BaseFragment<List<ItemDocument>?, DocumentsViewState>(
                         viewModel.sendDocToServer(this)
                     }
                 }
-
             }
         })
 
@@ -96,7 +93,6 @@ class DocumentsFragment : BaseFragment<List<ItemDocument>?, DocumentsViewState>(
         }
 
     }
-
 
     private fun showMenu() {
         PopupMenu(activity, tvMenu).run {

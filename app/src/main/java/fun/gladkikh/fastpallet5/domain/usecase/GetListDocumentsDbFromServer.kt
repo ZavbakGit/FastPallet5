@@ -1,6 +1,7 @@
 package `fun`.gladkikh.fastpallet5.domain.usecase
 
 import `fun`.gladkikh.fastpallet5.domain.intety.Document
+import `fun`.gladkikh.fastpallet5.domain.intety.SettingsPref
 import `fun`.gladkikh.fastpallet5.maping.creatpallet.toDocument
 import `fun`.gladkikh.fastpallet5.network.ApiFactory
 import `fun`.gladkikh.fastpallet5.network.intity.GetListDocsRequest
@@ -16,31 +17,40 @@ import io.reactivex.Single
  *    проставляем новый пришедщий в подтверждении статус
  * 4. Потом при сохранении не будем убивать все
  */
-fun getListDocumentsDbFromServer(documentRepository: DocumentRepository): Single<List<Document>> {
-    //ToDo Взять из настроек
-    val getListDocsRequest = GetListDocsRequest(codeTSD = "333")
-
-    return ApiFactory.reqest(
-        command = "command_get_doc",
-        username = "Администратор",
-        pass = "",
-        objReqest = getListDocsRequest,
-        classResponse = ListDocResponse::class.java
-    ).map {
-        it as ListDocResponse
-    }.map { resp ->
-        resp.listDocuments?.map {
-            it.toDocument()
+fun getListDocumentsDbFromServer(
+    documentRepository: DocumentRepository,
+    settingPref: SettingsPref
+): Single<List<Document>> {
+    return Single.just(settingPref)
+        .map {
+            if (it.code.isNullOrEmpty()) {
+                throw Throwable("Не заполнен код ТСД")
+            }
+            return@map GetListDocsRequest(codeTSD = settingPref.code!!)
+        }.flatMap {
+            ApiFactory.reqest(
+                command = "command_get_doc",
+                username = "Администратор",
+                pass = "",
+                objReqest = it,
+                classResponse = ListDocResponse::class.java
+            )
         }
-    }.flatMap {
-        //Отправляем подтверждение и проверяем что в 1С применился новый статус
-        confirmLoadDocuments(it)
-    }.doOnSuccess {
-        //Записываем
-        it.forEach { doc ->
-            documentRepository.saveDocument(doc)
+        .map {
+            it as ListDocResponse
+        }.map { resp ->
+            resp.listDocuments?.map {
+                it.toDocument()
+            }
+        }.flatMap {
+            //Отправляем подтверждение и проверяем что в 1С применился новый статус
+            confirmLoadDocuments(it)
+        }.doOnSuccess {
+            //Записываем
+            it.forEach { doc ->
+                documentRepository.saveDocument(doc)
+            }
         }
-    }
 }
 
 
