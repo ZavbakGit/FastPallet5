@@ -1,7 +1,7 @@
 package `fun`.gladkikh.fastpallet5
 
 import `fun`.gladkikh.fastpallet5.db.AppDatabase
-import `fun`.gladkikh.fastpallet5.di.DependeciesModule
+import `fun`.gladkikh.fastpallet5.di.DependencyModule
 import android.app.Application
 import android.content.Context
 import androidx.room.Room
@@ -34,7 +34,7 @@ class App : Application() {
             // Android context
             androidContext(this@App)
             // modules
-            modules(DependeciesModule.appModule)
+            modules(DependencyModule.appModule)
         }
         println("App -> Constants.UID: ${Constants.UID}; Platform: Android; APP Version: ${Constants.APP_VERSION}; OS Version: ${Constants.OS_VERSION}")
     }
