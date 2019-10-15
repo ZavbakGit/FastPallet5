@@ -9,7 +9,7 @@ import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.Observer
 
 
-class DialogProductCreatePalletViewModel(private val cretPalletRepository: CreatePalletRepository) :
+class DialogProductCreatePalletViewModel(private val cretePalletRepository: CreatePalletRepository) :
     BaseViewModel<WrapDataDialogProductCreatePallet?, DialogProductCreatePalletViewState>() {
 
     private var liveDataMerger: MediatorLiveData<WrapDataDialogProductCreatePallet> =
@@ -51,7 +51,7 @@ class DialogProductCreatePalletViewModel(private val cretPalletRepository: Creat
                 }
             }
 
-            cretPalletRepository.getDocByGuidLd(guidDoc).apply {
+            cretePalletRepository.getDocByGuidLd(guidDoc).apply {
                 addSource(this) {
                     doc = it
                     update()
@@ -59,7 +59,7 @@ class DialogProductCreatePalletViewModel(private val cretPalletRepository: Creat
                 listSourse.add(this)
             }
 
-            cretPalletRepository.getProductByGuid(guidProduct).apply {
+            cretePalletRepository.getProductByGuid(guidProduct).apply {
                 addSource(this) {
                     product = it
                     update()
@@ -98,7 +98,7 @@ class DialogProductCreatePalletViewModel(private val cretPalletRepository: Creat
     fun onFragmentDestroy() {
         liveDataMerger.value?.product?.let { prod ->
             liveDataMerger.value?.doc?.guid?.let { guid ->
-                cretPalletRepository.saveProduct(
+                cretePalletRepository.saveProduct(
                     prod,
                     guid
                 )

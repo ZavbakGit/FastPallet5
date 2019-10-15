@@ -79,7 +79,6 @@ class DocumentsFragment : BaseFragment<List<ItemDocument>?, DocumentsViewState>(
                         viewModel.sendDocToServer(this)
                     }
                 }
-
             }
         })
 
