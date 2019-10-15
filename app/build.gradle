@@ -71,6 +71,11 @@ dependencies {
     implementation "androidx.legacy:legacy-preference-v14:1.0.0"
     implementation "androidx.preference:preference:1.1.0"
 
+    testImplementation 'junit:junit:4.12'
+    testImplementation "com.nhaarman.mockitokotlin2:mockito-kotlin:2.1.0"
+    testImplementation "org.mockito:mockito-inline:2.28.2"
+    testImplementation 'android.arch.core:core-testing:1.1.1'
+
 
     implementation "com.github.castorflex.smoothprogressbar:library:1.1.0"
     implementation 'com.google.android.material:material:1.0.0'
