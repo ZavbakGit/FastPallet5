@@ -7,19 +7,19 @@ import `fun`.gladkikh.fastpallet5.ui.base.BaseFragment
 import `fun`.gladkikh.fastpallet5.ui.fragment.common.Command.Close
 import `fun`.gladkikh.fastpallet5.ui.fragment.common.Command.ConfirmDialog
 import `fun`.gladkikh.fastpallet5.ui.fragment.common.startConfirmDialog
+import `fun`.gladkikh.fastpallet5.ui.returnTextWatcherOnChanged
 import android.widget.EditText
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
 import kotlinx.android.synthetic.main.box_scr.*
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class BoxCreatePalletFragment :
     BaseFragment<BoxWrapDataCreatePallet?, BoxCreatePalletViewState>() {
 
     override val layoutRes: Int = R.layout.box_scr
+    override val viewModel: BoxCreatePalletViewModel by viewModel()
+    private var changed = false
 
-    override val viewModel: BoxCreatePalletViewModel by lazy {
-        ViewModelProviders.of(this).get(BoxCreatePalletViewModel::class.java)
-    }
 
     companion object {
         val EXTRA_GUID_DOC = this::class.java.name + "extra.GUID.DOC"
@@ -28,30 +28,51 @@ class BoxCreatePalletFragment :
         val EXTRA_GUID_BOX = this::class.java.name + "extra.GUID.BOX"
     }
 
-    private val listEditText: List<EditText> by lazy { listOf(edPlace, edWeight) }
+    private val listEditText: List<EditText> by lazy { listOf(edBarcode, edWeight) }
+
+   private val textChangeListener = returnTextWatcherOnChanged {
+        changed = true
+        btSave.isEnabled = changed
+    }
+
 
     override fun renderData(data: BoxWrapDataCreatePallet?) {
-        tvInfo.text = data?.product?.nameProduct
+
+        //Если пустая то просто не обновляем
+        if (data?.doc == null) return
+        val checkEditDoc = checkEditDoc(data.doc)
+
+        btSave.isEnabled = changed
+        btDell.isEnabled = checkEditDoc
+
+        listEditText.forEach {
+            //Если нельзя редактировать то блокирнем
+            if (!checkEditDoc) {
+                it.isEnabled = false
+            }
+            it.removeTextChangedListener(textChangeListener)
+        }
+
+        tvInfo.text = data.product?.nameProduct
             ?.plus("\n")
             ?.plus(data.pallet?.number)
 
-        tv_info_doc_left.text = "".plus(data?.product?.countBox ?: 0)
+        tv_info_doc_left.text = "".plus(data.product?.countBox ?: 0)
             .plus(" / ")
-            .plus(data?.product?.count ?: 0)
+            .plus(data.product?.count ?: 0)
 
-        edPlace.setText(data?.box?.countBox.toString())
-        edWeight.setText(data?.box?.weight.toString())
-        tvDate.text = data?.box?.data?.toSimpleString()
+        tvDate.text = data.box?.data?.toSimpleString()
 
-        tvbarcode.text = data?.box?.barcode ?: ""
+        edBarcode.setText((data.box?.countBox ?: 0).toString())
+        edWeight.setText((data.box?.weight ?: 0).toString())
+
+        tvbarcode.text = data.box?.barcode ?: ""
 
         listEditText.forEach {
-            if (data?.doc != null) {
-                if (!checkEditDoc(data.doc)){
-                    it.isEnabled = false
-                }
-            }
+            it.setSelection(it.text.length)
+            it.addTextChangedListener(textChangeListener)
         }
+
 
     }
 
@@ -96,6 +117,22 @@ class BoxCreatePalletFragment :
         }
 
         btDell.setOnClickListener {
+            dell()
+        }
+
+        btSave.setOnClickListener {
+            save()
+        }
+    }
+
+    private fun save() {
+        if (btSave.isEnabled) {
+            viewModel.save(edWeight.text.toString(), edBarcode.text.toString())
+        }
+    }
+
+    private fun dell() {
+        if(btDell.isEnabled){
             viewModel.dell()
         }
     }

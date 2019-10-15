@@ -1,6 +1,5 @@
 package `fun`.gladkikh.fastpallet5.ui.fragment.creatpallet.dialodproduct
 
-import `fun`.gladkikh.fastpallet5.domain.extend.getWeightByBarcode
 import `fun`.gladkikh.fastpallet5.domain.intety.CreatePallet
 import `fun`.gladkikh.fastpallet5.domain.intety.Product
 import `fun`.gladkikh.fastpallet5.repository.CreatePalletRepository
@@ -9,7 +8,7 @@ import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.Observer
 
 
-class DialogProductCreatePalletViewModel :
+class DialogProductCreatePalletViewModel(private val cretePalletRepository: CreatePalletRepository) :
     BaseViewModel<WrapDataDialogProductCreatePallet?, DialogProductCreatePalletViewState>() {
 
     private var liveDataMerger: MediatorLiveData<WrapDataDialogProductCreatePallet> =
@@ -51,7 +50,7 @@ class DialogProductCreatePalletViewModel :
                 }
             }
 
-            CreatePalletRepository.getDocByGuidLd(guidDoc).apply {
+            cretePalletRepository.getDocByGuidLd(guidDoc).apply {
                 addSource(this) {
                     doc = it
                     update()
@@ -59,7 +58,7 @@ class DialogProductCreatePalletViewModel :
                 listSourse.add(this)
             }
 
-            CreatePalletRepository.getProductByGuid(guidProduct).apply {
+            cretePalletRepository.getProductByGuid(guidProduct).apply {
                 addSource(this) {
                     product = it
                     update()
@@ -73,36 +72,24 @@ class DialogProductCreatePalletViewModel :
     }
 
 
-    fun setDataChangeListener(barcode: String?, start: String?, finish: String?, coff: String?) {
+    fun save(barcode: String?, start: String?, finish: String?, coff: String?) {
         val product = liveDataMerger.value?.product
         val doc = liveDataMerger.value?.doc
 
-        product?.barcode = barcode
-        product?.weightStartProduct = start?.toIntOrNull() ?: 0
-        product?.weightEndProduct = finish?.toIntOrNull() ?: 0
-        product?.weightCoffProduct = coff?.toFloatOrNull() ?: 0f
+        if (product == null) return
+        if (doc == null) return
 
+        product.apply {
+            this.barcode = barcode
+            this.weightStartProduct = start?.toIntOrNull() ?: 0
+            this.weightEndProduct = finish?.toIntOrNull() ?: 0
+            this.weightCoffProduct = coff?.toFloatOrNull() ?: 0f
+        }
 
-        liveDataMerger.value = WrapDataDialogProductCreatePallet(
-            doc = doc,
-            product = product,
-            weight = getWeightByBarcode(
-                barcode = product?.barcode ?: "",
-                start = product?.weightStartProduct ?: 0,
-                finish = product?.weightEndProduct ?: 0,
-                coff = product?.weightCoffProduct ?: 0f
-            )
+        cretePalletRepository.saveProduct(
+            product,
+            doc.guid
         )
     }
 
-    fun onFragmentDestroy() {
-        liveDataMerger.value?.product?.let { prod ->
-            liveDataMerger.value?.doc?.guid?.let { guid ->
-                CreatePalletRepository.saveProduct(
-                    prod,
-                    guid
-                )
-            }
-        }
-    }
 }

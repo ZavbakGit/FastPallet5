@@ -10,16 +10,14 @@ import android.content.Context
 import android.os.Bundle
 import android.view.View
 import android.widget.TextView
-import androidx.lifecycle.ViewModelProviders
 import kotlinx.android.synthetic.main.documents_frag.*
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class CreatePalletFragment : BaseFragment<CreatePallet?, CreatPalletViewState>() {
+class CreatePalletFragment : BaseFragment<CreatePallet?, CreatePalletViewState>() {
 
     override val layoutRes: Int = R.layout.documents_frag
 
-    override val viewModel: CreatePalletViewModel by lazy {
-        ViewModelProviders.of(this).get(CreatePalletViewModel::class.java)
-    }
+    override val viewModel: CreatePalletViewModel by viewModel()
 
     companion object {
         val EXTRA_GUID = CreatePalletFragment::class.java.name + "extra.GUID"

@@ -1,6 +1,7 @@
 package `fun`.gladkikh.fastpallet5.ui.fragment.creatpallet.pallet
 
-import `fun`.gladkikh.fastpallet5.Constants
+import `fun`.gladkikh.fastpallet5.Constants.KEY_ADD
+import `fun`.gladkikh.fastpallet5.Constants.KEY_DELL
 import `fun`.gladkikh.fastpallet5.R
 import `fun`.gladkikh.fastpallet5.common.toSimpleString
 import `fun`.gladkikh.fastpallet5.domain.intety.Box
@@ -16,17 +17,16 @@ import android.os.Bundle
 import android.view.View
 import android.widget.TextView
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
 import kotlinx.android.synthetic.main.documents_frag.*
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class PalletCreatePalletFragment :
     BaseFragment<PalletWrapDataCreatePallet?, PalletCreatPalletViewState>() {
 
     override val layoutRes: Int = R.layout.documents_frag
 
-    override val viewModel: PalletCreatePalletViewModel by lazy {
-        ViewModelProviders.of(this).get(PalletCreatePalletViewModel::class.java)
-    }
+    override val viewModel: PalletCreatePalletViewModel by viewModel()
+
 
     companion object {
         val EXTRA_GUID_DOC = this::class.java.name + "extra.GUID.DOC"
@@ -119,7 +119,7 @@ class PalletCreatePalletFragment :
         hostActivity.getKeyListenerLd().observe(viewLifecycleOwner, Observer { key ->
             when (key) {
                 //Проверяем, что нажата dell
-                Constants.KEY_DELL -> {
+                KEY_DELL -> {
                     //Проверяем, что выбрана строка
                     listView.selectedItemPosition.takeUnless { position ->
                         position == -1
@@ -127,12 +127,16 @@ class PalletCreatePalletFragment :
                         viewModel.dell(this)
                     }
                 }
+                KEY_ADD ->{
+                    viewModel.addBox()
+                }
 
             }
         })
 
 
 
+        //ToDo test
         tvMenu.setOnClickListener {
             //            Flowable.interval(300, TimeUnit.MILLISECONDS)
 //                .take(500)
@@ -175,8 +179,7 @@ class PalletCreatePalletFragment :
         override fun bindView(item: Box, holder: Any) {
             holder as ViewHolder
             holder.tvInfo.text = item.data?.toSimpleString()
-                //.plus("\n").plus(item.guid)
-                .plus("\n").plus(item.barcode)
+                .plus("\n").plus(item.barcode?:"")
 
             holder.tvLeft.text = ""
             holder.tvRight.text = ""
