@@ -136,12 +136,4 @@ class BoxCreatePalletFragment :
             viewModel.dell()
         }
     }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        viewModel.onFragmentDestroy()
-
-    }
-
-
 }
