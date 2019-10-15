@@ -213,15 +213,16 @@ class BoxCreatePalletViewModel(private val createPalletRepository: CreatePalletR
 
     }
 
-    fun setDataChangeListener(weight: String?, countBox: String?) {
-        liveDataMerger.value?.box.apply {
-            this?.weight = weight?.toFloatOrNull() ?: 0f
-            this?.countBox = countBox?.toIntOrNull() ?: 0
+    fun save(weight: String?, countBox: String?) {
+        val box = liveDataMerger.value?.box ?: return
+        val pallet = liveDataMerger.value?.pallet?:return
+
+        box.apply {
+            this.weight = weight?.toFloatOrNull() ?: 0f
+            this.countBox = countBox?.toIntOrNull() ?: 0
         }
 
-        liveDataMerger.value?.box?.let {
-            createPalletRepository.saveBox(it, liveDataMerger.value?.pallet?.guid!!)
-        }
+        createPalletRepository.saveBox(box, pallet.guid)
     }
 
 

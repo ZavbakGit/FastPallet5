@@ -127,7 +127,7 @@ class BoxCreatePalletFragment :
 
     private fun save() {
         if (btSave.isEnabled) {
-            viewModel.setDataChangeListener(edWeight.text.toString(), edBarcode.text.toString())
+            viewModel.save(edWeight.text.toString(), edBarcode.text.toString())
         }
     }
 
