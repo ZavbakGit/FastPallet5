@@ -10,8 +10,13 @@ import `fun`.gladkikh.fastpallet5.ui.fragment.common.startConfirmDialog
 import `fun`.gladkikh.fastpallet5.ui.returnTextWatcherOnChanged
 import android.widget.EditText
 import androidx.lifecycle.Observer
+import io.reactivex.Flowable
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
+import io.reactivex.schedulers.Schedulers.*
 import kotlinx.android.synthetic.main.box_scr.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
+import java.util.concurrent.TimeUnit
 
 class BoxCreatePalletFragment :
     BaseFragment<BoxWrapDataCreatePallet?, BoxCreatePalletViewState>() {
@@ -30,7 +35,7 @@ class BoxCreatePalletFragment :
 
     private val listEditText: List<EditText> by lazy { listOf(edBarcode, edWeight) }
 
-   private val textChangeListener = returnTextWatcherOnChanged {
+    private val textChangeListener = returnTextWatcherOnChanged {
         changed = true
         btSave.isEnabled = changed
     }
@@ -113,7 +118,16 @@ class BoxCreatePalletFragment :
 
         tvInfo.setOnClickListener {
             //ToDo this is test
-            viewModel.addBox("${(10..99).random()}123456789")
+
+            Flowable.interval(300, TimeUnit.MILLISECONDS)
+                .take(500)
+                .subscribeOn(io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe {
+                    viewModel.addBox("${(10..99).random()}123456789")
+                }
+
+            //viewModel.addBox("${(10..99).random()}123456789")
         }
 
         btDell.setOnClickListener {
@@ -132,7 +146,7 @@ class BoxCreatePalletFragment :
     }
 
     private fun dell() {
-        if(btDell.isEnabled){
+        if (btDell.isEnabled) {
             viewModel.dell()
         }
     }

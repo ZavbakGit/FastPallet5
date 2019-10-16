@@ -39,7 +39,7 @@ class ProductCreatePalletFragment :
         data?.product?.pallets?.let {
             adapter.list = data.listItem
         }
-        tv_info_doc_right.text = data?.infoListBoxWrap?.getInfo() ?: ""
+        tv_info_doc_right.text = data?.infoListBoxWrap?.getInfoPallet() ?: ""
         tv_info_doc_left.text = (data?.product?.countBox ?: 0).toString()
             .plus(" / ")
             .plus((data?.product?.count ?: 0).toString())
@@ -124,7 +124,7 @@ class ProductCreatePalletFragment :
             //Обновляем инфо
 
             item.infoListBoxWrap.let {
-                holder.tvRight.text = it?.getInfo()
+                holder.tvRight.text = it?.getInfoBox()
             }
         }
 

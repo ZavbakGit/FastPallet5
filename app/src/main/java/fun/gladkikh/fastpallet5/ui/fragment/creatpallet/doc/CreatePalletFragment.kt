@@ -1,7 +1,6 @@
 package `fun`.gladkikh.fastpallet5.ui.fragment.creatpallet.doc
 
 import `fun`.gladkikh.fastpallet5.R
-import `fun`.gladkikh.fastpallet5.domain.entity.Product
 import `fun`.gladkikh.fastpallet5.ui.adapter.MyBaseAdapter
 import `fun`.gladkikh.fastpallet5.ui.base.BaseFragment
 import `fun`.gladkikh.fastpallet5.ui.fragment.creatpallet.product.ProductCreatePalletFragment
@@ -55,7 +54,7 @@ class CreatePalletFragment : BaseFragment<DocWrapDataCreatePallet?, CreatePallet
 
             //ToDo Пересчитать причем постораться в другом потоке
             item.infoListBoxWrap.let {
-                holder.tvRight.text = it?.getInfo()
+                holder.tvRight.text = it?.getInfoPallet()
             }
         }
 

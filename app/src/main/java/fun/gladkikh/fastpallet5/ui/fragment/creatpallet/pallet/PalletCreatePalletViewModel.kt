@@ -1,7 +1,7 @@
 package `fun`.gladkikh.fastpallet5.ui.fragment.creatpallet.pallet
 
 import `fun`.gladkikh.fastpallet5.domain.checkEditDoc
-import `fun`.gladkikh.fastpallet5.domain.extend.InfoListBoxWrap
+import `fun`.gladkikh.fastpallet5.domain.extend.InfoPalletListBoxWrap
 import `fun`.gladkikh.fastpallet5.domain.extend.getInfoWrap
 import `fun`.gladkikh.fastpallet5.domain.extend.getWeightByBarcode
 import `fun`.gladkikh.fastpallet5.domain.entity.Box
@@ -31,8 +31,8 @@ class PalletCreatePalletViewModel(private val createPalletRepository: CreatePall
     private var liveDataMerger: MediatorLiveData<PalletWrapDataCreatePallet> = MediatorLiveData()
 
     private val dataPublishSubject = PublishSubject.create<List<Box>?>()
-    private val infoWrap = MutableLiveData<InfoListBoxWrap>()
-    fun getInfoWrap(): LiveData<InfoListBoxWrap> = infoWrap
+    private val infoWrap = MutableLiveData<InfoPalletListBoxWrap>()
+    fun getInfoWrap(): LiveData<InfoPalletListBoxWrap> = infoWrap
 
     private val documentObserver = Observer<PalletWrapDataCreatePallet> {
         viewStateLiveData.value = PalletCreatPalletViewState(

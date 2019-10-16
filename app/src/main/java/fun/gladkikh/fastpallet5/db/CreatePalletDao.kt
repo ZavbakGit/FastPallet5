@@ -1,7 +1,7 @@
 package `fun`.gladkikh.fastpallet5.db
 
 
-import `fun`.gladkikh.fastpallet5.db.initity.BoxCreatPalletDb
+import `fun`.gladkikh.fastpallet5.db.initity.BoxCreatePalletDb
 import `fun`.gladkikh.fastpallet5.db.initity.CreatePalletDb
 import `fun`.gladkikh.fastpallet5.db.initity.PalletCreatePalletDb
 import `fun`.gladkikh.fastpallet5.db.initity.ProductCreatePalletDb
@@ -10,6 +10,12 @@ import androidx.room.*
 
 @Dao
 interface CreatePalletDao {
+
+
+    //@Query("SELECT SUM(weight) as total FROM BoxCreatePalletDb")
+    @Query("SELECT cast(SUM(weight) as DECIMAL(18,2)) as total FROM BoxCreatePalletDb")
+    fun getSumWeight(): Sum
+
 
     //region Doc
     @Insert(onConflict = OnConflictStrategy.IGNORE)
@@ -124,37 +130,39 @@ interface CreatePalletDao {
 
     //region BoxServer
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    fun insertIgnore(boxCreatPalletDb: BoxCreatPalletDb): Long
+    fun insertIgnore(boxCreatPalletDb: BoxCreatePalletDb): Long
 
     @Update
-    fun update(boxCreatPalletDb: BoxCreatPalletDb)
+    fun update(boxCreatPalletDb: BoxCreatePalletDb)
 
     @Transaction
-    fun insertOrUpdate(boxCreatPalletDb: BoxCreatPalletDb) {
+    fun insertOrUpdate(boxCreatPalletDb: BoxCreatePalletDb) {
         if (insertIgnore(boxCreatPalletDb) == -1L) {
             update(boxCreatPalletDb)
         }
     }
 
 
-    @Query("SELECT * FROM BoxCreatPalletDb")
-    fun getBoxAll(): List<BoxCreatPalletDb>
+    @Query("SELECT * FROM BoxCreatePalletDb")
+    fun getBoxAll(): List<BoxCreatePalletDb>
 
-    @Query("SELECT * FROM BoxCreatPalletDb WHERE guid = :guid")
-    fun getBoxByGuidLd(guid: String): LiveData<BoxCreatPalletDb>
+    @Query("SELECT * FROM BoxCreatePalletDb WHERE guid = :guid")
+    fun getBoxByGuidLd(guid: String): LiveData<BoxCreatePalletDb>
 
-    @Query("SELECT * FROM BoxCreatPalletDb WHERE guid = :guid")
-    fun getBoxByGuid(guid: String): BoxCreatPalletDb
+    @Query("SELECT * FROM BoxCreatePalletDb WHERE guid = :guid")
+    fun getBoxByGuid(guid: String): BoxCreatePalletDb
 
-    @Query("SELECT * FROM BoxCreatPalletDb WHERE guidPallet = :guidPallet")
-    fun getListBoxByPalletLd(guidPallet: String): LiveData<List<BoxCreatPalletDb>>
+    @Query("SELECT * FROM BoxCreatePalletDb WHERE guidPallet = :guidPallet")
+    fun getListBoxByPalletLd(guidPallet: String): LiveData<List<BoxCreatePalletDb>>
 
-    @Query("SELECT * FROM BoxCreatPalletDb WHERE guidPallet = :guidPallet")
-    fun getListBoxByPallet(guidPallet: String): List<BoxCreatPalletDb>
+    @Query("SELECT * FROM BoxCreatePalletDb WHERE guidPallet = :guidPallet")
+    fun getListBoxByPallet(guidPallet: String): List<BoxCreatePalletDb>
 
 
     @Delete
-    fun dellBox(boxCreatPalletDb: BoxCreatPalletDb)
+    fun dellBox(boxCreatPalletDb: BoxCreatePalletDb)
     //endregion
 
 }
+
+data class Sum(val total:Float)

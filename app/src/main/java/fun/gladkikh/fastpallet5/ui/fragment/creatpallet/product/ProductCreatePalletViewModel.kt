@@ -41,8 +41,8 @@ class ProductCreatePalletViewModel(private val createPalletRepository: CreatePal
                 }
                 .map {
 
-                    val infoWrap = liveDataMerger.value!!.listItem[it].pallet?.guid?.let { it1 ->
-                        createPalletRepository.getListBoxByPallet(it1).getInfoWrap()
+                    val infoWrap = liveDataMerger.value!!.listItem[it].pallet?.guid?.let {
+                        createPalletRepository.getListBoxByPallet(it).getInfoWrap()
                     }
 
                     val data = WrapDataProductCreatePallet(
@@ -59,7 +59,9 @@ class ProductCreatePalletViewModel(private val createPalletRepository: CreatePal
 
                     val totalInfoListBoxWrap = liveDataMerger.value?.listItem?.map {
                         it.infoListBoxWrap
-                    }?.fold(InfoListBoxWrap()) { total, next -> total + next }
+                    }?.fold(InfoPalletListBoxWrap()) { total, next -> total + next }
+
+                    totalInfoListBoxWrap?.countPallet = liveDataMerger.value?.listItem?.size
 
                     data.infoListBoxWrap = totalInfoListBoxWrap
 

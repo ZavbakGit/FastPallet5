@@ -2,7 +2,7 @@ package `fun`.gladkikh.fastpallet5.ui.fragment.creatpallet.doc
 
 import `fun`.gladkikh.fastpallet5.domain.entity.CreatePallet
 import `fun`.gladkikh.fastpallet5.domain.entity.Product
-import `fun`.gladkikh.fastpallet5.domain.extend.InfoListBoxWrap
+import `fun`.gladkikh.fastpallet5.domain.extend.InfoPalletListBoxWrap
 import `fun`.gladkikh.fastpallet5.ui.base.BaseViewState
 
 
@@ -17,5 +17,5 @@ data class DocWrapDataCreatePallet(
 data class ItemProduct(
     val number:Int? = null,
     val product: Product? = null,
-    var infoListBoxWrap: InfoListBoxWrap? = null
+    var infoListBoxWrap: InfoPalletListBoxWrap? = null
 )

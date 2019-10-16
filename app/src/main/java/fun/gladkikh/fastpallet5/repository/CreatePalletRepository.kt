@@ -9,7 +9,7 @@ import `fun`.gladkikh.fastpallet5.maping.creatpallet.*
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Transformations
 
-class CreatePalletRepository(private val createPalletDao: CreatePalletDao) {
+class CreatePalletRepository(val createPalletDao: CreatePalletDao) {
 
     //region Doc
     fun getListDoc() = createPalletDao.getAllLd()

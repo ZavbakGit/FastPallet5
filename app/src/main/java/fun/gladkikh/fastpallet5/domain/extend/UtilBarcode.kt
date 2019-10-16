@@ -10,8 +10,8 @@ fun Product.getWeightFromBarcode(barcode: String): Float {
 }
 
 //ToDo Надо перенести куданибудь
-fun List<Box>.getInfoWrap(): InfoListBoxWrap {
-    val infoPalletWrap = InfoListBoxWrap(0, 0f)
+fun List<Box>.getInfoWrap(): InfoPalletListBoxWrap {
+    val infoPalletWrap = InfoPalletListBoxWrap(0, 0f,0,0)
 
     val size = this.size
 
@@ -20,6 +20,7 @@ fun List<Box>.getInfoWrap(): InfoListBoxWrap {
             countBox = countBox!! + (it.countBox ?: 0)
             weight = weight!!.toBigDecimal().add((it.weight ?: 0f).toBigDecimal()).toFloat()
             row = size
+            countPallet = 0
         }
     }
 
@@ -29,31 +30,35 @@ fun List<Box>.getInfoWrap(): InfoListBoxWrap {
 
 
 
-data class InfoListBoxWrap(
+data class InfoPalletListBoxWrap(
     var countBox: Int? = null,
     var weight: Float? = null,
-    var row: Int? = null
+    var row: Int? = null,
+    var countPallet:Int? = null
 ) {
 
-    fun getInfo() = (row ?: 0).toString().plus(" / ")
-        .plus(countBox ?: 0).plus(" / ")
-        .plus(weight ?: 0)
+    fun getInfoBox() = "стр: ".plus(row ?: 0).toString()
+        .plus(" кор: ").plus(countBox ?: 0)
+        .plus(" кол: ").plus(weight ?: 0)
 
-
+    fun getInfoPallet() = "пaл: ".plus(countPallet ?: 0)
+        .plus(" кор: ").plus(countBox ?: 0)
+        .plus(" кол: ").plus(weight ?: 0)
 
 }
 
-operator fun InfoListBoxWrap.plus(infoListBoxWrap: InfoListBoxWrap?): InfoListBoxWrap {
+operator fun InfoPalletListBoxWrap.plus(infoListBoxWrap: InfoPalletListBoxWrap?): InfoPalletListBoxWrap {
     val weight = BigDecimal(this.weight?.toString() ?: "0")
         .plus(
             BigDecimal(infoListBoxWrap?.weight?.toString() ?: "0")
         )
         .toFloat()
 
-    return InfoListBoxWrap(
+    return InfoPalletListBoxWrap(
         countBox = (infoListBoxWrap?.countBox ?: 0) + (this.countBox ?: 0),
         row = (infoListBoxWrap?.row ?: 0) + (this.row ?: 0),
-        weight = weight
+        weight = weight,
+        countPallet = (infoListBoxWrap?.countPallet ?: 0) + (this.countPallet ?: 0)
     )
 }
 

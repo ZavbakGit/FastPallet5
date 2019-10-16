@@ -1,6 +1,6 @@
 package `fun`.gladkikh.fastpallet5.maping.creatpallet
 
-import `fun`.gladkikh.fastpallet5.db.initity.BoxCreatPalletDb
+import `fun`.gladkikh.fastpallet5.db.initity.BoxCreatePalletDb
 import `fun`.gladkikh.fastpallet5.db.initity.CreatePalletDb
 import `fun`.gladkikh.fastpallet5.db.initity.PalletCreatePalletDb
 import `fun`.gladkikh.fastpallet5.db.initity.ProductCreatePalletDb
@@ -116,7 +116,7 @@ fun Pallet.toPalletCreatePalletDb(guidProduct:String):PalletCreatePalletDb{
     )
 }
 
-fun BoxCreatPalletDb.toBox(): Box {
+fun BoxCreatePalletDb.toBox(): Box {
     return Box(
         guid = this.guid,
         barcode = this.barcode,
@@ -126,8 +126,8 @@ fun BoxCreatPalletDb.toBox(): Box {
     )
 }
 
-fun Box.toBoxCreatePalletDb(guidPallet:String):BoxCreatPalletDb{
-    return BoxCreatPalletDb(
+fun Box.toBoxCreatePalletDb(guidPallet:String):BoxCreatePalletDb{
+    return BoxCreatePalletDb(
         guid = this.guid,
         weight = this.weight,
         data = this.data?.time,

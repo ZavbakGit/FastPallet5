@@ -9,6 +9,7 @@ import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.Observer
 import io.reactivex.BackpressureStrategy
 import io.reactivex.Flowable
+import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import io.reactivex.subjects.PublishSubject
 
@@ -38,33 +39,64 @@ class CreatePalletViewModel(private val createPalletRepository: CreatePalletRepo
                 .switchMap {
                     Flowable.fromIterable(it.listItem.indices)
                 }
-                .map { it ->
+//                .switchMap {
+//                    Flowable.just(it)
+//                }
+                .doOnNext {
 
-                    //Расчитаем по всем паллетам
-                    val infoWrap = liveDataMerger.value!!.listItem[it].product?.pallets
-                        ?.flatMap { pallet ->
-                            createPalletRepository.getListBoxByPallet(pallet.guid)
-                        }
-                        ?.getInfoWrap()
+//                  return@map  it.listItem.forEach {
+//                        val pallets =
+//                            createPalletRepository.getListPalletByProduct(it.product!!.guid)
+//
+//                        it.infoListBoxWrap = pallets.flatMap {
+//                            createPalletRepository.getListBoxByPallet(it.guid)
+//                        }.getInfoWrap()
+//
+//                        it.infoListBoxWrap?.countPallet = pallets.size
+//                  } as DocWrapDataCreatePallet
 
 
-                    val data = DocWrapDataCreatePallet(
-                        doc = liveDataMerger.value!!.doc,
+                   val sum =  createPalletRepository.createPalletDao.getSumWeight()
+                    val f = 1
+                    //342381.8
+                    //342504.12
 
-                        listItem = liveDataMerger.value!!.listItem.mapIndexed { index, itemProduct ->
-                            if (index == it) {
-                                itemProduct.infoListBoxWrap = infoWrap
-                            }
+                    message.postValue(sum.total.toString())
 
-                            return@mapIndexed itemProduct
-                        }
-                    )
 
-                    liveDataMerger.postValue(data)
-                    return@map infoWrap
+//                    //Расчитаем по всем паллетам
+//                    val guidProd = liveDataMerger.value!!.listItem[it].product?.guid
+//
+//                    val infoWrap = createPalletRepository.getListPalletByProduct(guidProd!!)
+//                        .flatMap {
+//                            createPalletRepository.getListBoxByPallet(it.guid)
+//                        }
+//                        .getInfoWrap()
+//
+//                    infoWrap.countPallet =
+//                        createPalletRepository.getListPalletByProduct(guidProd).size
+//
+//
+//                    val data = DocWrapDataCreatePallet(
+//                        doc = liveDataMerger.value!!.doc,
+//
+//                        listItem = liveDataMerger.value!!.listItem.mapIndexed { index, itemProduct ->
+//                            if (index == it) {
+//                                itemProduct.infoListBoxWrap = infoWrap
+//                            }
+//
+//                            return@mapIndexed itemProduct
+//                        }
+//                    )
+//
+//                    liveDataMerger.postValue(data)
+                    //return@map infoWrap
                 }
                 .subscribeOn(Schedulers.io())
-                .subscribe()
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe{
+                    //liveDataMerger.postValue(it)
+                }
         )
 
     }

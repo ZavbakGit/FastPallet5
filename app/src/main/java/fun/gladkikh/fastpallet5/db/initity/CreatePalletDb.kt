@@ -83,7 +83,7 @@ data class PalletCreatePalletDb(
         onDelete = ForeignKey.CASCADE
     )]
 )
-data class BoxCreatPalletDb(
+data class BoxCreatePalletDb(
     @PrimaryKey val guid: String,
     var guidPallet:String,
     var barcode: String?,
