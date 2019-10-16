@@ -28,11 +28,9 @@ fun getListDocumentsDbFromServer(
             }
             return@map GetListDocsRequest(codeTSD = settingPref.code!!)
         }.flatMap {
-            ApiFactory.reqest(
+            ApiFactory.request(
                 command = "command_get_doc",
-                username = "Администратор",
-                pass = "",
-                objReqest = it,
+                objRequest = it,
                 classResponse = ListDocResponse::class.java
             )
         }

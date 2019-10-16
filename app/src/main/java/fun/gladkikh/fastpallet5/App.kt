@@ -2,6 +2,7 @@ package `fun`.gladkikh.fastpallet5
 
 import `fun`.gladkikh.fastpallet5.db.AppDatabase
 import `fun`.gladkikh.fastpallet5.di.DependencyModule
+import `fun`.gladkikh.fastpallet5.repository.SettingsRepository
 import android.app.Application
 import android.content.Context
 import androidx.room.Room
@@ -20,15 +21,11 @@ class App : Application() {
         private var instance: App? = null
 
         fun appContext(): Context? = instance?.applicationContext
-        lateinit var database: AppDatabase
+        var settingsRepository: SettingsRepository = SettingsRepository()
     }
 
     override fun onCreate() {
         super.onCreate()
-        database = Room.databaseBuilder(this, AppDatabase::class.java, "mydatabase")
-            .allowMainThreadQueries()
-            .build()
-
         startKoin {
             androidLogger()
             // Android context

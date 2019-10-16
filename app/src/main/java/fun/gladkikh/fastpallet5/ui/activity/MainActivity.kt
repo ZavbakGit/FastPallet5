@@ -1,5 +1,6 @@
 package `fun`.gladkikh.fastpallet5.ui.activity
 
+import `fun`.gladkikh.fastpallet5.App
 import `fun`.gladkikh.fastpallet5.R
 import `fun`.gladkikh.fastpallet5.domain.intety.SettingsPref
 import `fun`.gladkikh.fastpallet5.repository.SettingsRepository
@@ -14,16 +15,9 @@ import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.activity_main.*
 
 import kotlinx.android.synthetic.main.progress_overlay.*
-import org.koin.android.ext.android.getKoin
-import org.koin.core.qualifier.named
-import org.koin.core.scope.Scope
 
 
 class MainActivity : BaseActivity(), HostActivity {
-
-    private var activitySession: Scope? = null
-
-    private lateinit var setting: SettingsPref
 
     lateinit var barcodeHelper: BarcodeHelper
 
@@ -73,7 +67,7 @@ class MainActivity : BaseActivity(), HostActivity {
                 refreshSettings()
                 barcodeHelper = BarcodeHelper(
                     this,
-                    BarcodeHelper.TYPE_TSD.getTypeTSD(setting.typeTsd)
+                    BarcodeHelper.TYPE_TSD.getTypeTSD(App.settingsRepository.settings.typeTsd)
                 )
                 barcodeHelper.getBarcodeLiveData().observe(this, Observer {
                     barcode.postValue(it)
@@ -82,27 +76,22 @@ class MainActivity : BaseActivity(), HostActivity {
         }
 
         refreshSettings()
-        showMessage(setting.host ?: "")
 
     }
 
     private fun refreshSettings() {
-        val koin = getKoin()
-
-        if (activitySession != null) {
-            activitySession?.close()
-        }
-        activitySession = koin.createScope("myScope1", named("scope_main_activity"))
-        setting = activitySession?.get<SettingsPref>()!!
-
-        val settingsRepository = koin.get<SettingsRepository>()
-        settingsRepository.settings = setting
+//        val koin = getKoin()
+//
+//        if (activitySession != null) {
+//            activitySession?.close()
+//        }
+//        activitySession = koin.createScope("myScope1", named("scope_main_activity"))
+//        setting = activitySession?.get<SettingsPref>()!!
+//
+//        val settingsRepository = koin.get<SettingsRepository>()
+        App.settingsRepository.readSettings(this)
     }
 
-    override fun onStop() {
-        super.onStop()
-        activitySession?.close()
-    }
 
     override fun getLayout() = R.layout.activity_main
 }
