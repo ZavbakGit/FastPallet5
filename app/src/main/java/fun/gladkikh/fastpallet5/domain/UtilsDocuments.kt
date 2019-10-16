@@ -1,7 +1,7 @@
 package `fun`.gladkikh.fastpallet5.domain
 
-import `fun`.gladkikh.fastpallet5.domain.intety.CreatePallet
-import `fun`.gladkikh.fastpallet5.domain.intety.Status
+import `fun`.gladkikh.fastpallet5.domain.entity.CreatePallet
+import `fun`.gladkikh.fastpallet5.domain.entity.Status
 
 fun <T>getStatusDoc(doc: T):Status?{
     when (doc) {

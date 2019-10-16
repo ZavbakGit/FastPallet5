@@ -1,7 +1,7 @@
 package `fun`.gladkikh.fastpallet5.ui.fragment.creatpallet.dialodproduct
 
-import `fun`.gladkikh.fastpallet5.domain.intety.CreatePallet
-import `fun`.gladkikh.fastpallet5.domain.intety.Product
+import `fun`.gladkikh.fastpallet5.domain.entity.CreatePallet
+import `fun`.gladkikh.fastpallet5.domain.entity.Product
 import `fun`.gladkikh.fastpallet5.ui.base.BaseViewState
 
 

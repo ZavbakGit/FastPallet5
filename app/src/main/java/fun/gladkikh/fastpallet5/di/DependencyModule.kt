@@ -1,7 +1,6 @@
 package `fun`.gladkikh.fastpallet5.di
 
 import `fun`.gladkikh.fastpallet5.db.AppDatabase
-import `fun`.gladkikh.fastpallet5.domain.intety.SettingsPref
 import `fun`.gladkikh.fastpallet5.repository.CreatePalletRepository
 import `fun`.gladkikh.fastpallet5.repository.DocumentRepository
 import `fun`.gladkikh.fastpallet5.repository.SettingsRepository
@@ -12,11 +11,9 @@ import `fun`.gladkikh.fastpallet5.ui.fragment.creatpallet.pallet.PalletCreatePal
 import `fun`.gladkikh.fastpallet5.ui.fragment.creatpallet.product.ProductCreatePalletViewModel
 import `fun`.gladkikh.fastpallet5.ui.fragment.documents.DocumentsViewModel
 import android.content.Context
-import androidx.preference.PreferenceManager
 import androidx.room.Room
 import org.koin.android.ext.koin.androidContext
 import org.koin.androidx.viewmodel.dsl.viewModel
-import org.koin.core.qualifier.named
 import org.koin.dsl.module
 
 

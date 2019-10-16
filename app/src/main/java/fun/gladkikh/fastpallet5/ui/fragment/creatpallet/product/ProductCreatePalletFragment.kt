@@ -3,7 +3,6 @@ package `fun`.gladkikh.fastpallet5.ui.fragment.creatpallet.product
 import `fun`.gladkikh.fastpallet5.Constants.KEY_DELL
 import `fun`.gladkikh.fastpallet5.R
 import `fun`.gladkikh.fastpallet5.common.toSimpleString
-import `fun`.gladkikh.fastpallet5.domain.intety.Pallet
 import `fun`.gladkikh.fastpallet5.ui.adapter.MyBaseAdapter
 import `fun`.gladkikh.fastpallet5.ui.base.BaseFragment
 import `fun`.gladkikh.fastpallet5.ui.fragment.common.Command.ConfirmDialog
@@ -14,12 +13,12 @@ import android.os.Bundle
 import android.view.View
 import android.widget.TextView
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
 import kotlinx.android.synthetic.main.documents_frag.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
+
 class ProductCreatePalletFragment :
-    BaseFragment<WrapDataProductCreatePallet?, ProductCreatPalletViewState>() {
+    BaseFragment<WrapDataProductCreatePallet?, ProductCreatePalletViewState>() {
 
     override val layoutRes: Int = R.layout.documents_frag
 
@@ -38,8 +37,12 @@ class ProductCreatePalletFragment :
         tvInfo.text = data?.product?.nameProduct
         listView.adapter = adapter
         data?.product?.pallets?.let {
-            adapter.list = data.product.pallets
+            adapter.list = data.listItem
         }
+        tv_info_doc_right.text = data?.infoListBoxWrap?.getInfo() ?: ""
+        tv_info_doc_left.text = (data?.product?.countBox ?: 0).toString()
+            .plus(" / ")
+            .plus((data?.product?.count ?: 0).toString())
     }
 
     override fun initSubscription() {
@@ -62,7 +65,10 @@ class ProductCreatePalletFragment :
                 PalletCreatePalletFragment.EXTRA_GUID_PRODUCT,
                 arguments?.get(EXTRA_GUID_PRODUCT) as String
             )
-            bundle.putString(PalletCreatePalletFragment.EXTRA_GUID_PALLET, adapter.list[i].guid)
+            bundle.putString(
+                PalletCreatePalletFragment.EXTRA_GUID_PALLET,
+                adapter.list[i].pallet?.guid
+            )
             hostActivity.getNavController().navigate(
                 R.id.action_productCreatePalletFragment_to_palletCreatePalletFragment,
                 bundle
@@ -108,17 +114,24 @@ class ProductCreatePalletFragment :
     }
 
 
-    private class Adapter(mContext: Context) : MyBaseAdapter<Pallet>(mContext) {
-        override fun bindView(item: Pallet, holder: Any) {
+    class Adapter(mContext: Context) : MyBaseAdapter<ItemPallet>(mContext) {
+        override fun bindView(item: ItemPallet, holder: Any) {
             holder as ViewHolder
-            holder.tvInfo.text = item.number
-            holder.tvLeft.text = ""
-            holder.tvRight.text = item.dataChanged?.toSimpleString()
+            holder.tvInfo.text = item.pallet?.number
+            holder.tvLeft.text = item.number.toString()
+            holder.tvRight.text = item.pallet?.dataChanged?.toSimpleString()
+
+            //Обновляем инфо
+
+            item.infoListBoxWrap.let {
+                holder.tvRight.text = it?.getInfo()
+            }
         }
 
-        override fun getLayaot(): Int = R.layout.fr_list_doc_item
+        override fun getLayout(): Int = R.layout.fr_list_doc_item
         override fun createViewHolder(view: View): Any =
             ViewHolder(view)
+
     }
 
     private class ViewHolder(view: View) {
@@ -126,5 +139,4 @@ class ProductCreatePalletFragment :
         var tvLeft: TextView = view.findViewById(R.id.tv_info_doc_left)
         var tvRight: TextView = view.findViewById(R.id.tv_info_doc_right)
     }
-
 }

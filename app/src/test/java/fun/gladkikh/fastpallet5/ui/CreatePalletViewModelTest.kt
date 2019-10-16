@@ -1,8 +1,8 @@
 package `fun`.gladkikh.fastpallet5.ui
 
-import `fun`.gladkikh.fastpallet5.domain.intety.CreatePallet
-import `fun`.gladkikh.fastpallet5.domain.intety.Product
-import `fun`.gladkikh.fastpallet5.domain.intety.Type
+import `fun`.gladkikh.fastpallet5.domain.entity.CreatePallet
+import `fun`.gladkikh.fastpallet5.domain.entity.Product
+import `fun`.gladkikh.fastpallet5.domain.entity.Type
 import `fun`.gladkikh.fastpallet5.repository.CreatePalletRepository
 import `fun`.gladkikh.fastpallet5.ui.fragment.creatpallet.doc.CreatePalletViewModel
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
@@ -71,7 +71,7 @@ class CreatePalletViewModelTest {
 
 
         viewModel.getViewState().observeForever {
-            result = it.document
+            result = it.wrapData?.doc
         }
         viewModel.setGuid(testDoc.guid)
         creatPalletLiveData.value = testDoc

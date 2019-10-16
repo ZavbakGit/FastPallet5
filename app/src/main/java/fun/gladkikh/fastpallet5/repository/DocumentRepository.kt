@@ -1,9 +1,9 @@
 package `fun`.gladkikh.fastpallet5.repository
 
-import `fun`.gladkikh.fastpallet5.domain.intety.CreatePallet
-import `fun`.gladkikh.fastpallet5.domain.intety.Document
-import `fun`.gladkikh.fastpallet5.domain.intety.ItemDocument
-import `fun`.gladkikh.fastpallet5.domain.intety.Type.CREATE_PALLET
+import `fun`.gladkikh.fastpallet5.domain.entity.CreatePallet
+import `fun`.gladkikh.fastpallet5.domain.entity.Document
+import `fun`.gladkikh.fastpallet5.domain.entity.ItemDocument
+import `fun`.gladkikh.fastpallet5.domain.entity.Type.CREATE_PALLET
 import `fun`.gladkikh.fastpallet5.maping.creatpallet.toCreatePallet
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.Transformations

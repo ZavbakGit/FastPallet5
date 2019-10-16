@@ -5,7 +5,6 @@ import `fun`.gladkikh.fastpallet5.db.initity.BoxCreatPalletDb
 import `fun`.gladkikh.fastpallet5.db.initity.CreatePalletDb
 import `fun`.gladkikh.fastpallet5.db.initity.PalletCreatePalletDb
 import `fun`.gladkikh.fastpallet5.db.initity.ProductCreatePalletDb
-import `fun`.gladkikh.fastpallet5.domain.intety.Product
 import androidx.lifecycle.LiveData
 import androidx.room.*
 

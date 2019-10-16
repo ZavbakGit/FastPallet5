@@ -4,10 +4,10 @@ import `fun`.gladkikh.fastpallet5.db.initity.BoxCreatPalletDb
 import `fun`.gladkikh.fastpallet5.db.initity.CreatePalletDb
 import `fun`.gladkikh.fastpallet5.db.initity.PalletCreatePalletDb
 import `fun`.gladkikh.fastpallet5.db.initity.ProductCreatePalletDb
-import `fun`.gladkikh.fastpallet5.domain.intety.Box
-import `fun`.gladkikh.fastpallet5.domain.intety.CreatePallet
-import `fun`.gladkikh.fastpallet5.domain.intety.Pallet
-import `fun`.gladkikh.fastpallet5.domain.intety.Product
+import `fun`.gladkikh.fastpallet5.domain.entity.Box
+import `fun`.gladkikh.fastpallet5.domain.entity.CreatePallet
+import `fun`.gladkikh.fastpallet5.domain.entity.Pallet
+import `fun`.gladkikh.fastpallet5.domain.entity.Product
 import java.util.*
 
 fun CreatePalletDb.toCreatePallet(): CreatePallet {

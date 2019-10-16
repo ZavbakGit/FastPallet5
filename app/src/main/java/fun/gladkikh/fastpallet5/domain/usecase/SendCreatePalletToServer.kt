@@ -1,8 +1,8 @@
 package `fun`.gladkikh.fastpallet5.domain.usecase
 
 import `fun`.gladkikh.fastpallet5.App
-import `fun`.gladkikh.fastpallet5.domain.intety.CreatePallet
-import `fun`.gladkikh.fastpallet5.domain.intety.Status
+import `fun`.gladkikh.fastpallet5.domain.entity.CreatePallet
+import `fun`.gladkikh.fastpallet5.domain.entity.Status
 import `fun`.gladkikh.fastpallet5.maping.creatpallet.toCreatPalletOld
 import `fun`.gladkikh.fastpallet5.network.ApiFactory
 import `fun`.gladkikh.fastpallet5.network.intity.SendDocumentsReqest

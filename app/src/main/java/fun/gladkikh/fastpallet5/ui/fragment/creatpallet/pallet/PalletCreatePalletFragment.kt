@@ -4,7 +4,6 @@ import `fun`.gladkikh.fastpallet5.Constants.KEY_ADD
 import `fun`.gladkikh.fastpallet5.Constants.KEY_DELL
 import `fun`.gladkikh.fastpallet5.R
 import `fun`.gladkikh.fastpallet5.common.toSimpleString
-import `fun`.gladkikh.fastpallet5.domain.intety.Box
 import `fun`.gladkikh.fastpallet5.ui.adapter.MyBaseAdapter
 import `fun`.gladkikh.fastpallet5.ui.base.BaseFragment
 import `fun`.gladkikh.fastpallet5.ui.fragment.common.Command.ConfirmDialog
@@ -39,13 +38,8 @@ class PalletCreatePalletFragment :
     override fun renderData(data: PalletWrapDataCreatePallet?) {
         tvInfo.text = data?.pallet?.number
         listView.adapter = adapter
-        data?.pallet?.boxes?.let {
-            adapter.list = data.pallet.boxes
-        }
-
+        adapter.list = data?.listItem ?: listOf()
         tv_info_doc_left.text = ""
-
-
     }
 
     override fun initSubscription() {
@@ -55,9 +49,11 @@ class PalletCreatePalletFragment :
 
 
         viewModel.getInfoWrap().observe(viewLifecycleOwner, Observer {
-            tv_info_doc_right.text = "".plus(it.countBox ?: 0)
-                .plus(" / ")
-                .plus(it?.weight ?: 0)
+            tv_info_doc_right.text =
+                it.row.toString().plus(" / ") //Записей
+                    .plus(it.countBox ?: 0) //Коробок
+                    .plus(" / ")
+                    .plus(it?.weight ?: 0) //Вес
         })
 
 
@@ -91,7 +87,7 @@ class PalletCreatePalletFragment :
         }
 
         listView.setOnItemClickListener { _, _, i, _ ->
-            openBox(adapter.list[i].guid)
+            adapter.list[i].box?.guid?.let { openBox(it) }
         }
 
         viewModel.getCommandLd().observe(viewLifecycleOwner, Observer {
@@ -127,13 +123,12 @@ class PalletCreatePalletFragment :
                         viewModel.dell(this)
                     }
                 }
-                KEY_ADD ->{
+                KEY_ADD -> {
                     viewModel.addBox()
                 }
 
             }
         })
-
 
 
         //ToDo test
@@ -146,7 +141,7 @@ class PalletCreatePalletFragment :
 //                    viewModel.saveBox("${(10..99).random()}123456789")
 //                }
             //(0..20).forEach {
-                viewModel.addBox("${(10..99).random()}123456789")
+            viewModel.addBox("${(10..99).random()}123456789")
             //}
 
         }
@@ -175,20 +170,22 @@ class PalletCreatePalletFragment :
         )
     }
 
-    private class Adapter(mContext: Context) : MyBaseAdapter<Box>(mContext) {
-        override fun bindView(item: Box, holder: Any) {
+    private class Adapter(mContext: Context) : MyBaseAdapter<ItemBox>(mContext) {
+        override fun bindView(item: ItemBox, holder: Any) {
             holder as ViewHolder
-            holder.tvInfo.text = item.data?.toSimpleString()
-                .plus("\n").plus(item.barcode?:"")
+            holder.tvInfo.text =
+                item.number.toString().plus("   ")
+                    .plus(item.box?.data?.toSimpleString())
+                    .plus("\n").plus(item.box?.barcode ?: "")
 
             holder.tvLeft.text = ""
             holder.tvRight.text = ""
-                .plus(item.countBox.toString())
+                .plus(item.box?.countBox.toString())
                 .plus(" / ")
-                .plus(item.weight.toString())
+                .plus(item.box?.weight.toString())
         }
 
-        override fun getLayaot(): Int = R.layout.fr_list_doc_item
+        override fun getLayout(): Int = R.layout.fr_list_doc_item
         override fun createViewHolder(view: View): Any =
             ViewHolder(view)
     }

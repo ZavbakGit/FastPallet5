@@ -2,13 +2,12 @@ package `fun`.gladkikh.fastpallet5.ui.fragment.documents
 
 import `fun`.gladkikh.fastpallet5.App
 import `fun`.gladkikh.fastpallet5.domain.checkEditDoc
-import `fun`.gladkikh.fastpallet5.domain.intety.CreatePallet
-import `fun`.gladkikh.fastpallet5.domain.intety.ItemDocument
+import `fun`.gladkikh.fastpallet5.domain.entity.CreatePallet
+import `fun`.gladkikh.fastpallet5.domain.entity.ItemDocument
 import `fun`.gladkikh.fastpallet5.domain.usecase.getListDocumentsDbFromServer
 import `fun`.gladkikh.fastpallet5.domain.usecase.sendCreatePalletToServer
 import `fun`.gladkikh.fastpallet5.repository.CreatePalletRepository
 import `fun`.gladkikh.fastpallet5.repository.DocumentRepository
-import `fun`.gladkikh.fastpallet5.repository.SettingsRepository
 import `fun`.gladkikh.fastpallet5.ui.base.BaseViewModel
 import `fun`.gladkikh.fastpallet5.ui.fragment.common.Command
 import androidx.lifecycle.Observer

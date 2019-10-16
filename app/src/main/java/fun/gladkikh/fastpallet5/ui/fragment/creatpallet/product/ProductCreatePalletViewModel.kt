@@ -1,35 +1,75 @@
 package `fun`.gladkikh.fastpallet5.ui.fragment.creatpallet.product
 
 import `fun`.gladkikh.fastpallet5.domain.checkEditDoc
-import `fun`.gladkikh.fastpallet5.domain.extend.ValidationResult
-import `fun`.gladkikh.fastpallet5.domain.extend.getNumberDocByBarCode
-import `fun`.gladkikh.fastpallet5.domain.extend.isPallet
-import `fun`.gladkikh.fastpallet5.domain.intety.CreatePallet
-import `fun`.gladkikh.fastpallet5.domain.intety.Pallet
-import `fun`.gladkikh.fastpallet5.domain.intety.Product
+import `fun`.gladkikh.fastpallet5.domain.entity.CreatePallet
+import `fun`.gladkikh.fastpallet5.domain.entity.Pallet
+import `fun`.gladkikh.fastpallet5.domain.entity.Product
+import `fun`.gladkikh.fastpallet5.domain.extend.*
 import `fun`.gladkikh.fastpallet5.repository.CreatePalletRepository
 import `fun`.gladkikh.fastpallet5.ui.base.BaseViewModel
 import `fun`.gladkikh.fastpallet5.ui.fragment.common.Command
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.Observer
+import io.reactivex.BackpressureStrategy
+import io.reactivex.Flowable
+import io.reactivex.schedulers.Schedulers
+import io.reactivex.subjects.PublishSubject
 import java.util.*
 
 
 class ProductCreatePalletViewModel(private val createPalletRepository: CreatePalletRepository) :
-    BaseViewModel<WrapDataProductCreatePallet?, ProductCreatPalletViewState>() {
+    BaseViewModel<WrapDataProductCreatePallet?, ProductCreatePalletViewState>() {
 
     private var liveDataMerger: MediatorLiveData<WrapDataProductCreatePallet> = MediatorLiveData()
+    private val dataPublishSubject = PublishSubject.create<WrapDataProductCreatePallet>()
 
     private val documentObserver = Observer<WrapDataProductCreatePallet> {
-        viewStateLiveData.value = ProductCreatPalletViewState(
+        viewStateLiveData.value = ProductCreatePalletViewState(
             wrapData = it
         )
     }
 
 
     init {
-        viewStateLiveData.value = ProductCreatPalletViewState()
+        viewStateLiveData.value = ProductCreatePalletViewState()
         liveDataMerger.observeForever(documentObserver)
+
+        disposables.add(
+            dataPublishSubject.toFlowable(BackpressureStrategy.BUFFER)
+                .switchMap {
+                    Flowable.fromIterable(it.listItem.indices)
+                }
+                .map {
+
+                    val infoWrap = liveDataMerger.value!!.listItem[it].pallet?.guid?.let { it1 ->
+                        createPalletRepository.getListBoxByPallet(it1).getInfoWrap()
+                    }
+
+                    val data = WrapDataProductCreatePallet(
+                        doc = liveDataMerger.value!!.doc,
+                        product = liveDataMerger.value!!.product,
+                        listItem = liveDataMerger.value!!.listItem.mapIndexed { index, itemPallet ->
+                            if (index == it) {
+                                itemPallet.infoListBoxWrap = infoWrap
+                            }
+
+                            return@mapIndexed itemPallet
+                        }
+                    )
+
+                    val totalInfoListBoxWrap = liveDataMerger.value?.listItem?.map {
+                        it.infoListBoxWrap
+                    }?.fold(InfoListBoxWrap()) { total, next -> total + next }
+
+                    data.infoListBoxWrap = totalInfoListBoxWrap
+
+                    liveDataMerger.postValue(data)
+
+                    return@map infoWrap
+                }
+                .subscribeOn(Schedulers.io())
+                .subscribe()
+        )
 
 
     }
@@ -54,10 +94,25 @@ class ProductCreatePalletViewModel(private val createPalletRepository: CreatePal
                 if (doc != null && product != null && listPallet != null) {
                     product!!.pallets = listPallet!!
 
+                    val listItem = product!!.pallets.mapIndexed { index, pallet ->
+                        ItemPallet(
+                            number = product!!.pallets.size - index,
+                            pallet = pallet,
+                            index = index
+                        )
+                    }
+
                     value = WrapDataProductCreatePallet(
                         doc = doc,
-                        product = product
+                        product = product,
+                        listItem = listItem
                     )
+
+
+                    //Запустим обновление
+                    value?.let {
+                        dataPublishSubject.onNext(it)
+                    }
                 }
             }
 
@@ -159,6 +214,5 @@ class ProductCreatePalletViewModel(private val createPalletRepository: CreatePal
             )
         }
     }
-
 
 }

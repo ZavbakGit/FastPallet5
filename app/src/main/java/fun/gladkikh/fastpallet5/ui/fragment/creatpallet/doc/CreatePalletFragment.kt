@@ -1,8 +1,7 @@
 package `fun`.gladkikh.fastpallet5.ui.fragment.creatpallet.doc
 
 import `fun`.gladkikh.fastpallet5.R
-import `fun`.gladkikh.fastpallet5.domain.intety.CreatePallet
-import `fun`.gladkikh.fastpallet5.domain.intety.Product
+import `fun`.gladkikh.fastpallet5.domain.entity.Product
 import `fun`.gladkikh.fastpallet5.ui.adapter.MyBaseAdapter
 import `fun`.gladkikh.fastpallet5.ui.base.BaseFragment
 import `fun`.gladkikh.fastpallet5.ui.fragment.creatpallet.product.ProductCreatePalletFragment
@@ -13,7 +12,7 @@ import android.widget.TextView
 import kotlinx.android.synthetic.main.documents_frag.*
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class CreatePalletFragment : BaseFragment<CreatePallet?, CreatePalletViewState>() {
+class CreatePalletFragment : BaseFragment<DocWrapDataCreatePallet?, CreatePalletViewState>() {
 
     override val layoutRes: Int = R.layout.documents_frag
 
@@ -25,11 +24,11 @@ class CreatePalletFragment : BaseFragment<CreatePallet?, CreatePalletViewState>(
 
     private lateinit var adapter: Adapter
 
-    override fun renderData(data: CreatePallet?) {
-        tvInfo.text = data?.description
+    override fun renderData(data: DocWrapDataCreatePallet?) {
+        tvInfo.text = data?.doc?.description
         listView.adapter = adapter
         data?.let {
-            adapter.list = data.listProduct
+            adapter.list = data.listItem
         }
     }
 
@@ -42,23 +41,25 @@ class CreatePalletFragment : BaseFragment<CreatePallet?, CreatePalletViewState>(
 
         listView.setOnItemClickListener { _, _, i, _ ->
             val bundle = Bundle()
-            bundle.putString(ProductCreatePalletFragment.EXTRA_GUID_PRODUCT, adapter.list[i].guid)
+            bundle.putString(ProductCreatePalletFragment.EXTRA_GUID_PRODUCT, adapter.list[i].product?.guid)
             bundle.putString(ProductCreatePalletFragment.EXTRA_GUID_DOC, arguments?.get(EXTRA_GUID) as String)
             hostActivity.getNavController().navigate(R.id.action_creatPalletFragment_to_productCreatePalletFragment, bundle)
         }
     }
 
-    private class Adapter(mContext: Context) : MyBaseAdapter<Product>(mContext) {
-        override fun bindView(item: Product, holder: Any) {
+    private class Adapter(context: Context) : MyBaseAdapter<ItemProduct>(context) {
+        override fun bindView(item: ItemProduct, holder: Any) {
             holder as ViewHolder
-            holder.tvInfo.text = item.nameProduct
-            holder.tvLeft.text =    "${item.count}".plus(" / ").plus(item.countBox)
+            holder.tvInfo.text = item.product?.nameProduct
+            holder.tvLeft.text =    "${item.product?.count}".plus(" / ").plus(item.product?.countBox)
 
             //ToDo Пересчитать причем постораться в другом потоке
-            holder.tvRight.text = "10 / 100"
+            item.infoListBoxWrap.let {
+                holder.tvRight.text = it?.getInfo()
+            }
         }
 
-        override fun getLayaot(): Int = R.layout.fr_list_doc_item
+        override fun getLayout(): Int = R.layout.fr_list_doc_item
         override fun createViewHolder(view: View): Any =
             ViewHolder(view)
     }

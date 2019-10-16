@@ -1,4 +1,4 @@
-package `fun`.gladkikh.fastpallet5.domain.intety
+package `fun`.gladkikh.fastpallet5.domain.entity
 
 
 data class SettingsPref(

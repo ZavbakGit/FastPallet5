@@ -1,4 +1,4 @@
-package `fun`.gladkikh.fastpallet5.domain.intety
+package `fun`.gladkikh.fastpallet5.domain.entity
 
 import java.util.*
 
@@ -8,4 +8,5 @@ data class Box(
     var countBox: Int? = null,
     var data: Date? = null,
     var guid: String = ""
+
 )

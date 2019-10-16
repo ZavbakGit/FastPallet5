@@ -4,8 +4,8 @@ import `fun`.gladkikh.fastpallet5.Constants
 import `fun`.gladkikh.fastpallet5.Constants.KEY_DELL
 import `fun`.gladkikh.fastpallet5.Constants.KEY_MENU
 import `fun`.gladkikh.fastpallet5.R
-import `fun`.gladkikh.fastpallet5.domain.intety.ItemDocument
-import `fun`.gladkikh.fastpallet5.domain.intety.Status
+import `fun`.gladkikh.fastpallet5.domain.entity.ItemDocument
+import `fun`.gladkikh.fastpallet5.domain.entity.Status
 import `fun`.gladkikh.fastpallet5.ui.adapter.MyBaseAdapter
 import `fun`.gladkikh.fastpallet5.ui.base.BaseFragment
 import `fun`.gladkikh.fastpallet5.ui.fragment.common.Command
@@ -123,7 +123,7 @@ class DocumentsFragment : BaseFragment<List<ItemDocument>?, DocumentsViewState>(
             holder.tvRight.text = ""
         }
 
-        override fun getLayaot(): Int = R.layout.fr_list_doc_item
+        override fun getLayout(): Int = R.layout.fr_list_doc_item
         override fun createViewHolder(view: View): Any =
             ViewHolder(view)
     }

@@ -1,6 +1,6 @@
 package `fun`.gladkikh.fastpallet5.repository
 
-import `fun`.gladkikh.fastpallet5.domain.intety.SettingsPref
+import `fun`.gladkikh.fastpallet5.domain.entity.SettingsPref
 import android.content.Context
 import androidx.preference.PreferenceManager
 

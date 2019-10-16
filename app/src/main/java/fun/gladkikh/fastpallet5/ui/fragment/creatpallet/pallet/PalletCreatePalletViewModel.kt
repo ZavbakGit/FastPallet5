@@ -4,10 +4,10 @@ import `fun`.gladkikh.fastpallet5.domain.checkEditDoc
 import `fun`.gladkikh.fastpallet5.domain.extend.InfoListBoxWrap
 import `fun`.gladkikh.fastpallet5.domain.extend.getInfoWrap
 import `fun`.gladkikh.fastpallet5.domain.extend.getWeightByBarcode
-import `fun`.gladkikh.fastpallet5.domain.intety.Box
-import `fun`.gladkikh.fastpallet5.domain.intety.CreatePallet
-import `fun`.gladkikh.fastpallet5.domain.intety.Pallet
-import `fun`.gladkikh.fastpallet5.domain.intety.Product
+import `fun`.gladkikh.fastpallet5.domain.entity.Box
+import `fun`.gladkikh.fastpallet5.domain.entity.CreatePallet
+import `fun`.gladkikh.fastpallet5.domain.entity.Pallet
+import `fun`.gladkikh.fastpallet5.domain.entity.Product
 import `fun`.gladkikh.fastpallet5.repository.CreatePalletRepository
 import `fun`.gladkikh.fastpallet5.ui.base.BaseViewModel
 import `fun`.gladkikh.fastpallet5.ui.fragment.common.Command.ConfirmDialog
@@ -69,13 +69,13 @@ class PalletCreatePalletViewModel(private val createPalletRepository: CreatePall
             messageError.value = "Нельзя изменять документ!"
             return
         }
-        val pallet = liveDataMerger.value?.pallet?:return
+        val pallet = liveDataMerger.value?.pallet ?: return
 
         val box = Box(
             guid = UUID.randomUUID().toString(),
             data = Date()
         )
-        createPalletRepository.saveBox(box,pallet.guid)
+        createPalletRepository.saveBox(box, pallet.guid)
         commandLd.postValue(OpenForm(box.guid))
     }
 
@@ -86,7 +86,7 @@ class PalletCreatePalletViewModel(private val createPalletRepository: CreatePall
             return
         }
 
-        val pallet = liveDataMerger.value?.pallet?:return
+        val pallet = liveDataMerger.value?.pallet ?: return
         val product = liveDataMerger.value?.product!!
 
         val weight = getWeightByBarcode(
@@ -138,10 +138,20 @@ class PalletCreatePalletViewModel(private val createPalletRepository: CreatePall
 
                     pallet!!.boxes = listBox!!
 
+                    val listItem = pallet!!.boxes.mapIndexed { index, box ->
+                        ItemBox(
+                            box = box,
+                            number = pallet!!.boxes.size - index
+                        )
+                    }
+
+
+
                     value = PalletWrapDataCreatePallet(
                         doc = doc,
                         product = product,
-                        pallet = pallet
+                        pallet = pallet,
+                        listItem = listItem
                     )
                 }
             }

@@ -1,6 +1,5 @@
 package `fun`.gladkikh.fastpallet5.network.intity.old.metaobj
 
-import `fun`.gladkikh.fastpallet5.domain.intety.Type
 import `fun`.gladkikh.fastpallet5.network.intity.old.MetaObjServer
 
 

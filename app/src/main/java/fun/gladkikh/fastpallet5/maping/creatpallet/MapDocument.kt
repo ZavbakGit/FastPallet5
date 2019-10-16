@@ -1,7 +1,7 @@
 package `fun`.gladkikh.fastpallet5.maping.creatpallet
 
-import `fun`.gladkikh.fastpallet5.domain.intety.Document
-import `fun`.gladkikh.fastpallet5.domain.intety.Type
+import `fun`.gladkikh.fastpallet5.domain.entity.Document
+import `fun`.gladkikh.fastpallet5.domain.entity.Type
 import `fun`.gladkikh.fastpallet5.network.intity.DocResponse
 
 fun DocResponse.toDocument(): Document {

@@ -1,7 +1,7 @@
 package `fun`.gladkikh.fastpallet5.network.intity.old.metaobj
 
-import `fun`.gladkikh.fastpallet5.domain.intety.Status
-import `fun`.gladkikh.fastpallet5.domain.intety.Type
+import `fun`.gladkikh.fastpallet5.domain.entity.Status
+import `fun`.gladkikh.fastpallet5.domain.entity.Type
 import `fun`.gladkikh.fastpallet5.network.intity.old.MetaObjServer
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName

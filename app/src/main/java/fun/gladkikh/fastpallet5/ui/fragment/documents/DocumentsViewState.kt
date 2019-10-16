@@ -1,6 +1,6 @@
 package `fun`.gladkikh.fastpallet5.ui.fragment.documents
 
-import `fun`.gladkikh.fastpallet5.domain.intety.ItemDocument
+import `fun`.gladkikh.fastpallet5.domain.entity.ItemDocument
 import `fun`.gladkikh.fastpallet5.ui.base.BaseViewState
 
 

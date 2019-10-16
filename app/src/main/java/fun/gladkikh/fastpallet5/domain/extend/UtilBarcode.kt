@@ -1,7 +1,7 @@
 package `fun`.gladkikh.fastpallet5.domain.extend
 
-import `fun`.gladkikh.fastpallet5.domain.intety.Box
-import `fun`.gladkikh.fastpallet5.domain.intety.Product
+import `fun`.gladkikh.fastpallet5.domain.entity.Box
+import `fun`.gladkikh.fastpallet5.domain.entity.Product
 import io.reactivex.Flowable
 import java.math.BigDecimal
 
@@ -13,19 +13,53 @@ fun Product.getWeightFromBarcode(barcode: String): Float {
 fun List<Box>.getInfoWrap(): InfoListBoxWrap {
     val infoPalletWrap = InfoListBoxWrap(0, 0f)
 
+    val size = this.size
+
     this.forEach {
         infoPalletWrap.apply {
             countBox = countBox!! + (it.countBox ?: 0)
             weight = weight!!.toBigDecimal().add((it.weight ?: 0f).toBigDecimal()).toFloat()
+            row = size
         }
     }
 
     return infoPalletWrap
 }
 
-data class InfoListBoxWrap(var countBox: Int? = null, var weight: Float? = null)
+
+
+
+data class InfoListBoxWrap(
+    var countBox: Int? = null,
+    var weight: Float? = null,
+    var row: Int? = null
+) {
+
+    fun getInfo() = (row ?: 0).toString().plus(" / ")
+        .plus(countBox ?: 0).plus(" / ")
+        .plus(weight ?: 0)
+
+
+
+}
+
+operator fun InfoListBoxWrap.plus(infoListBoxWrap: InfoListBoxWrap?): InfoListBoxWrap {
+    val weight = BigDecimal(this.weight?.toString() ?: "0")
+        .plus(
+            BigDecimal(infoListBoxWrap?.weight?.toString() ?: "0")
+        )
+        .toFloat()
+
+    return InfoListBoxWrap(
+        countBox = (infoListBoxWrap?.countBox ?: 0) + (this.countBox ?: 0),
+        row = (infoListBoxWrap?.row ?: 0) + (this.row ?: 0),
+        weight = weight
+    )
+}
+
 
 fun getWeightByBarcode(barcode: String, start: Int, finish: Int, coff: Float): Float {
+
 
     if (start == 0) {
         return 0F

@@ -1,6 +1,6 @@
 package `fun`.gladkikh.fastpallet5.maping.creatpallet
 
-import `fun`.gladkikh.fastpallet5.domain.intety.*
+import `fun`.gladkikh.fastpallet5.domain.entity.*
 import `fun`.gladkikh.fastpallet5.network.intity.old.metaobj.BoxServer
 import `fun`.gladkikh.fastpallet5.network.intity.old.metaobj.CreatePalletServer
 import `fun`.gladkikh.fastpallet5.network.intity.old.metaobj.PalletServer

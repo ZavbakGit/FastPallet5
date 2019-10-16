@@ -14,8 +14,20 @@ import java.util.*
  * See [testing documentation](http://d.android.com/tools/testing).
  */
 class ExampleUnitTest {
+
+    data class My(val name:String,val list:List<String>)
+
+
     @Test
     fun addition_isCorrect() {
+
+        (0..3).map {
+            My(it.toString(),(0..5).map {
+                it.toString()
+            })
+        }.flatMap {
+            it.list
+        }
 
 
 

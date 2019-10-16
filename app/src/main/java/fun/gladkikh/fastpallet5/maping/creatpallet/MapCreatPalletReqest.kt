@@ -2,9 +2,9 @@ package `fun`.gladkikh.fastpallet5.maping.creatpallet
 
 import `fun`.gladkikh.fastpallet5.common.getFloatByParseStr
 import `fun`.gladkikh.fastpallet5.common.getIntByParseStr
-import `fun`.gladkikh.fastpallet5.domain.intety.CreatePallet
-import `fun`.gladkikh.fastpallet5.domain.intety.Product
-import `fun`.gladkikh.fastpallet5.domain.intety.Status
+import `fun`.gladkikh.fastpallet5.domain.entity.CreatePallet
+import `fun`.gladkikh.fastpallet5.domain.entity.Product
+import `fun`.gladkikh.fastpallet5.domain.entity.Status
 import `fun`.gladkikh.fastpallet5.network.intity.DocResponse
 import java.util.*
 

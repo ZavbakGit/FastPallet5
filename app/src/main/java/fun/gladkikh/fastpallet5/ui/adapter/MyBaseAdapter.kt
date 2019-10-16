@@ -7,28 +7,27 @@ import android.view.ViewGroup
 import android.widget.BaseAdapter
 
 
-abstract class MyBaseAdapter<T>(val mContext: Context) : BaseAdapter() {
+abstract class MyBaseAdapter<T>(val context: Context) : BaseAdapter() {
     var list: List<T> = listOf()
         set(value) {
             field = value
             notifyDataSetChanged()
         }
 
-    abstract fun getLayaot(): Int
+    abstract fun getLayout(): Int
     abstract fun bindView(item: T,holder:Any)
     abstract fun createViewHolder(view: View) :Any
 
     override fun getCount() = list.size
     override fun getItem(position: Int) = list[position]
     override fun getItemId(position: Int) = position.toLong()
-
     override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
         var convertView = convertView
         val viewHolder: Any
 
         if (convertView == null) {
-            val inflater = mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
-            convertView = inflater.inflate(getLayaot(), parent, false)
+            val inflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+            convertView = inflater.inflate(getLayout(), parent, false)
             viewHolder = createViewHolder(convertView)
             convertView!!.tag = viewHolder
         } else {

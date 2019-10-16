@@ -1,10 +1,10 @@
 package `fun`.gladkikh.fastpallet5.ui.fragment.creatpallet.box
 
-import `fun`.gladkikh.fastpallet5.domain.intety.Box
-import `fun`.gladkikh.fastpallet5.domain.intety.CreatePallet
-import `fun`.gladkikh.fastpallet5.domain.intety.Pallet
+import `fun`.gladkikh.fastpallet5.domain.entity.Box
+import `fun`.gladkikh.fastpallet5.domain.entity.CreatePallet
+import `fun`.gladkikh.fastpallet5.domain.entity.Pallet
 
-import `fun`.gladkikh.fastpallet5.domain.intety.Product
+import `fun`.gladkikh.fastpallet5.domain.entity.Product
 import `fun`.gladkikh.fastpallet5.ui.base.BaseViewState
 
 
