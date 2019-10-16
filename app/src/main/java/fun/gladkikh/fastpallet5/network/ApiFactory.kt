@@ -24,7 +24,7 @@ import retrofit2.http.POST
 /**
  *The interface which provides methods to get result of webservices
  */
-object ApiFactory {
+class ApiFactory() {
 
     private val gson =
         GsonBuilder()
