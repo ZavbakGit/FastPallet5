@@ -1,5 +1,6 @@
 package `fun`.gladkikh.fastpallet5.network
 
+import `fun`.gladkikh.fastpallet5.App
 import `fun`.gladkikh.fastpallet5.Constants
 import `fun`.gladkikh.fastpallet5.network.util.intity.ReqestObj
 import `fun`.gladkikh.fastpallet5.network.util.intity.ResponseObj
@@ -61,7 +62,7 @@ object ApiFactory {
 
     private val retrofit by lazy {
         Retrofit.Builder()
-            .baseUrl(Constants.BASE_URL)
+            .baseUrl(App.settingsRepository.settings.host ?: "")
             .client(authClient)
             .addConverterFactory(GsonConverterFactory.create())
             .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
@@ -81,26 +82,38 @@ object ApiFactory {
 
 
     @SuppressLint("CheckResult")
-    fun <T : ResponseObj> reqest(
+    fun <T : ResponseObj> request(
         command: String,
-        username: String,
-        pass: String?,
-        objReqest: ReqestObj,
+        objRequest: ReqestObj,
         classResponse: Class<T>
     ): Single<ResponseObj> {
 
-        val reqestModel = ReqestModel(
+        val requestModel = ReqestModel(
             command = command,
-            strDataIn = gson.toJson(objReqest)
+            strDataIn = gson.toJson(objRequest)
         )
 
-        val strAuth = AutorithationUtil.getStringAutorization(username, pass)
 
-
-        return api.getDataFromServer(
-            auth = strAuth,
-            sendParamJson = reqestModel
-        )
+        return Single.just(App.settingsRepository.settings)
+            .map {
+                //Проверка на код тсд
+                if (it.code.isNullOrEmpty()) {
+                    throw Throwable("Не заполнен код ТСД")
+                }
+                return@map it
+            }
+            .map {
+                //Строка авторизации
+                return@map AutorithationUtil.getStringAutorization(
+                    App.settingsRepository.settings.login,
+                    App.settingsRepository.settings.pass
+                )
+            }.flatMap {
+                api.getDataFromServer(
+                    auth = it,
+                    sendParamJson = requestModel
+                )
+            }
             .flatMap {
                 when {
                     !it.isSuccessful -> Single.error<Throwable>(Throwable(it.errorBody().toString()))
@@ -110,7 +123,11 @@ object ApiFactory {
                 val responseModel = it as ResponseModel
 
                 when {
-                    !(responseModel.success ?: true) -> Single.error<Throwable>(Throwable(responseModel.messError))
+                    !(responseModel.success ?: true) -> Single.error<Throwable>(
+                        Throwable(
+                            responseModel.messError
+                        )
+                    )
                     else -> Single.just(responseModel)
                 }
             }.map {

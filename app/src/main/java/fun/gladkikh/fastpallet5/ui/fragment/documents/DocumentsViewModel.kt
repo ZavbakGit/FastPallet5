@@ -1,5 +1,6 @@
 package `fun`.gladkikh.fastpallet5.ui.fragment.documents
 
+import `fun`.gladkikh.fastpallet5.App
 import `fun`.gladkikh.fastpallet5.domain.checkEditDoc
 import `fun`.gladkikh.fastpallet5.domain.intety.CreatePallet
 import `fun`.gladkikh.fastpallet5.domain.intety.ItemDocument
@@ -16,8 +17,7 @@ import io.reactivex.schedulers.Schedulers
 
 class DocumentsViewModel(
     private val documentRepository: DocumentRepository,
-    private val createPalletRepository: CreatePalletRepository,
-    private val settingsRepository: SettingsRepository
+    private val createPalletRepository: CreatePalletRepository
 ) :
     BaseViewModel<List<ItemDocument>?, DocumentsViewState>() {
 
@@ -43,7 +43,7 @@ class DocumentsViewModel(
 
     fun loadDocs() {
         disposables.add(
-            getListDocumentsDbFromServer(documentRepository,settingsRepository.settings)
+            getListDocumentsDbFromServer(documentRepository, App.settingsRepository.settings)
                 .doOnSubscribe {
                     showProgress.postValue(true)
                 }

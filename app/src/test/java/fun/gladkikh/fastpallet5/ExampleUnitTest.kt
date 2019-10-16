@@ -19,6 +19,10 @@ class ExampleUnitTest {
 
 
 
+        var s:String? = null
+
+
+        //println(s1)
 
 
 

@@ -1,5 +1,6 @@
 package `fun`.gladkikh.fastpallet5.domain.usecase
 
+import `fun`.gladkikh.fastpallet5.App
 import `fun`.gladkikh.fastpallet5.domain.intety.CreatePallet
 import `fun`.gladkikh.fastpallet5.domain.intety.Document
 import `fun`.gladkikh.fastpallet5.domain.intety.Status
@@ -19,12 +20,10 @@ fun confirmLoadDocuments(listDocuments: List<Document>): Single<List<Document>> 
         }
     }
 
-    //ToDo Взять из настроек
-    return ApiFactory.reqest(
+
+    return ApiFactory.request(
         command = "command_confirm_doc",
-        username = "Администратор",
-        pass = "",
-        objReqest = ConfirmDocumentsLoadRequest(codeTSD = "333", list = list),
+        objRequest = ConfirmDocumentsLoadRequest(App.settingsRepository.settings.code?:"", list = list),
         classResponse = ConfirmResponse::class.java
     )
         .map {

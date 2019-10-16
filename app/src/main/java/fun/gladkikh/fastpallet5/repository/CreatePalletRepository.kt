@@ -84,7 +84,7 @@ class CreatePalletRepository(private val createPalletDao: CreatePalletDao) {
         createPalletDao.insertOrUpdate(pallet.toPalletCreatePalletDb(guidProduct))
 
     //Для Теста
-    fun getPalletAll() = App.database.getCreatPalletDao().getPalletAll()
+    fun getPalletAll() = createPalletDao.getPalletAll()
 
     fun getListPalletByProductLd(guidProduct: String): LiveData<List<Pallet>> = Transformations.map(
         createPalletDao.getListPalletByProductLd(guidProduct)

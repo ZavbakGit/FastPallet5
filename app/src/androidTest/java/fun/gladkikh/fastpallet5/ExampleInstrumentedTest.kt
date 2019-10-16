@@ -31,33 +31,33 @@ class ExampleInstrumentedTest {
     @Test
     fun useAppContext() {
 
-        val gson =
-            GsonBuilder()
-                .setDateFormat("yyyy-MM-dd'T'HH:mm:ss")
-                .create()
-
-
-        val getListDocsRequest = GetListDocsRequest(codeTSD = "333")
-
-
-        val requestModel = ReqestModel(
-            command = "command_get_doc",
-            strDataIn = gson.toJson(getListDocsRequest)
-        )
-
-        ApiFactory.reqest(
-            command = "command_get_doc",
-            username = "Администратор",
-            pass = "",
-            objReqest = getListDocsRequest,
-            classResponse = ListDocResponse::class.java
-        ).subscribe({
-            println(it as ListDocResponse)
-        }, {
-            println(it)
-        })
-
-        val appContext = InstrumentationRegistry.getTargetContext()
-        assertEquals("fun.gladkikh.fastpallet5", appContext.packageName)
+//        val gson =
+//            GsonBuilder()
+//                .setDateFormat("yyyy-MM-dd'T'HH:mm:ss")
+//                .create()
+//
+//
+//        val getListDocsRequest = GetListDocsRequest(codeTSD = "333")
+//
+//
+//        val requestModel = ReqestModel(
+//            command = "command_get_doc",
+//            strDataIn = gson.toJson(getListDocsRequest)
+//        )
+//
+//        ApiFactory.request(
+//            command = "command_get_doc",
+//            username = "Администратор",
+//            pass = "",
+//            objReqest = getListDocsRequest,
+//            classResponse = ListDocResponse::class.java
+//        ).subscribe({
+//            println(it as ListDocResponse)
+//        }, {
+//            println(it)
+//        })
+//
+//        val appContext = InstrumentationRegistry.getTargetContext()
+        //assertEquals("fun.gladkikh.fastpallet5", appContext.packageName)
     }
 }

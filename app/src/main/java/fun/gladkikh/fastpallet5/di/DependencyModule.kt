@@ -27,10 +27,10 @@ object DependencyModule {
         single { CreatePalletRepository(get()) }
         single { SettingsRepository() }
         single { DocumentRepository(get()) }
-        scope(named("scope_main_activity")){
-            scoped { getSettings(get()) }
-        }
-        viewModel { DocumentsViewModel(get(), get(),get()) }
+//        scope(named("scope_main_activity")){
+//            scoped { getSettingsFromPref(get()) }
+//        }
+        viewModel { DocumentsViewModel(get(), get()) }
         viewModel { CreatePalletViewModel(get()) }
         viewModel { ProductCreatePalletViewModel(get()) }
         viewModel { PalletCreatePalletViewModel(get()) }
@@ -44,25 +44,5 @@ object DependencyModule {
             .allowMainThreadQueries()
             .build()
     }
-
-
-   private fun getSettings(context: Context): SettingsPref {
-        val sharedPref = PreferenceManager.getDefaultSharedPreferences(context)
-
-        val host = "preference_host"
-        val login = "preference_login"
-        val pass = "preference_pass"
-        val code = "preference_code_1c"
-        val listTsd = "list_tsd"
-
-        return SettingsPref(
-            host = sharedPref.getString(host, null),
-            code = sharedPref.getString(code, null),
-            login = sharedPref.getString(login, null),
-            pass = sharedPref.getString(pass, null),
-            typeTsd = sharedPref.getString(listTsd, 1.toString()).toIntOrNull()
-        )
-    }
-
 
 }
