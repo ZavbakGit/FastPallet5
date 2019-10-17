@@ -61,7 +61,7 @@ class CreatePalletViewModel(private val createPalletRepository: CreatePalletRepo
                     //342381.8
                     //342504.12
 
-                    message.postValue(sum.total.toString())
+                    message.postValue(sum.weight.toString())
 
 
 //                    //Расчитаем по всем паллетам

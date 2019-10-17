@@ -1,23 +1,23 @@
 package `fun`.gladkikh.fastpallet5.db.initity
 
-import androidx.room.Entity
-import androidx.room.ForeignKey
-import androidx.room.PrimaryKey
+import androidx.room.*
 
 @Entity
 data class CreatePalletDb(
-    @PrimaryKey val guid: String,
+    @PrimaryKey @ColumnInfo(index = true) val guid: String,
     val number: String?,
     val date: Long?,
     val status: Int?,
-    var guidServer: String?,
+    @ColumnInfo(index = true) var guidServer: String?,
     var typeFromServer: String?,
-    var dataChanged: Long?,
+    @ColumnInfo(index = true) var dataChanged: Long?,
     var isWasLoadedLastTime: Boolean?,
     var description: String?,
     var barcode: String?
 )
 
+
+//ToDo не вижу guid из 1С
 @Entity(
     foreignKeys = [ForeignKey(
         entity = CreatePalletDb::class,
@@ -27,12 +27,12 @@ data class CreatePalletDb(
     )]
 )
 data class ProductCreatePalletDb(
-    @PrimaryKey val guid: String,
-    val guidDoc: String,
+    @PrimaryKey @ColumnInfo(index = true) val guid: String,
+    @ColumnInfo(index = true) val guidDoc: String,
     var number: String?,
     var barcode: String?,
 
-    var guidProduct: String?,
+    @ColumnInfo(index = true) var guidProduct: String?,
     var nameProduct: String?,
     var codeProduct: String?,
     var ed: String?,
@@ -60,9 +60,10 @@ data class ProductCreatePalletDb(
         onDelete = ForeignKey.CASCADE
     )]
 )
+
 data class PalletCreatePalletDb(
-    @PrimaryKey val guid: String,
-    var guidProduct: String?,
+    @PrimaryKey @ColumnInfo(index = true) val guid: String,
+    @ColumnInfo(index = true) var guidProduct: String?,
     var number: String?,
     var barcode: String?,
 
@@ -84,8 +85,8 @@ data class PalletCreatePalletDb(
     )]
 )
 data class BoxCreatePalletDb(
-    @PrimaryKey val guid: String,
-    var guidPallet:String,
+    @PrimaryKey @ColumnInfo(index = true) val guid: String,
+    @ColumnInfo(index = true) var guidPallet: String,
     var barcode: String?,
     var weight: Float?,
     var countBox: Int?,

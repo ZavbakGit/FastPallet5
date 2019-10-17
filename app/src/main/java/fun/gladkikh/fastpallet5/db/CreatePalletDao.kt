@@ -13,8 +13,11 @@ interface CreatePalletDao {
 
 
     //@Query("SELECT SUM(weight) as total FROM BoxCreatePalletDb")
-    @Query("SELECT cast(SUM(weight) as DECIMAL(18,2)) as total FROM BoxCreatePalletDb")
+    @Query("SELECT cast(SUM(weight) as DECIMAL(18,2)) as weight FROM BoxCreatePalletDb")
     fun getSumWeight(): Sum
+
+    @Query("SELECT cast(SUM(weight) as DECIMAL(18,2)) as weight,SUM(countBox)  as count  FROM BoxCreatePalletDb  WHERE guidPallet = :guidPallet")
+    fun getInfoPallet(guidPallet:String):Sum
 
 
     //region Doc
@@ -142,6 +145,14 @@ interface CreatePalletDao {
         }
     }
 
+    @Transaction
+    fun insertOrUpdateList(list:List<BoxCreatePalletDb>) {
+        list.forEach {
+            if (insertIgnore(it) == -1L) {
+                update(it)
+            }
+        }
+    }
 
     @Query("SELECT * FROM BoxCreatePalletDb")
     fun getBoxAll(): List<BoxCreatePalletDb>
@@ -165,4 +176,4 @@ interface CreatePalletDao {
 
 }
 
-data class Sum(val total:Float)
+data class Sum(val weight:Float? = null, val count:Int? = null)

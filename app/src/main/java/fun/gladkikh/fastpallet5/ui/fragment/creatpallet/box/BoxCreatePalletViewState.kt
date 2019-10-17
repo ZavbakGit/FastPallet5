@@ -18,5 +18,6 @@ data class BoxWrapDataCreatePallet(
     val doc: CreatePallet? = null,
     val product: Product? = null,
     val pallet: Pallet? = null,
-    val box: Box? = null
+    val box: Box? = null,
+    val bufferSaveListBox:List<Box> = listOf()
 )

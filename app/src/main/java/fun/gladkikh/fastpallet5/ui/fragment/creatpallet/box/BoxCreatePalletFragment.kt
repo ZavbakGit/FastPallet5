@@ -78,6 +78,12 @@ class BoxCreatePalletFragment :
             it.addTextChangedListener(textChangeListener)
         }
 
+        if (data.bufferSaveListBox.isEmpty()){
+            tvBuffer.text = "Сохранено"
+        }else{
+            tvBuffer.text = "Ожидает сохранения: ${data.bufferSaveListBox.size}"
+        }
+
 
     }
 

@@ -3,7 +3,6 @@ package `fun`.gladkikh.fastpallet5.ui.fragment.creatpallet.box
 
 import `fun`.gladkikh.fastpallet5.domain.checkEditDoc
 import `fun`.gladkikh.fastpallet5.domain.extend.InfoPalletListBoxWrap
-import `fun`.gladkikh.fastpallet5.domain.extend.getInfoWrap
 import `fun`.gladkikh.fastpallet5.domain.extend.getWeightByBarcode
 import `fun`.gladkikh.fastpallet5.domain.entity.Box
 import `fun`.gladkikh.fastpallet5.domain.entity.CreatePallet
@@ -18,7 +17,6 @@ import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import io.reactivex.BackpressureStrategy
-import io.reactivex.Flowable
 import io.reactivex.schedulers.Schedulers
 import io.reactivex.subjects.PublishSubject
 import java.util.*
@@ -29,8 +27,8 @@ class BoxCreatePalletViewModel(private val createPalletRepository: CreatePalletR
     BaseViewModel<BoxWrapDataCreatePallet?, BoxCreatePalletViewState>() {
 
     private var liveDataMerger: MediatorLiveData<BoxWrapDataCreatePallet> = MediatorLiveData()
-
     private val refreshPublishSubject = PublishSubject.create<List<Box>?>()
+    private val saveBufferBoxPublishSubject = PublishSubject.create<List<Box>>()
 
     private val infoWrap = MutableLiveData<InfoPalletListBoxWrap>()
     fun getInfoWrap(): LiveData<InfoPalletListBoxWrap> = infoWrap
@@ -46,19 +44,88 @@ class BoxCreatePalletViewModel(private val createPalletRepository: CreatePalletR
         viewStateLiveData.value = BoxCreatePalletViewState()
         liveDataMerger.observeForever(documentObserver)
 
-        //Подписка на пересчет
+
+        //Сохранение box через буффер
         disposables.add(
-            refreshPublishSubject.toFlowable(BackpressureStrategy.BUFFER)
-                .debounce(300, TimeUnit.MILLISECONDS)
-                .switchMap { list ->
-                    return@switchMap Flowable.just(list).map { it.getInfoWrap() }
-                }
+            saveBufferBoxPublishSubject.toFlowable(BackpressureStrategy.BUFFER)
                 .doOnNext {
-                    infoWrap.postValue(it)
+                    //Прокинем список и последний box
+                    liveDataMerger.postValue(
+                        BoxWrapDataCreatePallet(
+                            doc = liveDataMerger.value?.doc,
+                            product = liveDataMerger.value?.product,
+                            pallet = liveDataMerger.value?.pallet,
+                            box = it.last(),
+                            bufferSaveListBox = it
+                        )
+                    )
                 }
+                .debounce(1000, TimeUnit.MILLISECONDS)
+//                .map {
+//
+//                    return@map lastGuid
+//                }
                 .subscribeOn(Schedulers.io())
-                .subscribe()
+                .subscribe {
+                    createPalletRepository.saveListBox(it, liveDataMerger.value?.pallet?.guid!!)
+                    val lastGuid = it.last().guid
+
+                    liveDataMerger.postValue(
+                        BoxWrapDataCreatePallet(
+                            doc = liveDataMerger.value?.doc,
+                            product = liveDataMerger.value?.product,
+                            pallet = liveDataMerger.value?.pallet,
+                            box = it.last(),
+                            bufferSaveListBox = listOf()
+                        )
+                    )
+
+                    setGuid(
+                        guidDoc = liveDataMerger.value?.doc!!.guid,
+                        guidProduct = liveDataMerger.value?.product!!.guid,
+                        guidPallet = liveDataMerger.value?.pallet!!.guid,
+                        guidBox = it.last().guid
+                    )
+                }
         )
+
+
+        //Подписка на пересчет
+//        disposables.add(
+////            refreshPublishSubject.toFlowable(BackpressureStrategy.BUFFER)
+////                .debounce(300, TimeUnit.MILLISECONDS)
+////                .switchMap { list ->
+////                    val info =
+////                        createPalletRepository.createPalletDao.getInfoPallet(liveDataMerger.value?.pallet!!.guid)
+////
+////                    val inf = InfoPalletListBoxWrap(
+////                        countBox = info.count,
+////                        weight = info.weight,
+////                        row = 1,
+////                        countPallet = 1
+////                    )
+////
+////
+////                    //return@switchMap Flowable.just(list).map { it.getInfoWrap() }
+////                    return@switchMap Flowable.just(inf)
+////                    //return@switchMap Flowable.just(InfoPalletListBoxWrap())
+////                }
+////                .doOnNext {
+////                    infoWrap.postValue(it)
+////                }
+////                .subscribeOn(Schedulers.io())
+////                .subscribe()
+////        )
+////
+////        disposables.add(
+////            saveBoxPublishSubject.toFlowable(BackpressureStrategy.BUFFER)
+////                .doOnNext {
+////                    createPalletRepository.saveBox(it, liveDataMerger.value?.pallet?.guid!!)
+////                }
+////                .subscribeOn(Schedulers.io())
+////                .subscribe()
+//        )
+
 
     }
 
@@ -70,7 +137,24 @@ class BoxCreatePalletViewModel(private val createPalletRepository: CreatePalletR
     }
 
 
-    fun setGuid(guidDoc: String, guidProduct: String, guidPallet: String, guidBox: String) {
+    fun setGuid(
+        guidDoc: String,
+        guidProduct: String,
+        guidPallet: String,
+        guidBox: String,
+        boxParam: Box? = null
+    ) {
+
+        if (boxParam != null) {
+            liveDataMerger.value =
+                BoxWrapDataCreatePallet(
+                    doc = liveDataMerger.value?.doc,
+                    product = liveDataMerger.value?.product,
+                    pallet = liveDataMerger.value?.pallet,
+                    box = boxParam
+                )
+
+        }
 
         //Обязательно добавляем и удаляем
         cleanSourseMediator(liveDataMerger)
@@ -91,11 +175,13 @@ class BoxCreatePalletViewModel(private val createPalletRepository: CreatePalletR
 
                     pallet!!.boxes = listBox!!
 
-                    value = BoxWrapDataCreatePallet(
-                        doc = doc,
-                        product = product,
-                        pallet = pallet,
-                        box = box
+                    postValue(
+                        BoxWrapDataCreatePallet(
+                            doc = doc,
+                            product = product,
+                            pallet = pallet,
+                            box = box
+                        )
                     )
 
                     refreshInfo()
@@ -124,21 +210,39 @@ class BoxCreatePalletViewModel(private val createPalletRepository: CreatePalletR
             createPalletRepository.getPalletByGuid(guidPallet).apply {
                 addSource(this) {
                     pallet = it
+                    //ToDo Для проверки
+//                    listBox = listOf()
+//                    if (boxParam == null) {
+//                        box = createPalletRepository.createPalletDao.getBoxByGuid(guidBox).toBox()
+//                    } else {
+//                        box = boxParam
+//                    }
+
                     update()
                 }
                 listSourse.add(this)
 
             }
 
-            createPalletRepository.getListBoxByPalletLd(guidPallet).apply {
-                addSource(this) { list ->
-                    listBox = list.sortedByDescending { it.data }
-                    box = list.find { it.guid == guidBox }
+            createPalletRepository.getBoxByGuidLd(guidBox).apply {
+                addSource(this) {
+                    listBox = listOf()
+                    box = it
                     update()
-
                 }
                 listSourse.add(this)
             }
+
+
+//            createPalletRepository.getListBoxByPalletLd(guidPallet).apply {
+//                addSource(this) { list ->
+//                    listBox = list.sortedByDescending { it.data }
+//                    boxParam = list.find { it.guid == guidBox }
+//                    update()
+//
+//                }
+//                listSourse.add(this)
+//            }
 
 
         }
@@ -173,15 +277,23 @@ class BoxCreatePalletViewModel(private val createPalletRepository: CreatePalletR
             weight = weight,
             data = Date()
         )
-        createPalletRepository.saveBox(box, liveDataMerger.value?.pallet?.guid!!)
 
-        setGuid(
-            guidDoc = liveDataMerger.value?.doc!!.guid,
-            guidProduct = liveDataMerger.value?.product!!.guid,
-            guidPallet = liveDataMerger.value?.pallet!!.guid,
-            guidBox = box.guid
-        )
+        //Передаем в буфер
+        saveBufferBoxPublishSubject.onNext(liveDataMerger.value!!.bufferSaveListBox + box)
 
+
+        //Надо вынести на после сохранения
+//        setGuid(
+//            guidDoc = liveDataMerger.value?.doc!!.guid,
+//            guidProduct = liveDataMerger.value?.product!!.guid,
+//            guidPallet = liveDataMerger.value?.pallet!!.guid,
+//            guidBox = box.guid,
+//            boxParam = box
+//        )
+
+
+        //saveBoxPublishSubject.onNext(box)
+        //createPalletRepository.saveBox(box, liveDataMerger.value?.pallet?.guid!!)
     }
 
     /**
@@ -214,7 +326,7 @@ class BoxCreatePalletViewModel(private val createPalletRepository: CreatePalletR
 
     fun save(weight: String?, countBox: String?) {
         val box = liveDataMerger.value?.box ?: return
-        val pallet = liveDataMerger.value?.pallet?:return
+        val pallet = liveDataMerger.value?.pallet ?: return
 
         box.apply {
             this.weight = weight?.toFloatOrNull() ?: 0f

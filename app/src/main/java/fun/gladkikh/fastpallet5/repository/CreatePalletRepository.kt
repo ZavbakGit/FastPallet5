@@ -122,8 +122,20 @@ class CreatePalletRepository(val createPalletDao: CreatePalletDao) {
             it.toBox()
         }
 
+    fun getBoxByGuidLd(guid: String) = Transformations.map(
+        createPalletDao.getBoxByGuidLd(guid)
+    ) {
+        it.toBox()
+    }
+
+
     fun saveBox(box: Box, guidPallet: String) =
         createPalletDao.insertOrUpdate(box.toBoxCreatePalletDb(guidPallet))
+
+    fun saveListBox(list: List<Box>, guidPallet: String) =
+        createPalletDao.insertOrUpdateList(list.map {
+            it.toBoxCreatePalletDb(guidPallet)
+        })
 
     fun dellPallet(pallet: Pallet, guidProduct: String) {
         createPalletDao.dellPallet(pallet.toPalletCreatePalletDb(guidProduct))
