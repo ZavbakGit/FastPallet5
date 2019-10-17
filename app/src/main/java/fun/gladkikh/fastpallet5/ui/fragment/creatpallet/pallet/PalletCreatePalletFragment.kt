@@ -165,7 +165,8 @@ class PalletCreatePalletFragment :
         bundle.putString(BoxCreatePalletFragment.EXTRA_GUID_BOX, guid)
 
         hostActivity.getNavController().navigate(
-            R.id.action_palletCreatePalletFragment_to_boxCreatePalletFragment,
+            //R.id.action_palletCreatePalletFragment_to_boxCreatePalletFragment,
+            R.id.action_palletCreatePalletFragment_to_box1CreatePalletFragment,
             bundle
         )
     }

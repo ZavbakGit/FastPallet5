@@ -49,6 +49,9 @@ dependencies {
     implementation 'io.reactivex.rxjava2:rxjava:2.2.12'
     implementation 'io.reactivex.rxjava2:rxkotlin:2.3.0'
 
+    implementation "android.arch.lifecycle:reactivestreams:1.1.1"
+
+
     implementation 'com.squareup.retrofit2:retrofit:2.6.1'
     implementation 'com.squareup.retrofit2:adapter-rxjava2:2.6.1'
     implementation 'com.squareup.retrofit2:converter-gson:2.6.1'

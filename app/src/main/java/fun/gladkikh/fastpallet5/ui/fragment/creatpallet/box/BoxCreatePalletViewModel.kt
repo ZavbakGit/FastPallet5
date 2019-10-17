@@ -45,6 +45,8 @@ class BoxCreatePalletViewModel(private val createPalletRepository: CreatePalletR
         liveDataMerger.observeForever(documentObserver)
 
 
+
+
         //Сохранение box через буффер
         disposables.add(
             saveBufferBoxPublishSubject.toFlowable(BackpressureStrategy.BUFFER)
@@ -60,7 +62,7 @@ class BoxCreatePalletViewModel(private val createPalletRepository: CreatePalletR
                         )
                     )
                 }
-                .debounce(1000, TimeUnit.MILLISECONDS)
+                .debounce(2000, TimeUnit.MILLISECONDS)
 //                .map {
 //
 //                    return@map lastGuid
@@ -155,6 +157,8 @@ class BoxCreatePalletViewModel(private val createPalletRepository: CreatePalletR
                 )
 
         }
+
+       //val model =  createPalletRepository.createPalletDao.getDataForBoxScreen(guidBox)
 
         //Обязательно добавляем и удаляем
         cleanSourseMediator(liveDataMerger)

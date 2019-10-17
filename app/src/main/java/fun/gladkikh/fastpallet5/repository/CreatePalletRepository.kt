@@ -145,4 +145,10 @@ class CreatePalletRepository(val createPalletDao: CreatePalletDao) {
         createPalletDao.dellBox(box.toBoxCreatePalletDb(guidPallet))
     }
     //endregion
+
+
+    fun getDataForBoxScreen(guidBox:String) = createPalletDao.getDataForBoxScreen(guidBox)
+
+
+
 }

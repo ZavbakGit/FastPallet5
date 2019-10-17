@@ -45,6 +45,9 @@
         <action
             android:id="@+id/action_palletCreatePalletFragment_to_boxCreatePalletFragment"
             app:destination="@id/boxCreatePalletFragment" />
+        <action
+            android:id="@+id/action_palletCreatePalletFragment_to_box1CreatePalletFragment"
+            app:destination="@id/box1CreatePalletFragment" />
     </fragment>
     <fragment
             android:id="@+id/dialogProductCreatePalletFragment"
@@ -54,4 +57,8 @@
         android:id="@+id/boxCreatePalletFragment"
         android:name="fun.gladkikh.fastpallet5.ui.fragment.creatpallet.box.BoxCreatePalletFragment"
         android:label="BoxCreatePalletFragment" />
+    <fragment
+        android:id="@+id/box1CreatePalletFragment"
+        android:name="fun.gladkikh.fastpallet5.ui.fragment.creatpallet.box1.Box1CreatePalletFragment"
+        android:label="Box1CreatePalletFragment" />
 </navigation>

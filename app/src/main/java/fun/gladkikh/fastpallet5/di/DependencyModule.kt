@@ -5,6 +5,7 @@ import `fun`.gladkikh.fastpallet5.repository.CreatePalletRepository
 import `fun`.gladkikh.fastpallet5.repository.DocumentRepository
 import `fun`.gladkikh.fastpallet5.repository.SettingsRepository
 import `fun`.gladkikh.fastpallet5.ui.fragment.creatpallet.box.BoxCreatePalletViewModel
+import `fun`.gladkikh.fastpallet5.ui.fragment.creatpallet.box1.Box1CreatePalletViewModel
 import `fun`.gladkikh.fastpallet5.ui.fragment.creatpallet.dialodproduct.DialogProductCreatePalletViewModel
 import `fun`.gladkikh.fastpallet5.ui.fragment.creatpallet.doc.CreatePalletViewModel
 import `fun`.gladkikh.fastpallet5.ui.fragment.creatpallet.pallet.PalletCreatePalletViewModel
@@ -33,6 +34,7 @@ object DependencyModule {
         viewModel { PalletCreatePalletViewModel(get()) }
         viewModel { DialogProductCreatePalletViewModel(get()) }
         viewModel { BoxCreatePalletViewModel(get()) }
+        viewModel { Box1CreatePalletViewModel(get()) }
     }
 
 
