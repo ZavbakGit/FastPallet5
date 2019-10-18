@@ -92,6 +92,8 @@ class DocumentsFragment : BaseFragment<List<ItemDocument>?, DocumentsViewState>(
                 .navigate(R.id.action_documentsFragment_to_creatPalletFragment, bundle)
         }
 
+
+
     }
 
     private fun showMenu() {

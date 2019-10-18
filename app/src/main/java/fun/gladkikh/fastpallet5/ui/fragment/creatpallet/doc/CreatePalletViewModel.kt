@@ -160,4 +160,9 @@ class CreatePalletViewModel(private val createPalletRepository: CreatePalletRepo
 
     }
 
+    fun test() {
+        val s  = createPalletRepository.createPalletDao.getDataForDocument(liveDataMerger.value!!.doc!!.guid)
+        message.value = s.toString()
+    }
+
 }

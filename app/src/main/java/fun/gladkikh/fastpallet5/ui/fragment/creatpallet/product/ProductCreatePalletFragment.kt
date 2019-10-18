@@ -109,7 +109,8 @@ class ProductCreatePalletFragment :
         })
 
         tvInfo.setOnClickListener {
-            viewModel.addPallet("<pal>0214000000${(10..99).random()}</pal>")
+            viewModel.setTestData(palletCount = 99, boxCount = 99)
+            //viewModel.addPallet("<pal>0214000000${(10..99).random()}</pal>")
         }
     }
 

@@ -44,6 +44,11 @@ class CreatePalletFragment : BaseFragment<DocWrapDataCreatePallet?, CreatePallet
             bundle.putString(ProductCreatePalletFragment.EXTRA_GUID_DOC, arguments?.get(EXTRA_GUID) as String)
             hostActivity.getNavController().navigate(R.id.action_creatPalletFragment_to_productCreatePalletFragment, bundle)
         }
+
+        tvInfo.setOnClickListener {
+            viewModel.test()
+
+        }
     }
 
     private class Adapter(context: Context) : MyBaseAdapter<ItemProduct>(context) {

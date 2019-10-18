@@ -1,10 +1,13 @@
 package `fun`.gladkikh.fastpallet5.ui.fragment.creatpallet.product
 
 import `fun`.gladkikh.fastpallet5.domain.checkEditDoc
+import `fun`.gladkikh.fastpallet5.domain.entity.Box
 import `fun`.gladkikh.fastpallet5.domain.entity.CreatePallet
 import `fun`.gladkikh.fastpallet5.domain.entity.Pallet
 import `fun`.gladkikh.fastpallet5.domain.entity.Product
 import `fun`.gladkikh.fastpallet5.domain.extend.*
+import `fun`.gladkikh.fastpallet5.maping.creatpallet.toBoxCreatePalletDb
+import `fun`.gladkikh.fastpallet5.maping.creatpallet.toPalletCreatePalletDb
 import `fun`.gladkikh.fastpallet5.repository.CreatePalletRepository
 import `fun`.gladkikh.fastpallet5.ui.base.BaseViewModel
 import `fun`.gladkikh.fastpallet5.ui.fragment.common.Command
@@ -215,6 +218,53 @@ class ProductCreatePalletViewModel(private val createPalletRepository: CreatePal
                 liveDataMerger.value?.product!!.guid
             )
         }
+    }
+
+    fun setTestData(palletCount: Int, boxCount: Int) {
+
+        val listPallet = (0..palletCount).map {
+            //Thread.sleep(200)
+            Pallet(
+                guid = it.toString(),
+                count = null,
+                countBox = null,
+                number = it.toString(),
+                barcode = "<pal>0214000000$it}</pal>",
+                dataChanged = Date(),
+                nameProduct = null,
+                sclad = null,
+                state = null
+            ).toPalletCreatePalletDb(liveDataMerger.value?.product?.guid!!)
+        }
+
+        createPalletRepository.createPalletDao.insertOrUpdateListPallet(listPallet)
+
+        listPallet.mapIndexed { index, pallet ->
+
+            val listBox = (0..boxCount).map {
+
+                Box(
+                    guid = "${pallet.guid}_$it",
+                    countBox = 1,
+                    data = Date(),
+                    weight = 10.25f
+                    //weight = (10000..99999).random().toFloat() * 0.001f
+                ).toBoxCreatePalletDb(pallet.guid)
+            }
+
+            createPalletRepository.createPalletDao.insertOrUpdateList(
+                listBox
+            )
+            message.postValue("save ${pallet.number}")
+        }
+
+
+
+
+
+
+
+
     }
 
 }

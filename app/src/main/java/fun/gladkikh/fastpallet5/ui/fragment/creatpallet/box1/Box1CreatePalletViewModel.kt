@@ -1,16 +1,14 @@
 package `fun`.gladkikh.fastpallet5.ui.fragment.creatpallet.box1
 
-import `fun`.gladkikh.fastpallet5.db.DataQueryForBoxScreen
+import `fun`.gladkikh.fastpallet5.db.DataForBoxScreen
 import `fun`.gladkikh.fastpallet5.domain.entity.Box
 import `fun`.gladkikh.fastpallet5.domain.extend.getWeightByBarcode
 import `fun`.gladkikh.fastpallet5.repository.CreatePalletRepository
 import `fun`.gladkikh.fastpallet5.ui.base.BaseViewModel1
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.LiveDataReactiveStreams
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import io.reactivex.BackpressureStrategy
-import io.reactivex.Flowable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import io.reactivex.subjects.PublishSubject
@@ -21,7 +19,7 @@ class Box1CreatePalletViewModel(private val createPalletRepository: CreatePallet
     BaseViewModel1() {
 
     private val liveData: MutableLiveData<Box1CreatePalletViewState> = MutableLiveData()
-    var repositoryBox: LiveData<DataQueryForBoxScreen>? = null
+    var repositoryBox: LiveData<DataForBoxScreen>? = null
     private val saveBufferBoxPublishSubject = PublishSubject.create<List<Box>>()
     private val bufferBoxList: MutableList<Box> = mutableListOf()
 
@@ -30,7 +28,7 @@ class Box1CreatePalletViewModel(private val createPalletRepository: CreatePallet
     fun getCountBufferSaveLiveData(): LiveData<Int> = countBufferSaveLiveData
 
 
-    private val observer = Observer<DataQueryForBoxScreen> {
+    private val observer = Observer<DataForBoxScreen> {
 
         //message.postValue(it.boxGuid)
 

@@ -143,6 +143,15 @@ interface CreatePalletDao {
     }
 
     @Transaction
+    fun insertOrUpdateListPallet(list: List<PalletCreatePalletDb>) {
+        list.forEach {
+            if (insertIgnore(it) == -1L) {
+                update(it)
+            }
+        }
+    }
+
+    @Transaction
     fun insertOrUpdateList(list: List<BoxCreatePalletDb>) {
         list.forEach {
             if (insertIgnore(it) == -1L) {
@@ -218,12 +227,57 @@ interface CreatePalletDao {
                 "          Prod.guid," +
                 "          Doc.guid;"
     )
-    fun getDataForBoxScreen(guidBox: String): LiveData<DataQueryForBoxScreen>
+    fun getDataForBoxScreen(guidBox: String): LiveData<DataForBoxScreen>
 
+
+    @Query("SELECT  SUM(BoxCountBOX) AS boxCount " +
+            "       ,SUM(RoundedWieght) AS boxWeight " +
+            "       ,SUM(BoxCountRows) AS boxRow " +
+            "       ,SUM(PalCount) AS palCount " +
+            "       ,ProdGuid AS prodGuid " +
+            "       ,ProdName AS prodName " +
+            "FROM ( " +
+            "SELECT SUM(Box.countBox) AS BoxCountBOX " +
+            "       ,SUM(Round(Box.weight * 1000) ) / 1000 AS RoundedWieght " +
+            "       ,COUNT(Box.guid) AS BoxCountRows " +
+            "       ,COUNT(DISTINCT Pal.guid) AS PalCount " +
+            "       ,Prod.guid AS ProdGuid " +
+            "       ,MAX(Prod.guidProduct) ProdProductGuid " +
+            "       ,MAX(Prod.nameProduct) AS ProdName " +
+            "FROM BoxCreatePalletDb Box " +
+            "       LEFT JOIN " +
+            "       PalletCreatePalletDb Pal ON Pal.guid = Box.guidPallet " +
+            "       LEFT JOIN " +
+            "       ProductCreatePalletDb Prod ON Prod.guid = Pal.guidProduct " +
+            "WHERE Prod.guidDoc =:guidDoc  " +
+            "GROUP BY Prod.guid " +
+            "UNION ALL " +
+            "SELECT 0,0,0,0, Prod.guid  " +
+            "       ,Prod.guidProduct  " +
+            "       ,Prod.nameProduct " +
+            "FROM ProductCreatePalletDb Prod WHERE Prod.guidDoc =:guidDoc) " +
+            "GROUP BY ProdName " +
+            "       ,ProdProductGuid " +
+            "       ,ProdGuid " +
+            "ORDER BY ProdName " +
+            "       ,ProdProductGuid " +
+            "       ,ProdGuid"
+            )
+    fun getDataForDocument(guidDoc: String): List<DataForDocumentItem>
 
 }
 
-data class DataQueryForBoxScreen(
+
+data class DataForDocumentItem(
+    val prodGuid: String?,
+    val prodName: String?,
+    val boxCount: String?,
+    val boxWeight: Float?,
+    val boxRow: Int?,
+    val palCount:Int?
+)
+
+data class DataForBoxScreen(
     val docNumber: String?,
     val prodName: String?,
     val prodStart: Int?,
